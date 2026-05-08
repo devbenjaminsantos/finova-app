@@ -183,7 +183,7 @@ Variaveis esperadas:
 
 Se preferir, use o arquivo de exemplo `server/FinanceDashboard.Api/appsettings.Development.local.example.json` como base para montar seu `appsettings.Development.local.json`.
 
-Exemplo de execucao:
+Exemplo de execução:
 
 ```powershell
 cd server/FinanceDashboard.Api
