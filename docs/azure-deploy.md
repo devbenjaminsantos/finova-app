@@ -9,7 +9,7 @@ Este projeto usa três recursos separados no Azure:
 ## Recursos
 
 - Grupo de recursos: `rg-finova`
-- Static Web App: `happy-coast-09654c410.2.azurestaticapps.net`
+- Static Web App: `polite-ground-038630210.2.azurestaticapps.net`
 - App Service: `finova-api`
 - Azure SQL Server: `finovasqlserver.database.windows.net`
 - Azure SQL Database: `finova-db`
@@ -19,7 +19,7 @@ Este projeto usa três recursos separados no Azure:
 O workflow real do frontend está em:
 
 ```text
-.github/workflows/azure-static-web-apps-happy-coast-09654c410.yml
+.github/workflows/azure-static-web-apps-polite-ground-038630210.yml
 ```
 
 Configuração do Static Web Apps:
@@ -30,7 +30,7 @@ Configuração do Static Web Apps:
 
 Secrets do GitHub Actions:
 
-- `AZURE_STATIC_WEB_APPS_API_TOKEN_HAPPY_COAST_09654C410`
+- `AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GROUND_038630210`
 - `VITE_API_URL`
 
 Valor atual de `VITE_API_URL`:
@@ -63,6 +63,32 @@ Esse valor vem de:
 Azure Portal > App Service > Visão geral > Obter perfil de publicação
 ```
 
+## Erro: token inválido do Static Web Apps
+
+Se o deploy do frontend falhar com:
+
+```text
+No matching Static Web App was found or the api key was invalid.
+```
+
+confirme estes pontos:
+
+1. O workflow ativo deve ser `.github/workflows/azure-static-web-apps-polite-ground-038630210.yml`.
+2. O workflow deve usar o secret `AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GROUND_038630210`.
+3. Esse secret deve conter o deployment token do recurso `polite-ground-038630210` no Azure Static Web Apps.
+
+Para gerar/copiar o token correto:
+
+```text
+Azure Portal > Static Web App polite-ground-038630210 > Manage deployment token
+```
+
+Depois atualize o valor em:
+
+```text
+GitHub > Settings > Secrets and variables > Actions > Repository secrets
+```
+
 ## Variáveis da API no App Service
 
 No `Azure Portal > App Service > Configurações > Variáveis de ambiente`, configure:
@@ -88,8 +114,8 @@ Valores esperados:
 ```text
 Jwt__Issuer=FinanceDashboard
 Jwt__Audience=FinanceDashboard
-Cors__AllowedOrigins__0=https://happy-coast-09654c410.2.azurestaticapps.net
-Client__BaseUrl=https://happy-coast-09654c410.2.azurestaticapps.net
+Cors__AllowedOrigins__0=https://polite-ground-038630210.2.azurestaticapps.net
+Client__BaseUrl=https://polite-ground-038630210.2.azurestaticapps.net
 Smtp__Port=587
 Smtp__FromName=Finova
 Smtp__EnableSsl=true
@@ -161,7 +187,7 @@ VITE_API_URL=https://api.seu-dominio.com/api
 
 Teste estes endereços depois do deploy:
 
-- frontend: `https://happy-coast-09654c410.2.azurestaticapps.net`
+- frontend: `https://polite-ground-038630210.2.azurestaticapps.net`
 - health da API: `https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/health`
 - recuperação: `/forgot-password`
 - redefinição: `/reset-password?token=...`
