@@ -9,7 +9,7 @@ Este projeto usa três recursos separados no Azure:
 ## Recursos
 
 - Grupo de recursos: `rg-finova`
-- Static Web App: `polite-ground-038630210.2.azurestaticapps.net`
+- Static Web App: `polite-ground-038630210.7.azurestaticapps.net`
 - App Service: `finova-api`
 - Azure SQL Server: `finovasqlserver.database.windows.net`
 - Azure SQL Database: `finova-db`
@@ -114,8 +114,8 @@ Valores esperados:
 ```text
 Jwt__Issuer=FinanceDashboard
 Jwt__Audience=FinanceDashboard
-Cors__AllowedOrigins__0=https://polite-ground-038630210.2.azurestaticapps.net
-Client__BaseUrl=https://polite-ground-038630210.2.azurestaticapps.net
+Cors__AllowedOrigins__0=https://polite-ground-038630210.7.azurestaticapps.net
+Client__BaseUrl=https://polite-ground-038630210.7.azurestaticapps.net
 Smtp__Port=587
 Smtp__FromName=Finova
 Smtp__EnableSsl=true
@@ -187,7 +187,7 @@ VITE_API_URL=https://api.seu-dominio.com/api
 
 Teste estes endereços depois do deploy:
 
-- frontend: `https://polite-ground-038630210.2.azurestaticapps.net`
+- frontend: `https://polite-ground-038630210.7.azurestaticapps.net`
 - health da API: `https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/health`
 - recuperação: `/forgot-password`
 - redefinição: `/reset-password?token=...`

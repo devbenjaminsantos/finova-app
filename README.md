@@ -135,7 +135,7 @@ Estado atual da publicacao:
 
 Links atuais:
 
-- front-end: `https://polite-ground-038630210.2.azurestaticapps.net`
+- front-end: `https://polite-ground-038630210.7.azurestaticapps.net`
 - health da API: `https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/health`
 
 O dominio customizado planejado para a proxima etapa e `finovawallet`.
