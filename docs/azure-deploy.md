@@ -30,8 +30,12 @@ Configuração do Static Web Apps:
 
 Secrets do GitHub Actions:
 
+- `AZURE_STATIC_WEB_APPS_API_TOKEN`
 - `AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GROUND_038630210`
 - `VITE_API_URL`
+
+Use `AZURE_STATIC_WEB_APPS_API_TOKEN` para o token do Static Web App atual. O secret com sufixo
+`POLITE_GROUND_038630210` ficou apenas como fallback de compatibilidade com o recurso antigo.
 
 Valor atual de `VITE_API_URL`:
 
@@ -74,13 +78,13 @@ No matching Static Web App was found or the api key was invalid.
 confirme estes pontos:
 
 1. O workflow ativo deve ser `.github/workflows/azure-static-web-apps-polite-ground-038630210.yml`.
-2. O workflow deve usar o secret `AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GROUND_038630210`.
-3. Esse secret deve conter o deployment token do recurso `polite-ground-038630210` no Azure Static Web Apps.
+2. O workflow deve usar o secret `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+3. Esse secret deve conter o deployment token do recurso atual no Azure Static Web Apps.
 
 Para gerar/copiar o token correto:
 
 ```text
-Azure Portal > Static Web App polite-ground-038630210 > Manage deployment token
+Azure Portal > Static Web App atual > Manage deployment token
 ```
 
 Depois atualize o valor em:
@@ -88,6 +92,10 @@ Depois atualize o valor em:
 ```text
 GitHub > Settings > Secrets and variables > Actions > Repository secrets
 ```
+
+Se o Static Web App foi recriado ou conectado a outro repositório, prefira resetar/copiar o token do
+recurso atual e salvar em `AZURE_STATIC_WEB_APPS_API_TOKEN`, em vez de reaproveitar um secret gerado
+com o nome do recurso antigo.
 
 ## Variáveis da API no App Service
 
