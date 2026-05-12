@@ -299,9 +299,9 @@ export function getAutomaticInsights(transactions, t) {
   }
 
   if (totalIncome > 0) {
-    const savingsRaté = Math.round((balance / totalIncome) * 100);
-    const tone = savingsRaté >= 20 ? "income" : savingsRaté < 0 ? "expense" : "primary";
-    const badge = savingsRaté > 0 ? `+${savingsRate}%` : `${savingsRate}%`;
+    const savingsRate = Math.round((balance / totalIncome) * 100);
+    const tone = savingsRate >= 20 ? "income" : savingsRate < 0 ? "expense" : "primary";
+    const badge = savingsRate > 0 ? `+${savingsRate}%` : `${savingsRate}%`;
 
     insights.push({
       key: "savings-rate",
@@ -309,9 +309,9 @@ export function getAutomaticInsights(transactions, t) {
       badge,
       tone,
       description:
-        savingsRaté >= 20
+        savingsRate >= 20
           ? translate(t, "dashboardAnalytics.insights.savingsRateHealthy")
-          : savingsRaté >= 0
+          : savingsRate >= 0
             ? translate(t, "dashboardAnalytics.insights.savingsRatePositive")
             : translate(t, "dashboardAnalytics.insights.savingsRateNegative"),
     });
@@ -372,7 +372,7 @@ export function getPrescriptiveInsights(transactions, t) {
     0
   );
   const balance = totalIncome - totalExpense;
-  const savingsRaté = totalIncome > 0 ? Math.round((balance / totalIncome) * 100) : null;
+  const savingsRate = totalIncome > 0 ? Math.round((balance / totalIncome) * 100) : null;
 
   const topExpenseCategory = Array.from(buildExpenseTotalsByCategory(transactions, t).entries()).sort(
     (a, b) => b[1] - a[1]
@@ -392,8 +392,8 @@ export function getPrescriptiveInsights(transactions, t) {
 
   const recommendations = [];
 
-  if (savingsRaté !== null) {
-    if (savingsRaté < 0) {
+  if (savingsRate !== null) {
+    if (savingsRate < 0) {
       recommendations.push({
         key: "prescriptive-balance-negative",
         title: translate(t, "dashboardAnalytics.prescriptive.priorityTitle"),
@@ -401,7 +401,7 @@ export function getPrescriptiveInsights(transactions, t) {
         tone: "expense",
         description: translate(t, "dashboardAnalytics.prescriptive.priorityDescription"),
       });
-    } else if (savingsRaté < 10) {
+    } else if (savingsRate < 10) {
       recommendations.push({
         key: "prescriptive-balance-low",
         title: translate(t, "dashboardAnalytics.prescriptive.nextStepTitle"),
@@ -409,7 +409,7 @@ export function getPrescriptiveInsights(transactions, t) {
         tone: "primary",
         description: translate(t, "dashboardAnalytics.prescriptive.nextStepDescription"),
       });
-    } else if (savingsRaté >= 20) {
+    } else if (savingsRate >= 20) {
       recommendations.push({
         key: "prescriptive-balance-healthy",
         title: translate(t, "dashboardAnalytics.prescriptive.opportunityTitle"),

@@ -31,20 +31,35 @@ export function TransactionsProvider({ children }) {
     setIsLoading(true);
 
     try {
-      const [transactionData, installmentPlanData, recurringRuleData] = await Promise.all([
-        getTransactions(),
-        getInstallmentPlans(),
-        getRecurringRules(),
-      ]);
+      const [transactionResult, installmentPlanResult, recurringRuleResult] =
+        await Promise.allSettled([
+          getTransactions(),
+          getInstallmentPlans(),
+          getRecurringRules(),
+        ]);
 
-      setTransactions(transactionData);
-      setInstallmentPlans(installmentPlanData);
-      setRecurringRules(recurringRuleData);
-    } catch (error) {
-      console.error("Erro ao carregar transações:", error);
-      setTransactions([]);
-      setInstallmentPlans([]);
-      setRecurringRules([]);
+      if (transactionResult.status === "fulfilled") {
+        setTransactions(Array.isArray(transactionResult.value) ? transactionResult.value : []);
+      } else {
+        console.error("Erro ao carregar transações:", transactionResult.reason);
+        setTransactions([]);
+      }
+
+      if (installmentPlanResult.status === "fulfilled") {
+        setInstallmentPlans(
+          Array.isArray(installmentPlanResult.value) ? installmentPlanResult.value : []
+        );
+      } else {
+        console.error("Erro ao carregar parcelamentos:", installmentPlanResult.reason);
+        setInstallmentPlans([]);
+      }
+
+      if (recurringRuleResult.status === "fulfilled") {
+        setRecurringRules(Array.isArray(recurringRuleResult.value) ? recurringRuleResult.value : []);
+      } else {
+        console.error("Erro ao carregar recorrências:", recurringRuleResult.reason);
+        setRecurringRules([]);
+      }
     } finally {
       setIsLoading(false);
     }
