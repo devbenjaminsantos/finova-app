@@ -999,7 +999,7 @@ export default function TransactionImportModal({
               </div>
             )}
 
-            <div className="finova-actions-row finova-actions-row-end pt-4">
+            <div className="finova-actions-row finova-actions-row-end finova-modal-actions pt-4">
               <button
                 type="button"
                 className="btn finova-btn-light px-4"

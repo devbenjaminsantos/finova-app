@@ -555,12 +555,12 @@ export default function FinancialAccounts() {
               <div className="finova-page-note mb-3">{t("accounts.removeNote")}</div>
 
               {isLoading ? (
-                <div className="d-flex align-items-center gap-3">
+                <div className="finova-loading-state">
                   <div className="spinner-border spinner-border-sm text-primary" />
                   <p className="finova-subtitle mb-0">{t("accounts.loading")}</p>
                 </div>
               ) : accounts.length === 0 ? (
-                <div className="finova-card-soft p-4 text-center">
+                <div className="finova-empty-state">
                   <h3 className="finova-title h6 mb-2">{t("accounts.emptyTitle")}</h3>
                   <p className="finova-subtitle mb-0">{t("accounts.emptySubtitle")}</p>
                 </div>

@@ -52,7 +52,10 @@ export default function TransactionsTable({
   if (isLoading) {
     return (
       <div className="finova-card p-4">
-        <p className="finova-subtitle mb-0">{t("transactions.loading")}</p>
+        <div className="finova-loading-state">
+          <div className="spinner-border spinner-border-sm text-primary" />
+          <p className="finova-subtitle mb-0">{t("transactions.loading")}</p>
+        </div>
       </div>
     );
   }
@@ -94,7 +97,7 @@ export default function TransactionsTable({
       </div>
 
       {transactions.length === 0 ? (
-        <div className="text-center py-5">
+        <div className="finova-empty-state">
           <h3 className="finova-title h6 mb-2">{t("transactions.emptyTitle")}</h3>
           <p className="finova-subtitle mb-0">
             {totalTransactionsCount === 0

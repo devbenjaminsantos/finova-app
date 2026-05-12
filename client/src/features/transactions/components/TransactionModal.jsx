@@ -509,7 +509,7 @@ export default function TransactionModal({
               ) : null}
 
               <div className="col-12">
-                <div className="finova-actions-row finova-actions-row-end pt-2">
+                <div className="finova-actions-row finova-actions-row-end finova-modal-actions pt-2">
                   <button
                     type="button"
                     className="btn finova-btn-light px-4"

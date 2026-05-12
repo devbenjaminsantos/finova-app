@@ -223,7 +223,7 @@ export default function Profile() {
       <div className="finova-page-stack finova-page-stack-narrow">
         <div className="finova-card p-4 p-md-5">
           {isLoading ? (
-            <div className="d-flex align-items-center gap-3">
+            <div className="finova-loading-state">
               <div className="spinner-border spinner-border-sm text-primary" />
               <p className="finova-subtitle mb-0">{t("profile.loading")}</p>
             </div>

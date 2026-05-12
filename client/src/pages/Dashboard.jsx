@@ -149,7 +149,10 @@ export default function Dashboard() {
 
       {isLoading ? (
         <div className="finova-card p-4">
-          <p className="finova-subtitle mb-0">{t("common.loading")}</p>
+          <div className="finova-loading-state">
+            <div className="spinner-border spinner-border-sm text-primary" />
+            <p className="finova-subtitle mb-0">{t("common.loading")}</p>
+          </div>
         </div>
       ) : (
         <>
@@ -173,8 +176,10 @@ export default function Dashboard() {
 
           {filteredTransactions.length === 0 ? (
             <div className="finova-card p-4">
-              <h2 className="finova-title h5 mb-2">{t("pages.dashboardEmptyTitle")}</h2>
-              <p className="finova-subtitle mb-0">{t("pages.dashboardEmptySubtitle")}</p>
+              <div className="finova-empty-state">
+                <h2 className="finova-title h5 mb-2">{t("pages.dashboardEmptyTitle")}</h2>
+                <p className="finova-subtitle mb-0">{t("pages.dashboardEmptySubtitle")}</p>
+              </div>
             </div>
           ) : (
             <div className="finova-card p-4">

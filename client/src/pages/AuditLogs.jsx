@@ -80,7 +80,7 @@ export default function AuditLogs() {
 
       <div className="finova-card p-4">
         {isLoading ? (
-          <div className="d-flex align-items-center gap-3">
+          <div className="finova-loading-state">
             <div className="spinner-border spinner-border-sm text-primary" />
             <p className="finova-subtitle mb-0">{t("history.loading")}</p>
           </div>
@@ -89,7 +89,7 @@ export default function AuditLogs() {
             {error}
           </div>
         ) : visibleLogs.length === 0 ? (
-          <div className="text-center py-4">
+          <div className="finova-empty-state">
             <h2 className="finova-title h6 mb-2">{t("history.emptyTitle")}</h2>
             <p className="finova-subtitle mb-0">{t("history.emptySubtitle")}</p>
           </div>
