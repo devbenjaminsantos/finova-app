@@ -122,7 +122,7 @@ namespace FinanceDashboard.Api.Services.Notifications
                     {
                         _logger.LogWarning(
                             exception,
-                            "Falha ao enviar alerta de meta para o usuario {UserId} no periodo {Month}.",
+                            "Falha ao enviar alerta de meta para o usuário {UserId} no período {Month}.",
                             user.Id,
                             month);
                     }
@@ -244,7 +244,7 @@ namespace FinanceDashboard.Api.Services.Notifications
                 {
                     _logger.LogWarning(
                         exception,
-                        "Falha ao enviar relatorio mensal para o usuario {UserId} no periodo {Month}.",
+                        "Falha ao enviar relatório mensal para o usuário {UserId} no período {Month}.",
                         user.Id,
                         reportMonth);
                 }

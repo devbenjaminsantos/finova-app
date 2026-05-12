@@ -58,7 +58,7 @@ namespace FinanceDashboard.Api.Services.BankSync.Pluggy
 
             if (string.IsNullOrWhiteSpace(data.AccessToken))
             {
-                throw new InvalidOperationException("Pluggy nao retornou um connect token valido.");
+                throw new InvalidOperationException("Pluggy não retornou um connect token válido.");
             }
 
             return data.AccessToken;
@@ -182,7 +182,7 @@ namespace FinanceDashboard.Api.Services.BankSync.Pluggy
 
             if (string.IsNullOrWhiteSpace(data.ApiKey))
             {
-                throw new InvalidOperationException("Pluggy nao retornou uma API key valida.");
+                throw new InvalidOperationException("Pluggy não retornou uma API key válida.");
             }
 
             _cache.Set(ApiKeyCacheKey, data.ApiKey, TimeSpan.FromMinutes(25));
@@ -194,7 +194,7 @@ namespace FinanceDashboard.Api.Services.BankSync.Pluggy
             if (!IsConfigured)
             {
                 throw new InvalidOperationException(
-                    "Pluggy nao configurado. Defina Pluggy:ClientId e Pluggy:ClientSecret.");
+                    "Pluggy não configurado. Defina Pluggy:ClientId e Pluggy:ClientSecret.");
             }
         }
 
@@ -220,7 +220,7 @@ namespace FinanceDashboard.Api.Services.BankSync.Pluggy
 
             if (data is null)
             {
-                throw new InvalidOperationException("A resposta do Pluggy veio vazia ou invalida.");
+                throw new InvalidOperationException("A resposta do Pluggy veio vazia ou inválida.");
             }
 
             return data;

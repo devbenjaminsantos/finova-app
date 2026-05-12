@@ -56,7 +56,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return NotFound(new ProblemDetails
                 {
-                    Title = "Usuario nao encontrado.",
+                    Title = "Usuário não encontrado.",
                     Status = StatusCodes.Status404NotFound
                 });
             }
@@ -100,7 +100,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return NotFound(new ProblemDetails
                 {
-                    Title = "Usuario nao encontrado.",
+                    Title = "Usuário não encontrado.",
                     Status = StatusCodes.Status404NotFound
                 });
             }
@@ -121,7 +121,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return NotFound(new ProblemDetails
                 {
-                    Title = "Usuario nao encontrado.",
+                    Title = "Usuário não encontrado.",
                     Status = StatusCodes.Status404NotFound
                 });
             }
@@ -137,8 +137,8 @@ namespace FinanceDashboard.Api.Controllers
                 entityId: user.Id.ToString(),
                 userId: user.Id,
                 summary: dto.Enabled
-                    ? "Dashboard publico ativado para leitura."
-                    : "Dashboard publico desativado.");
+                    ? "Dashboard público ativado para leitura."
+                    : "Dashboard público desativado.");
 
             return Ok(ToPublicDashboardSettingsResponse(user));
         }
@@ -155,7 +155,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return NotFound(new ProblemDetails
                 {
-                    Title = "Usuario nao encontrado.",
+                    Title = "Usuário não encontrado.",
                     Status = StatusCodes.Status404NotFound
                 });
             }
@@ -166,7 +166,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return BadRequest(new ProblemDetails
                 {
-                    Title = "Informe um nome valido.",
+                    Title = "Informe um nome válido.",
                     Status = StatusCodes.Status400BadRequest
                 });
             }
@@ -249,7 +249,7 @@ namespace FinanceDashboard.Api.Controllers
                 entityId: user.Id.ToString(),
                 userId: user.Id,
                 summary: changedPassword
-                    ? "Perfil atualizado com alteracao de senha."
+                    ? "Perfil atualizado com alteração de senha."
                     : BuildProfileSummary(dto));
 
             return Ok(ToAuthUserResponse(user));
@@ -265,7 +265,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return BadRequest(new ProblemDetails
                 {
-                    Title = "Informe uma escolha valida para o guia inicial.",
+                    Title = "Informe uma escolha válida para o guia inicial.",
                     Status = StatusCodes.Status400BadRequest
                 });
             }
@@ -277,7 +277,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return NotFound(new ProblemDetails
                 {
-                    Title = "Usuario nao encontrado.",
+                    Title = "Usuário não encontrado.",
                     Status = StatusCodes.Status404NotFound
                 });
             }
@@ -291,8 +291,8 @@ namespace FinanceDashboard.Api.Controllers
                 entityId: user.Id.ToString(),
                 userId: user.Id,
                 summary: dto.OnboardingOptIn.Value
-                    ? "Usuario optou por receber o guia inicial."
-                    : "Usuario optou por ocultar o guia inicial.");
+                    ? "Usuário optou por receber o guia inicial."
+                    : "Usuário optou por ocultar o guia inicial.");
 
             return Ok(ToAuthUserResponse(user));
         }

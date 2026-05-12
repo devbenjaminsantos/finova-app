@@ -36,13 +36,13 @@ export function detectImportDuplicates(previewTransactions, existingTransactions
 
     if (isDuplicateOfExisting && isDuplicateInsideImport) {
       duplicateReason =
-        "Essa linha ja existe no seu historico e tambem aparece repetida dentro do arquivo.";
+        "Essa linha já existe no seu histórico e também aparece repetida dentro do arquivo.";
       duplicateSource = "existing_and_import";
     } else if (isDuplicateOfExisting) {
-      duplicateReason = "Ja existe uma transacao muito parecida no seu historico.";
+      duplicateReason = "Já existe uma transação muito parecida no seu histórico.";
       duplicateSource = "existing";
     } else if (isDuplicateInsideImport) {
-      duplicateReason = "Essa linha parece repetida dentro do proprio arquivo importado.";
+      duplicateReason = "Essa linha parece repetida dentro do próprio arquivo importado.";
       duplicateSource = "import";
     }
 

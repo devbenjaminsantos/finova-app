@@ -30,7 +30,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return NotFound(new ProblemDetails
                 {
-                    Title = "Painel publico nao encontrado.",
+                    Title = "Painel público não encontrado.",
                     Status = StatusCodes.Status404NotFound
                 });
             }
@@ -45,7 +45,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 return NotFound(new ProblemDetails
                 {
-                    Title = "Painel publico nao encontrado.",
+                    Title = "Painel público não encontrado.",
                     Status = StatusCodes.Status404NotFound
                 });
             }

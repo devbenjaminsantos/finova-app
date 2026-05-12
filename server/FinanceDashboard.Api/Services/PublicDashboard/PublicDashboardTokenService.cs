@@ -59,7 +59,7 @@ namespace FinanceDashboard.Api.Services.PublicDashboard
             var key = _configuration["Jwt:Key"]?.Trim();
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new InvalidOperationException("Jwt:Key nao configurada para gerar o dashboard publico.");
+                throw new InvalidOperationException("Jwt:Key não configurada para gerar o dashboard público.");
             }
 
             using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key));

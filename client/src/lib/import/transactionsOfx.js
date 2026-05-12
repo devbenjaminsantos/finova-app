@@ -67,7 +67,7 @@ export function parseTransactionsOfx(text) {
   const blocks = getTransactionBlocks(normalizedText);
 
   if (blocks.length === 0) {
-    throw new Error("Nao foi encontrada nenhuma transacao valida no OFX.");
+    throw new Error("Não foi encontrada nenhuma transação válida no OFX.");
   }
 
   return blocks.map((block, index) => {

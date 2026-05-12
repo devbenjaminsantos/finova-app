@@ -24,7 +24,7 @@ namespace FinanceDashboard.Api.Services.BankSync
         {
             if (string.IsNullOrWhiteSpace(account.ProviderItemId))
             {
-                throw new InvalidOperationException("Esta conta ainda nao foi vinculada a um item do Pluggy.");
+                throw new InvalidOperationException("Esta conta ainda não foi vinculada a um item do Pluggy.");
             }
 
             await _pluggyClient.UpdateItemAsync(account.ProviderItemId, cancellationToken);
@@ -59,8 +59,8 @@ namespace FinanceDashboard.Api.Services.BankSync
             {
                 Items = importedItems,
                 Message = importedItems.Count == 0
-                    ? "Sincronizacao concluida. Nenhuma transacao nova foi encontrada no Pluggy."
-                    : $"Sincronizacao concluida. {importedItems.Count} transacoes foram preparadas para importacao."
+                    ? "Sincronização concluída. Nenhuma transação nova foi encontrada no Pluggy."
+                    : $"Sincronização concluída. {importedItems.Count} transações foram preparadas para importação."
             };
         }
 

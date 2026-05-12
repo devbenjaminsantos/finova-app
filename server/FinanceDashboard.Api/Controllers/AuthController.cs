@@ -103,7 +103,7 @@ namespace FinanceDashboard.Api.Controllers
             }
 
             // Eu invalido links anteriores antes de gerar um novo.
-            // Assim evito deixar varios links de confirmacao ativos para a mesma conta.
+            // Assim evito deixar vários links de confirmação ativos para a mesma conta.
             await InvalidateActiveEmailVerificationTokensAsync(user.Id);
             var verificationUrl = await CreateEmailVerificationTokenAsync(user);
 

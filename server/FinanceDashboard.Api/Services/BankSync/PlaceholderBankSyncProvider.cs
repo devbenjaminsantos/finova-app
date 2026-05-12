@@ -17,7 +17,7 @@ namespace FinanceDashboard.Api.Services.BankSync
         {
             return Task.FromResult(new BankSyncResult
             {
-                Message = $"Conta '{account.AccountName}' preparada para futura sincronizacao automatica. Nenhuma transacao nova foi importada ainda."
+                Message = $"Conta '{account.AccountName}' preparada para futura sincronização automática. Nenhuma transação nova foi importada ainda."
             });
         }
     }

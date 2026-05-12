@@ -72,7 +72,7 @@ function buildTableLines({ title, subtitle, columns, rows }) {
             )
           )
         )
-      : ["Nenhuma transacao encontrada para os filtros selecionados."];
+      : ["Nenhuma transação encontrada para os filtros selecionados."];
 
   return [
     title,

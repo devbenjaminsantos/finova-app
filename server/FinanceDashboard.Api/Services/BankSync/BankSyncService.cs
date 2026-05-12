@@ -34,7 +34,7 @@ namespace FinanceDashboard.Api.Services.BankSync
                     SkippedCount = 0,
                     SyncedAtUtc = DateTime.UtcNow,
                     Status = account.Status,
-                    Message = "Nenhum provedor de sincronizacao compativel foi encontrado para esta conta."
+                    Message = "Nenhum provedor de sincronização compatível foi encontrado para esta conta."
                 };
             }
 
@@ -96,7 +96,7 @@ namespace FinanceDashboard.Api.Services.BankSync
                 SyncedAtUtc = importedAtUtc,
                 Status = account.Status,
                 Message = string.IsNullOrWhiteSpace(syncResult.Message)
-                    ? "Sincronizacao concluida."
+                    ? "Sincronização concluída."
                     : syncResult.Message
             };
         }

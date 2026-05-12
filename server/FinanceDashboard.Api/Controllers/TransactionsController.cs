@@ -125,7 +125,7 @@ namespace FinanceDashboard.Api.Controllers
                 {
                     return BadRequest(new ProblemDetails
                     {
-                        Title = "Conta financeira invalida para este usuario.",
+                        Title = "Conta financeira inválida para este usuário.",
                         Status = StatusCodes.Status400BadRequest
                     });
                 }
@@ -195,8 +195,8 @@ namespace FinanceDashboard.Api.Controllers
             var summary = dto.InstallmentCount > 1
                 ? $"Compra parcelada criada: {firstTransaction.Description} ({dto.InstallmentCount} parcelas mensais)."
                 : dto.IsRecurring
-                ? $"Regra recorrente criada: {firstTransaction.Description} (proxima geracao mensal automatica)."
-                : $"Transacao criada: {firstTransaction.Description} ({firstTransaction.Type}).";
+                ? $"Regra recorrente criada: {firstTransaction.Description} (próxima geração mensal automática)."
+                : $"Transação criada: {firstTransaction.Description} ({firstTransaction.Type}).";
 
             await _auditLogService.WriteAsync(
                 action: "transaction.created",
@@ -218,7 +218,7 @@ namespace FinanceDashboard.Api.Controllers
 
             if (dto.Transactions.Count > 500)
             {
-                ModelState.AddModelError(nameof(dto.Transactions), "Limite de 500 transacoes por importacao.");
+                ModelState.AddModelError(nameof(dto.Transactions), "Limite de 500 transações por importação.");
                 return ValidationProblem(ModelState);
             }
 
@@ -239,7 +239,7 @@ namespace FinanceDashboard.Api.Controllers
                 {
                     ModelState.AddModelError(
                         $"{nameof(dto.Transactions)}[{index}].{nameof(item.IsRecurring)}",
-                        "A importacao inicial de arquivo nao aceita recorrencia automatica.");
+                        "A importação inicial de arquivo não aceita recorrência automática.");
                     return ValidationProblem(ModelState);
                 }
 
@@ -269,7 +269,7 @@ namespace FinanceDashboard.Api.Controllers
                 entityType: "Transaction",
                 entityId: transactions[0].Id.ToString(),
                 userId: userId,
-                summary: $"Importacao {dto.ImportFormat?.ToUpperInvariant() ?? "CSV"} concluida com {transactions.Count} transacoes.");
+                summary: $"Importação {dto.ImportFormat?.ToUpperInvariant() ?? "CSV"} concluída com {transactions.Count} transações.");
 
             return Ok(new TransactionImportResponse
             {
@@ -304,7 +304,7 @@ namespace FinanceDashboard.Api.Controllers
                 entityType: "Transaction",
                 entityId: transaction.Id.ToString(),
                 userId: userId,
-                summary: $"Transacao atualizada: {transaction.Description} ({transaction.Type}).");
+                summary: $"Transação atualizada: {transaction.Description} ({transaction.Type}).");
 
             return Ok(ToResponse(transaction));
         }
@@ -329,7 +329,7 @@ namespace FinanceDashboard.Api.Controllers
                 entityType: "Transaction",
                 entityId: id.ToString(),
                 userId: userId,
-                summary: $"Transacao removida: {transaction.Description} ({transaction.Type}).");
+                summary: $"Transação removida: {transaction.Description} ({transaction.Type}).");
 
             return NoContent();
         }
@@ -461,7 +461,7 @@ namespace FinanceDashboard.Api.Controllers
 
             if (dto.IsRecurring && installmentCount > 1)
             {
-                validationError = "Escolha recorrencia mensal ou parcelamento, nao os dois ao mesmo tempo.";
+                validationError = "Escolha recorrência mensal ou parcelamento, não os dois ao mesmo tempo.";
                 return false;
             }
 
@@ -469,7 +469,7 @@ namespace FinanceDashboard.Api.Controllers
             {
                 if (dto.Type != "expense")
                 {
-                    validationError = "Parcelamento esta disponivel apenas para despesas nesta etapa.";
+                    validationError = "Parcelamento está disponível apenas para despesas nesta etapa.";
                     return false;
                 }
 
@@ -500,7 +500,7 @@ namespace FinanceDashboard.Api.Controllers
 
             if (!dto.RecurrenceEndDate.HasValue)
             {
-                validationError = "Informe ate quando a recorrencia mensal deve ser gerada.";
+                validationError = "Informe até quando a recorrência mensal deve ser gerada.";
                 return false;
             }
 
@@ -509,7 +509,7 @@ namespace FinanceDashboard.Api.Controllers
 
             if (endDate < minimumEndDate)
             {
-                validationError = "A recorrencia mensal precisa alcancar pelo menos o proximo mes.";
+                validationError = "A recorrência mensal precisa alcancar pelo menos o proximo mes.";
                 return false;
             }
 

@@ -17,16 +17,16 @@ namespace FinanceDashboard.Api.Services.Email
         {
             return SendAsync(
                 toEmail,
-                "Redefinicao de senha - Finova",
+                "Redefinição de senha - Finova",
                 $"""
-                Ola, {name}.
+                Olá, {name}.
 
-                Recebemos uma solicitacao para redefinir sua senha no Finova.
+                Recebemos uma solicitação para redefinir sua senha no Finova.
 
                 Acesse o link abaixo para criar uma nova senha:
                 {resetUrl}
 
-                Se voce nao solicitou essa alteracao, ignore este e-mail.
+                Se você não solicitou essa alteração, ignore este e-mail.
                 """);
         }
 
@@ -34,16 +34,16 @@ namespace FinanceDashboard.Api.Services.Email
         {
             return SendAsync(
                 toEmail,
-                "Confirmacao de e-mail - Finova",
+                "Confirmação de e-mail - Finova",
                 $"""
-                Ola, {name}.
+                Olá, {name}.
 
                 Confirme seu e-mail para ativar sua conta no Finova.
 
-                Acesse o link abaixo para concluir a confirmacao:
+                Acesse o link abaixo para concluir a confirmação:
                 {verificationUrl}
 
-                Se voce nao criou esta conta, ignore este e-mail.
+                Se você não criou esta conta, ignore este e-mail.
                 """);
         }
 
@@ -60,14 +60,14 @@ namespace FinanceDashboard.Api.Services.Email
                 toEmail,
                 $"Alerta de meta mensal - {goalLabel}",
                 $"""
-                Ola, {name}.
+                Olá, {name}.
 
                 Sua meta "{goalLabel}" em {monthLabel} atingiu {progressPercent}% do limite definido.
 
-                Valor gasto ate agora: {spentAmount:C}
+                Valor gasto até agora: {spentAmount:C}
                 Limite planejado: {targetAmount:C}
 
-                Acesse o Finova para revisar suas movimentacoes e ajustar o plano do mes, se necessario.
+                Acesse o Finova para revisar suas movimentações e ajustar o plano do mês, se necessário.
                 """);
         }
 
@@ -83,21 +83,21 @@ namespace FinanceDashboard.Api.Services.Email
             IReadOnlyList<MonthlyGoalSummary> goalSummaries)
         {
             var goalLines = goalSummaries.Count == 0
-                ? "Nenhuma meta cadastrada para este mes."
+                ? "Nenhuma meta cadastrada para este mês."
                 : string.Join(
                     Environment.NewLine,
                     goalSummaries.Select(summary =>
                         $"- {summary.GoalLabel}: gasto {summary.SpentAmount:C} de {summary.TargetAmount:C}"));
 
             var topCategoryLine = string.IsNullOrWhiteSpace(topExpenseCategory) || topExpenseAmount is null
-                ? "Categoria com maior gasto: nao identificada."
+                ? "Categoria com maior gasto: não identificada."
                 : $"Categoria com maior gasto: {topExpenseCategory} ({topExpenseAmount.Value:C}).";
 
             return SendAsync(
                 toEmail,
                 $"Resumo mensal - {monthLabel}",
                 $"""
-                Ola, {name}.
+                Olá, {name}.
 
                 Aqui esta o seu resumo financeiro de {monthLabel}.
 
@@ -107,10 +107,10 @@ namespace FinanceDashboard.Api.Services.Email
 
                 {topCategoryLine}
 
-                Metas do periodo:
+                Metas do período:
                 {goalLines}
 
-                Acesse o Finova para revisar os detalhes e planejar o proximo mes.
+                Acesse o Finova para revisar os detalhes e planejar o próximo mês.
                 """);
         }
 
@@ -121,7 +121,7 @@ namespace FinanceDashboard.Api.Services.Email
 
             if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(fromEmail))
             {
-                throw new InvalidOperationException("SMTP nao configurado.");
+                throw new InvalidOperationException("SMTP não configurado.");
             }
 
             var port = _configuration.GetValue("Smtp:Port", 587);

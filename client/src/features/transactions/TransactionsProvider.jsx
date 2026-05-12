@@ -41,7 +41,7 @@ export function TransactionsProvider({ children }) {
       setInstallmentPlans(installmentPlanData);
       setRecurringRules(recurringRuleData);
     } catch (error) {
-      console.error("Erro ao carregar transacoes:", error);
+      console.error("Erro ao carregar transações:", error);
       setTransactions([]);
       setInstallmentPlans([]);
       setRecurringRules([]);

@@ -40,7 +40,7 @@ namespace FinanceDashboard.Api.Services.Notifications
                 }
                 catch (Exception exception)
                 {
-                    _logger.LogError(exception, "Falha ao processar alertas e relatorios financeiros.");
+                    _logger.LogError(exception, "Falha ao processar alertas e relatórios financeiros.");
                 }
 
                 await Task.Delay(TimeSpan.FromMinutes(intervalMinutes), stoppingToken);

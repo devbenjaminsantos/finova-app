@@ -1,58 +1,58 @@
 import { formatBRLFromCents } from "../../lib/format/currency";
 
 const FALLBACK_TRANSLATIONS = {
-  "dashboardAnalytics.period.currentMonth": "Mes atual",
-  "dashboardAnalytics.period.last3Months": "Ultimos 3 meses",
-  "dashboardAnalytics.period.last6Months": "Ultimos 6 meses",
-  "dashboardAnalytics.period.allHistory": "Todo o historico",
-  "dashboardAnalytics.comparisonRange.singleMonth": "1 mes",
+  "dashboardAnalytics.period.currentMonth": "Mês atual",
+  "dashboardAnalytics.period.last3Months": "Últimos 3 meses",
+  "dashboardAnalytics.period.last6Months": "Últimos 6 meses",
+  "dashboardAnalytics.period.allHistory": "Todo o histórico",
+  "dashboardAnalytics.comparisonRange.singleMonth": "1 mês",
   "dashboardAnalytics.comparisonRange.months": "{{count}} meses",
   "dashboardAnalytics.defaultCategory": "Outros",
   "dashboardAnalytics.biggestExpenseBadge": "Despesa",
   "dashboardAnalytics.insights.topCategoryTitle": "Categoria mais representativa",
   "dashboardAnalytics.insights.topCategoryDescription":
-    "{{category}} concentra {{share}}% das despesas do periodo e merece atencao extra.",
-  "dashboardAnalytics.insights.savingsRateTitle": "Ritmo de sobra no periodo",
+    "{{category}} concentra {{share}}% das despesas do período e merece atenção extra.",
+  "dashboardAnalytics.insights.savingsRateTitle": "Ritmo de sobra no período",
   "dashboardAnalytics.insights.savingsRateHealthy":
-    "Seu saldo esta preservando uma parcela saudavel das receitas neste recorte.",
+    "Seu saldo está preservando uma parcela saudável das receitas neste recorte.",
   "dashboardAnalytics.insights.savingsRatePositive":
-    "O saldo ainda esta positivo, mas ha espaco para aumentar a folga financeira.",
+    "O saldo ainda está positivo, mas há espaço para aumentar a folga financeira.",
   "dashboardAnalytics.insights.savingsRateNegative":
-    "As despesas superaram as receitas neste periodo e pedem correcao rapida.",
+    "As despesas superaram as receitas neste período e pedem correção rápida.",
   "dashboardAnalytics.insights.recurringTitle": "Compromissos recorrentes",
   "dashboardAnalytics.insights.recurringItems": "{{count}} itens",
   "dashboardAnalytics.insights.recurringPositive":
-    "Os lancamentos recorrentes deixam {{amount}} de margem entre entradas e saidas fixas.",
+    "Os lançamentos recorrentes deixam {{amount}} de margem entre entradas e saídas fixas.",
   "dashboardAnalytics.insights.recurringNegative":
-    "Os lancamentos recorrentes ja comprometem {{amount}} alem das entradas fixas.",
+    "Os lançamentos recorrentes já comprometem {{amount}} além das entradas fixas.",
   "dashboardAnalytics.insights.biggestExpenseTitle": "Maior despesa avulsa",
   "dashboardAnalytics.insights.biggestExpenseDescription":
-    "{{description}} foi o maior lancamento de saida do periodo, totalizando {{amount}}.",
-  "dashboardAnalytics.prescriptive.priorityTitle": "Acao prioritaria",
+    "{{description}} foi o maior lançamento de saída do período, totalizando {{amount}}.",
+  "dashboardAnalytics.prescriptive.priorityTitle": "Ação prioritária",
   "dashboardAnalytics.prescriptive.priorityBadge": "Ajuste imediato",
   "dashboardAnalytics.prescriptive.priorityDescription":
-    "As despesas passaram das receitas neste periodo. Vale revisar as saidas variaveis primeiro e congelar gastos menos essenciais ate o saldo voltar a respirar.",
-  "dashboardAnalytics.prescriptive.nextStepTitle": "Proximo movimento sugerido",
+    "As despesas passaram das receitas neste período. Vale revisar as saídas variáveis primeiro e congelar gastos menos essenciais até o saldo voltar a respirar.",
+  "dashboardAnalytics.prescriptive.nextStepTitle": "Próximo movimento sugerido",
   "dashboardAnalytics.prescriptive.nextStepBadge": "Baixa folga",
   "dashboardAnalytics.prescriptive.nextStepDescription":
-    "Sua folga esta curta. Um bom proximo passo e transformar pelo menos uma despesa previsivel em lancamento recorrente e definir uma meta mensal para a categoria mais pesada.",
+    "Sua folga está curta. Um bom próximo passo é transformar pelo menos uma despesa previsível em lançamento recorrente e definir uma meta mensal para a categoria mais pesada.",
   "dashboardAnalytics.prescriptive.opportunityTitle": "Oportunidade clara",
-  "dashboardAnalytics.prescriptive.opportunityBadge": "Saldo saudavel",
+  "dashboardAnalytics.prescriptive.opportunityBadge": "Saldo saudável",
   "dashboardAnalytics.prescriptive.opportunityDescription":
-    "O periodo esta com boa sobra. Este e um momento favoravel para reforcar metas, antecipar despesas previsiveis ou criar uma reserva para os proximos meses.",
-  "dashboardAnalytics.prescriptive.topCategoryTitle": "Categoria que pede atencao",
+    "O período está com boa sobra. Este é um momento favorável para reforçar metas, antecipar despesas previsíveis ou criar uma reserva para os próximos meses.",
+  "dashboardAnalytics.prescriptive.topCategoryTitle": "Categoria que pede atenção",
   "dashboardAnalytics.prescriptive.topCategoryDescription":
-    "{{category}} ja representa {{share}}% das despesas deste recorte. Vale criar ou revisar uma meta especifica para essa categoria antes que ela dite o resultado do mes sozinha.",
+    "{{category}} já representa {{share}}% das despesas deste recorte. Vale criar ou revisar uma meta específica para essa categoria antes que ela dite o resultado do mês sozinha.",
   "dashboardAnalytics.prescriptive.recurringTitle": "Estrutura fixa pressionada",
-  "dashboardAnalytics.prescriptive.recurringBadge": "Recorrencia",
+  "dashboardAnalytics.prescriptive.recurringBadge": "Recorrência",
   "dashboardAnalytics.prescriptive.recurringDescription":
-    "As saidas recorrentes ja superam as entradas recorrentes. A melhor alavanca aqui e renegociar compromissos fixos ou aumentar uma entrada previsivel antes de ampliar novos gastos.",
-  "dashboardAnalytics.prescriptive.defaultTitle": "Proximo passo sugerido",
-  "dashboardAnalytics.prescriptive.defaultBadge": "Organizacao",
+    "As saídas recorrentes já superam as entradas recorrentes. A melhor alavanca aqui é renegociar compromissos fixos ou aumentar uma entrada previsível antes de ampliar novos gastos.",
+  "dashboardAnalytics.prescriptive.defaultTitle": "Próximo passo sugerido",
+  "dashboardAnalytics.prescriptive.defaultBadge": "Organização",
   "dashboardAnalytics.prescriptive.defaultDescription":
-    "Seu cenario esta relativamente equilibrado. O proximo ganho pratico costuma vir de manter recorrencias em dia e revisar o comparativo entre meses para identificar mudancas cedo.",
+    "Seu cenário está relativamente equilibrado. O próximo ganho prático costuma vir de manter recorrências em dia e revisar o comparativo entre meses para identificar mudanças cedo.",
   "dashboardAnalytics.confidence.high": "Alta",
-  "dashboardAnalytics.confidence.medium": "Media",
+  "dashboardAnalytics.confidence.medium": "Média",
   "dashboardAnalytics.confidence.low": "Baixa",
 };
 
@@ -299,9 +299,9 @@ export function getAutomaticInsights(transactions, t) {
   }
 
   if (totalIncome > 0) {
-    const savingsRate = Math.round((balance / totalIncome) * 100);
-    const tone = savingsRate >= 20 ? "income" : savingsRate < 0 ? "expense" : "primary";
-    const badge = savingsRate > 0 ? `+${savingsRate}%` : `${savingsRate}%`;
+    const savingsRaté = Math.round((balance / totalIncome) * 100);
+    const tone = savingsRaté >= 20 ? "income" : savingsRaté < 0 ? "expense" : "primary";
+    const badge = savingsRaté > 0 ? `+${savingsRate}%` : `${savingsRate}%`;
 
     insights.push({
       key: "savings-rate",
@@ -309,9 +309,9 @@ export function getAutomaticInsights(transactions, t) {
       badge,
       tone,
       description:
-        savingsRate >= 20
+        savingsRaté >= 20
           ? translate(t, "dashboardAnalytics.insights.savingsRateHealthy")
-          : savingsRate >= 0
+          : savingsRaté >= 0
             ? translate(t, "dashboardAnalytics.insights.savingsRatePositive")
             : translate(t, "dashboardAnalytics.insights.savingsRateNegative"),
     });
@@ -372,7 +372,7 @@ export function getPrescriptiveInsights(transactions, t) {
     0
   );
   const balance = totalIncome - totalExpense;
-  const savingsRate = totalIncome > 0 ? Math.round((balance / totalIncome) * 100) : null;
+  const savingsRaté = totalIncome > 0 ? Math.round((balance / totalIncome) * 100) : null;
 
   const topExpenseCategory = Array.from(buildExpenseTotalsByCategory(transactions, t).entries()).sort(
     (a, b) => b[1] - a[1]
@@ -392,8 +392,8 @@ export function getPrescriptiveInsights(transactions, t) {
 
   const recommendations = [];
 
-  if (savingsRate !== null) {
-    if (savingsRate < 0) {
+  if (savingsRaté !== null) {
+    if (savingsRaté < 0) {
       recommendations.push({
         key: "prescriptive-balance-negative",
         title: translate(t, "dashboardAnalytics.prescriptive.priorityTitle"),
@@ -401,7 +401,7 @@ export function getPrescriptiveInsights(transactions, t) {
         tone: "expense",
         description: translate(t, "dashboardAnalytics.prescriptive.priorityDescription"),
       });
-    } else if (savingsRate < 10) {
+    } else if (savingsRaté < 10) {
       recommendations.push({
         key: "prescriptive-balance-low",
         title: translate(t, "dashboardAnalytics.prescriptive.nextStepTitle"),
@@ -409,7 +409,7 @@ export function getPrescriptiveInsights(transactions, t) {
         tone: "primary",
         description: translate(t, "dashboardAnalytics.prescriptive.nextStepDescription"),
       });
-    } else if (savingsRate >= 20) {
+    } else if (savingsRaté >= 20) {
       recommendations.push({
         key: "prescriptive-balance-healthy",
         title: translate(t, "dashboardAnalytics.prescriptive.opportunityTitle"),

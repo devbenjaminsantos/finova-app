@@ -142,7 +142,7 @@ namespace FinanceDashboard.Api.Controllers
                 userId: userId,
                 summary:
                     linkedTransactionsCount > 0
-                        ? $"Conta financeira removida: {account.InstitutionName} - {account.AccountName}. {linkedTransactionsCount} transacao(oes) seguiram sem vinculacao."
+                        ? $"Conta financeira removida: {account.InstitutionName} - {account.AccountName}. {linkedTransactionsCount} transação(ões) seguiram sem vinculação."
                         : $"Conta financeira removida: {account.InstitutionName} - {account.AccountName}.");
 
             return NoContent();
@@ -168,7 +168,7 @@ namespace FinanceDashboard.Api.Controllers
                 return BadRequest(new ProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    Title = "Esta conta nao usa o provedor Pluggy."
+                    Title = "Esta conta não usa o provedor Pluggy."
                 });
             }
 
@@ -177,7 +177,7 @@ namespace FinanceDashboard.Api.Controllers
                 return BadRequest(new ProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    Title = "Pluggy nao configurado no back-end."
+                    Title = "Pluggy não configurado no back-end."
                 });
             }
 
@@ -213,7 +213,7 @@ namespace FinanceDashboard.Api.Controllers
                 return BadRequest(new ProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    Title = "Esta conta nao usa o provedor Pluggy."
+                    Title = "Esta conta não usa o provedor Pluggy."
                 });
             }
 
@@ -273,7 +273,7 @@ namespace FinanceDashboard.Api.Controllers
                 entityType: "FinancialAccount",
                 entityId: account.Id.ToString(),
                 userId: userId,
-                summary: $"Sincronizacao executada para {account.InstitutionName} - {account.AccountName}: {result.ImportedCount} importadas, {result.SkippedCount} ignoradas.");
+                summary: $"Sincronização executada para {account.InstitutionName} - {account.AccountName}: {result.ImportedCount} importadas, {result.SkippedCount} ignoradas.");
 
             return Ok(result);
         }
