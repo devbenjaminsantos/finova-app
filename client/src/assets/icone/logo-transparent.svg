@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Finova</title>
+  <desc id="desc">Marca Finova em fundo transparente</desc>
+  <defs>
+    <linearGradient id="finova-blue" x1="16" x2="96" y1="18" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1787ff" />
+      <stop offset="1" stop-color="#0755e8" />
+    </linearGradient>
+    <filter id="finova-shadow" x="-20%" y="-20%" width="140%" height="150%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#1f5eff" flood-opacity=".22" />
+    </filter>
+  </defs>
+  <g filter="url(#finova-shadow)">
+    <rect x="16" y="24" width="62" height="18" rx="7" fill="url(#finova-blue)" />
+    <rect x="16" y="24" width="20" height="80" rx="7" fill="url(#finova-blue)" />
+    <rect x="30" y="57" width="42" height="17" rx="7" fill="url(#finova-blue)" />
+    <rect x="86" y="50" width="20" height="54" rx="7" fill="url(#finova-blue)" />
+    <circle cx="96" cy="31" r="12" fill="url(#finova-blue)" />
+  </g>
+</svg>

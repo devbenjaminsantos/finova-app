@@ -1,4 +1,4 @@
-import logo from "../assets/icone/logo.png";
+import logo from "../assets/icone/logo-transparent.svg";
 import { useI18n } from "../i18n/LanguageProvider";
 
 export default function BrandMark({

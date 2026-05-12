@@ -134,22 +134,43 @@ a {
 .finova-input,
 .finova-select {
   background: var(--surface-elevated);
-  color: var(--text);
+  color: var(--text) !important;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   min-height: 46px;
   box-shadow: none;
 }
 
+.finova-select,
+.form-select.finova-input {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.05rem) calc(50% - 0.14rem),
+    calc(100% - 0.72rem) calc(50% - 0.14rem);
+  background-size:
+    0.38rem 0.38rem,
+    0.38rem 0.38rem;
+  background-repeat: no-repeat;
+  padding-right: 2.35rem;
+}
+
 .finova-input:focus,
 .finova-select:focus {
   border-color: rgba(31, 94, 255, 0.42);
   box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.12);
+  color: var(--text) !important;
+  background-color: var(--surface-elevated);
+  -webkit-text-fill-color: var(--text);
 }
 
 .finova-input:disabled,
-.finova-input[readonly] {
-  color: var(--text);
+.finova-input[readonly],
+.finova-select:disabled {
+  color: var(--text) !important;
   -webkit-text-fill-color: var(--text);
   background: color-mix(in srgb, var(--surface-soft) 82%, white 18%);
   opacity: 1;
@@ -316,12 +337,12 @@ a {
 
 .finova-language-select {
   min-height: 40px;
-  min-width: 74px;
-  width: 74px;
+  min-width: 58px;
+  width: 58px;
   padding-top: 0.35rem;
   padding-bottom: 0.35rem;
-  padding-left: 0.65rem;
-  padding-right: 1.9rem;
+  padding-left: 0.62rem;
+  padding-right: 1.55rem;
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.18);
   color: #fff;
@@ -334,6 +355,7 @@ a {
 }
 
 .finova-language-select option {
+  background: var(--surface);
   color: var(--text);
 }
 
@@ -622,10 +644,10 @@ a {
   }
 
   .finova-language-select {
-    min-width: 68px;
-    width: 68px;
+    min-width: 54px;
+    width: 54px;
     padding-left: 0.55rem;
-    padding-right: 1.7rem;
+    padding-right: 1.45rem;
   }
 
   .finova-navbar .navbar-brand {
@@ -801,6 +823,7 @@ a {
   height: 44px;
   object-fit: contain;
   flex-shrink: 0;
+  background: transparent;
   filter: drop-shadow(0 12px 20px rgba(31, 94, 255, 0.18));
 }
 
@@ -1291,12 +1314,32 @@ hr {
 
 .finova-check-input,
 .form-check-input {
-  border-color: rgba(31, 94, 255, 0.24);
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--brand) 34%, var(--border) 66%);
+  background-color: var(--surface-elevated);
   box-shadow: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .finova-check-input:checked,
 .form-check-input:checked {
+  background-color: var(--brand);
+  border-color: var(--brand);
+}
+
+.form-switch .form-check-input {
+  width: 2.45rem;
+  height: 1.3rem;
+  background-color: color-mix(in srgb, var(--surface-soft) 78%, var(--text-muted) 22%);
+  border-color: color-mix(in srgb, var(--border) 70%, var(--text-muted) 30%);
+}
+
+.form-switch .form-check-input:checked {
   background-color: var(--brand);
   border-color: var(--brand);
 }
@@ -1445,9 +1488,27 @@ hr {
   background-color: var(--surface-elevated);
 }
 
+:root[data-theme="dark"] .finova-input,
+:root[data-theme="dark"] .finova-select {
+  color: var(--text) !important;
+  -webkit-text-fill-color: var(--text);
+}
+
+:root[data-theme="dark"] .finova-select option,
+:root[data-theme="dark"] .form-select.finova-input option {
+  background: var(--surface);
+  color: var(--text);
+}
+
 :root[data-theme="dark"] .finova-input::placeholder,
 :root[data-theme="dark"] textarea::placeholder {
   color: #9eb0cd !important;
+}
+
+:root[data-theme="dark"] .text-dark,
+:root[data-theme="dark"] .form-label,
+:root[data-theme="dark"] .form-check-label {
+  color: var(--text) !important;
 }
 
 :root[data-theme="dark"] .finova-auth-link {

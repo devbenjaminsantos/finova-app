@@ -1,7 +1,7 @@
 export const DEFAULT_LANGUAGE = "pt-BR";
 
 export const LANGUAGE_OPTIONS = [
-  { value: "pt-BR", label: "PT-BR" },
+  { value: "pt-BR", label: "BR" },
   { value: "en-US", label: "EN" },
 ];
 
