@@ -106,7 +106,11 @@ export function getStoredUser() {
   try {
     const parsed = JSON.parse(raw);
 
-    if (!parsed || typeof parsed !== "object") {
+    if (parsed === null) {
+      return null;
+    }
+
+    if (typeof parsed !== "object") {
       clearStoredSession();
       return null;
     }

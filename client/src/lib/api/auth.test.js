@@ -45,6 +45,16 @@ describe("auth storage helpers", () => {
     expect(getStoredUser()).toEqual({ id: 1, name: "Finova" });
   });
 
+  it("keeps the session when the login response has no user payload", () => {
+    const token = buildToken({ exp: Math.floor(Date.now() / 1000) + 3600 });
+
+    persistSession(token, null);
+
+    expect(getStoredToken()).toBe(token);
+    expect(getStoredUser()).toBeNull();
+    expect(hasValidSession()).toBe(true);
+  });
+
   it("clears corrupted stored user", () => {
     localStorage.setItem("user", "{");
 
