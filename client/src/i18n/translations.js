@@ -438,7 +438,7 @@ export const translations = {
     },
     accounts: {
       providerManual: "Manual",
-      providerManualDescription: "Conta pensada para importação por arquivo e conciliação assistida.",
+      providerManualDescription: "Cadastre e organize esta conta do seu jeito.",
       accountTypeBank: "Conta bancária",
       accountTypeBankDescription:
         "Conta corrente, conta digital ou conta principal do dia a dia.",
@@ -450,7 +450,7 @@ export const translations = {
       accountTypeCashDescription: "Valores em espécie para controle fora de contas bancárias.",
       accountTypeCreditCard: "Cartão de crédito",
       accountTypeCreditCardDescription:
-        "Conta voltada para compras no crédito e futuros parcelamentos.",
+        "Ideal para acompanhar compras no crédito e parcelas.",
       statusConnected: "Conectada",
       statusError: "Com erro",
       statusDisconnected: "Desconectada",
@@ -458,7 +458,7 @@ export const translations = {
       loadError: "Não foi possível carregar as contas financeiras.",
       validationInstitution: "Informe a instituição financeira.",
       validationAccountName: "Informe um nome para identificar a conta.",
-      createSuccess: "Conta financeira adicionada para uso manual e futuras importações.",
+      createSuccess: "Conta adicionada com sucesso.",
       createError: "Não foi possível adicionar a conta financeira.",
       updateSuccess: "Conta financeira atualizada com sucesso.",
       updateError: "Não foi possível atualizar a conta financeira.",
@@ -475,21 +475,21 @@ export const translations = {
       summaryRegistered: "Contas cadastradas",
       summaryConnected: "Contas conectadas",
       summaryPending: "Aguardando ação",
-      summarySynced: "Com sincronização registrada",
+      summarySynced: "Atualizadas",
       summaryCreditCards: "Cartões de crédito",
       editTitle: "Editar conta",
       addTitle: "Adicionar conta",
       editSubtitle:
-        "Atualize os dados da conta selecionada sem perder o histórico já vinculado.",
+        "Ajuste o nome, o tipo e os detalhes para manter sua organização em dia.",
       addSubtitle:
-        "Cadastre contas e cartões manualmente enquanto a integração de Open Finance aguarda liberação.",
+        "Separe conta principal, cartão, reserva ou dinheiro físico para ler tudo com mais clareza.",
       fieldAccountType: "Tipo da conta",
-      fieldProvider: "Provedor",
+      fieldProvider: "Origem",
       fieldInstitution: "Instituição",
-      fieldInstitutionCode: "Código da instituição",
+      fieldInstitutionCode: "Código",
       fieldAccountName: "Nome da conta",
-      fieldMask: "Máscara",
-      fieldExternalId: "ID externo",
+      fieldMask: "Final",
+      fieldExternalId: "Identificador",
       placeholderInstitution: "Ex.: Nubank, Itaú, Banco do Brasil",
       placeholderOptional: "Opcional",
       placeholderAccountName: "Ex.: Conta principal, Cartão, Reserva",
@@ -501,13 +501,13 @@ export const translations = {
       addButton: "Adicionar conta",
       listTitle: "Contas cadastradas",
       listSubtitle:
-        "As contas ficam separadas por instituição e nome, prontas para leitura por conta, saldo global e futuras importações.",
+        "Use esta lista para revisar, editar e manter cada conta no lugar certo.",
       refreshing: "Atualizando...",
       refresh: "Atualizar lista",
-      openFinanceTitle: "Open Finance aguardando liberação",
+      openFinanceTitle: "Organização por conta",
       openFinanceSubtitle:
-        "Enquanto a liberação externa não chega, o Finova segue com contas manuais e organização por carteira, banco e cartão.",
-      manualBadge: "Manual no momento",
+        "Quando cada lançamento fica ligado à conta certa, o saldo global e os filtros ficam mais fáceis de acompanhar.",
+      manualBadge: "Controle manual",
       removeNote:
         "Remover uma conta não apaga suas transações. Os lançamentos continuam no sistema e apenas deixam de ficar vinculados a essa conta.",
       fallbackAccountName: "Conta",
@@ -515,7 +515,7 @@ export const translations = {
       loading: "Carregando contas financeiras...",
       emptyTitle: "Nenhuma conta cadastrada",
       emptySubtitle:
-        "Assim que você cadastrar a primeira conta, ela passa a aparecer aqui com status, sincronização registrada e ações de conexão.",
+        "Adicione uma conta principal, cartão ou carteira para começar a separar suas movimentações.",
       metaAccount: "Conta",
       metaType: "Tipo",
       metaEnding: "Final",
@@ -523,7 +523,7 @@ export const translations = {
       metaLastSync: "Última sincronização",
       neverSynced: "Ainda não sincronizada",
       linkedTransactionsWarning:
-        "Esta conta possui {{count}} transação(ões) vinculada(s). Se você remover a conta, os lançamentos serão preservados e continuarão no histórico sem vinculação.",
+        "Esta conta tem {{count}} transação(ões) vinculada(s). Se ela for removida, os lançamentos continuam no histórico, apenas sem conta associada.",
       editButton: "Editar",
       sincronizaçãoing: "Sincronizando...",
       sincronização: "Sincronizar",
@@ -611,9 +611,9 @@ export const translations = {
         "O histórico foi simplificado para mostrar acontecimentos relevantes em linguagem mais direta, sem excesso de detalhes técnicos.",
       accountsTitle: "Contas financeiras",
       accountsSubtitle:
-        "Centralize contas manuais e contas conectadas. Nesta etapa, o Pluggy já entra como integração bancária real do produto.",
+        "Separe bancos, cartões, carteiras e dinheiro físico em uma visão simples de acompanhar.",
       accountsPageNote:
-        "Organize suas contas por instituição, tipo e nome do jeito que faz mais sentido para a sua rotina. O foco aqui é clareza de leitura, não excesso de configuração.",
+        "Use esta área para deixar cada movimentação no lugar certo e entender melhor de onde o dinheiro entra, sai e fica guardado.",
     },
     publicDashboard: {
       title: "Painel público",
@@ -1323,7 +1323,7 @@ export const translations = {
     },
     accounts: {
       providerManual: "Manual",
-      providerManualDescription: "Account designed for file import and assisted reconciliation.",
+      providerManualDescription: "Add and organize this account in the way that works for you.",
       accountTypeBank: "Bank account",
       accountTypeBankDescription:
         "Checking account, digital account, or your main everyday account.",
@@ -1335,7 +1335,7 @@ export const translations = {
       accountTypeCashDescription: "Cash amounts tracked outside the bank.",
       accountTypeCreditCard: "Credit card",
       accountTypeCreditCardDescription:
-        "Account focused on credit purchases and future installment plans.",
+        "Best for following credit purchases and installments.",
       statusConnected: "Connected",
       statusError: "With error",
       statusDisconnected: "Disconnected",
@@ -1343,7 +1343,7 @@ export const translations = {
       loadError: "Unable to load financial accounts.",
       validationInstitution: "Enter the financial institution.",
       validationAccountName: "Enter a name to identify the account.",
-      createSuccess: "Financial account added for manual use and future imports.",
+      createSuccess: "Account added successfully.",
       createError: "Unable to add the financial account.",
       updateSuccess: "Financial account updated successfully.",
       updateError: "Unable to update the financial account.",
@@ -1359,21 +1359,21 @@ export const translations = {
       summaryRegistered: "Registered accounts",
       summaryConnected: "Connected accounts",
       summaryPending: "Waiting for action",
-      summarySynced: "With sync history",
+      summarySynced: "Updated",
       summaryCreditCards: "Credit cards",
       editTitle: "Edit account",
       addTitle: "Add account",
       editSubtitle:
-        "Update the selected account details without losing the history already linked to it.",
+        "Adjust the name, type, and details to keep your organization up to date.",
       addSubtitle:
-        "Register accounts and cards manually while the Open Finance integration is still pending release.",
+        "Separate your main account, card, reserve, or cash to read everything more clearly.",
       fieldAccountType: "Account type",
-      fieldProvider: "Provider",
+      fieldProvider: "Source",
       fieldInstitution: "Institution",
-      fieldInstitutionCode: "Institution code",
+      fieldInstitutionCode: "Code",
       fieldAccountName: "Account name",
-      fieldMask: "Mask",
-      fieldExternalId: "External ID",
+      fieldMask: "Ending",
+      fieldExternalId: "Identifier",
       placeholderInstitution: "Example: Nubank, Chase, Bank of America",
       placeholderOptional: "Optional",
       placeholderAccountName: "Example: Main account, Card, Reserve",
@@ -1385,13 +1385,13 @@ export const translations = {
       addButton: "Add account",
       listTitle: "Registered accounts",
       listSubtitle:
-        "Accounts stay separated by institution and name, ready for account-specific views, global balance, and future imports.",
+        "Use this list to review, edit, and keep each account in the right place.",
       refreshing: "Refreshing...",
       refresh: "Refresh list",
-      openFinanceTitle: "Open Finance on hold",
+      openFinanceTitle: "Organization by account",
       openFinanceSubtitle:
-        "While external approval is still pending, Finova continues with manual accounts and organization by wallet, bank, and card.",
-      manualBadge: "Manual for now",
+        "When each entry is linked to the right account, global balance and filters become easier to follow.",
+      manualBadge: "Manual control",
       removeNote:
         "Removing an account does not delete its transactions. Entries stay in the system and simply stop being linked to that account.",
       fallbackAccountName: "Account",
@@ -1399,7 +1399,7 @@ export const translations = {
       loading: "Loading financial accounts...",
       emptyTitle: "No accounts registered",
       emptySubtitle:
-        "As soon as you add the first account, it will appear here with status, sync history, and connection actions.",
+        "Add a main account, card, or wallet to start separating your movements.",
       metaAccount: "Account",
       metaType: "Type",
       metaEnding: "Ending",
@@ -1407,7 +1407,7 @@ export const translations = {
       metaLastSync: "Last sync",
       neverSynced: "Not synced yet",
       linkedTransactionsWarning:
-        "This account has {{count}} linked transaction(s). If you remove the account, the entries will be preserved and remain in history without a link.",
+        "This account has {{count}} linked transaction(s). If it is removed, entries stay in history, just without an associated account.",
       editButton: "Edit",
       syncing: "Syncing...",
       sync: "Sync",
@@ -1495,9 +1495,9 @@ export const translations = {
         "History was simplified to highlight meaningful events in clearer language, without overloading the page with technical details.",
       accountsTitle: "Financial accounts",
       accountsSubtitle:
-        "Centralize manual and connected accounts. At this stage, Pluggy already appears as the product's real banking integration.",
+        "Separate banks, cards, wallets, and cash in a view that is easy to follow.",
       accountsPageNote:
-        "Organize your accounts by institution, type, and name in the way that best matches your routine. The goal here is clarity, not excessive configuration.",
+        "Use this area to keep each movement in the right place and understand where money comes in, goes out, and stays saved.",
     },
     publicDashboard: {
       title: "Public dashboard",
