@@ -4,6 +4,16 @@ Finova é uma aplicação full stack de controle financeiro pessoal criada para 
 
 English version: [README.md](README.md)
 
+## Prévia
+
+| Início | Transações |
+| --- | --- |
+| ![Prévia da página inicial do Finova](media/inicio.png) | ![Prévia da página de transações do Finova](media/transacoes.png) |
+
+| Análises | Perfil |
+| --- | --- |
+| ![Prévia da página de análises do Finova](media/analises.png) | ![Prévia da página de perfil do Finova](media/perfil.png) |
+
 ## O que o Finova faz
 
 O Finova permite:

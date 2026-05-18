@@ -4,6 +4,16 @@ Finova is a full-stack personal finance application built to make day-to-day mon
 
 Portuguese version: [README-pt-BR.md](README-pt-BR.md)
 
+## Preview
+
+| Home | Transactions |
+| --- | --- |
+| ![Finova home dashboard preview](media/inicio.png) | ![Finova transactions page preview](media/transacoes.png) |
+
+| Analyses | Profile |
+| --- | --- |
+| ![Finova analyses page preview](media/analises.png) | ![Finova profile page preview](media/perfil.png) |
+
 ## What It Does
 
 Finova helps users:
@@ -225,4 +235,3 @@ npm run test:e2e
 - Store SQL Server passwords only in safe local or cloud secret stores.
 - Keep password reset links out of logs in production.
 - Invalidate sessions when tokens expire or when the user stays inactive for too long.
-
