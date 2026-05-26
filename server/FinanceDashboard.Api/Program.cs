@@ -152,6 +152,8 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
+LogEmailConfigurationStatus(app);
+
 app.UseExceptionHandler(exceptionHandlerApp =>
 {
     exceptionHandlerApp.Run(async context =>
@@ -214,6 +216,37 @@ app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapControllers();
 
 app.Run();
+
+static void LogEmailConfigurationStatus(WebApplication app)
+{
+    var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("EmailConfiguration");
+    var provider = app.Configuration["Email:Provider"] ?? "Smtp";
+
+    logger.LogInformation("Provedor de e-mail configurado: {Provider}.", provider);
+
+    if (string.Equals(provider, "AzureCommunicationServices", StringComparison.OrdinalIgnoreCase))
+    {
+        var connectionString = app.Configuration["AzureCommunicationServices:Email:ConnectionString"];
+        var senderAddress = app.Configuration["AzureCommunicationServices:Email:SenderAddress"];
+
+        if (string.IsNullOrWhiteSpace(connectionString) || string.IsNullOrWhiteSpace(senderAddress))
+        {
+            logger.LogWarning(
+                "Azure Communication Services Email incompleto. Verifique AzureCommunicationServices__Email__ConnectionString e AzureCommunicationServices__Email__SenderAddress.");
+        }
+
+        return;
+    }
+
+    var smtpHost = app.Configuration["Smtp:Host"];
+    var smtpFromEmail = app.Configuration["Smtp:FromEmail"];
+
+    if (string.IsNullOrWhiteSpace(smtpHost) || string.IsNullOrWhiteSpace(smtpFromEmail))
+    {
+        logger.LogWarning(
+            "SMTP incompleto. Como Email__Provider não está definido como AzureCommunicationServices, a API tentará usar SMTP. Verifique Smtp__Host e Smtp__FromEmail.");
+    }
+}
 
 static string GetRequiredConnectionString(IConfiguration configuration)
 {

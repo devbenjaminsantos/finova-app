@@ -113,7 +113,10 @@ namespace FinanceDashboard.Api.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogWarning(exception, "Não foi possível enviar o e-mail de confirmação.");
+                _logger.LogWarning(
+                    exception,
+                    "Não foi possível enviar o e-mail de confirmação usando o provedor {Provider}.",
+                    ResolveEmailProvider());
             }
 
             await _auditLogService.WriteAsync(
@@ -301,7 +304,10 @@ namespace FinanceDashboard.Api.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogWarning(exception, "Não foi possível reenviar o e-mail de confirmação.");
+                _logger.LogWarning(
+                    exception,
+                    "Não foi possível reenviar o e-mail de confirmação usando o provedor {Provider}.",
+                    ResolveEmailProvider());
             }
 
             await _auditLogService.WriteAsync(
@@ -407,7 +413,10 @@ namespace FinanceDashboard.Api.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogWarning(exception, "Não foi possível enviar e-mail de redefinição de senha.");
+                _logger.LogWarning(
+                    exception,
+                    "Não foi possível enviar e-mail de redefinição de senha usando o provedor {Provider}.",
+                    ResolveEmailProvider());
             }
 
             await _auditLogService.WriteAsync(
@@ -587,6 +596,11 @@ namespace FinanceDashboard.Api.Controllers
             return !string.IsNullOrWhiteSpace(configuredBaseUrl)
                 ? configuredBaseUrl
                 : requestOrigin ?? "http://localhost:5173";
+        }
+
+        private string ResolveEmailProvider()
+        {
+            return _configuration["Email:Provider"] ?? "Smtp";
         }
 
         private void SeedDemoTransactions(int userId)

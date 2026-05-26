@@ -106,6 +106,10 @@ No `Azure Portal > App Service > Configurações > Variáveis de ambiente`, conf
 - `Jwt__Audience`
 - `Cors__AllowedOrigins__0`
 - `Client__BaseUrl`
+- `Email__Provider`
+- `AzureCommunicationServices__Email__ConnectionString`
+- `AzureCommunicationServices__Email__SenderAddress`
+- `AzureCommunicationServices__Email__SenderName`
 - `Smtp__Host`
 - `Smtp__Port`
 - `Smtp__Username`
@@ -124,12 +128,19 @@ Jwt__Issuer=FinanceDashboard
 Jwt__Audience=FinanceDashboard
 Cors__AllowedOrigins__0=https://polite-ground-038630210.7.azurestaticapps.net
 Client__BaseUrl=https://polite-ground-038630210.7.azurestaticapps.net
+Email__Provider=AzureCommunicationServices
+AzureCommunicationServices__Email__SenderName=Finova
 Smtp__Port=587
 Smtp__FromName=Finova
 Smtp__EnableSsl=true
 Demo__Enabled=true
 Demo__Email=demo@finova.app
 ```
+
+Para usar o Azure Communication Services Email, configure `Email__Provider=AzureCommunicationServices`
+e preencha `AzureCommunicationServices__Email__ConnectionString` e
+`AzureCommunicationServices__Email__SenderAddress`. Se `Email__Provider` não estiver definido, a API usa
+SMTP por padrão; nesse caso, todos os campos `Smtp__*` necessários precisam estar preenchidos.
 
 `Demo__Password` pode ser uma senha forte interna; o usuário final não precisa digitá-la quando usa o botão de demonstração.
 
