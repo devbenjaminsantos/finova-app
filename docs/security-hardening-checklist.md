@@ -18,7 +18,13 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [x] Manter `Authorization: Bearer` apenas como compatibilidade para clientes externos autenticados.
   - [x] Cobrir login, logout, cookie, CSRF e ausência de JWT no armazenamento com testes.
   - [ ] Validar cookies entre o Static Web App e o App Service no domínio final.
-- [ ] Invalidar sessões existentes após redefinição de senha e em eventos sensíveis.
+- [ ] Invalidar sessões existentes após redefinição ou troca de senha.
+  - [x] Persistir uma versão de sessão por usuário e incluí-la no JWT.
+  - [x] Rejeitar tokens sem versão ou com versão diferente da registrada no banco.
+  - [x] Encerrar todas as sessões após redefinição por link.
+  - [x] Revogar as demais sessões e renovar a atual após troca de senha no perfil.
+  - [x] Criar migration e cobrir validação, redefinição e troca de senha com testes.
+  - [ ] Aplicar a migration e validar a revogação no ambiente Azure ativo.
 - [ ] Permitir rotação e revogação do token do painel público.
 
 ## Confiabilidade operacional

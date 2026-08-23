@@ -7,7 +7,7 @@ namespace FinanceDashboard.Api.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            
+
         }
 
         public DbSet<User> Users { get; set; }
@@ -35,6 +35,9 @@ namespace FinanceDashboard.Api.Data
 
                 entity.Property(user => user.PasswordHash)
                     .HasMaxLength(512);
+
+                entity.Property(user => user.SessionVersion)
+                    .HasDefaultValue(1);
 
                 entity.HasIndex(user => user.Email)
                     .IsUnique();

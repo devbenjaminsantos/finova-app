@@ -164,6 +164,8 @@ Depois de uma migration nova:
 dotnet ef database update --project server/FinanceDashboard.Api/FinanceDashboard.Api.csproj
 ```
 
+A migration `AddUserSessionVersion` precisa ser aplicada antes de publicar a API que valida versões de sessão. Após essa implantação, JWTs emitidos pela versão anterior não terão a nova claim e serão rejeitados; esse novo login único é esperado. Trocas de senha posteriores revogam as demais sessões do usuário, e redefinições por link revogam todas.
+
 ## E-mail e recuperação de senha
 
 Valide o SMTP com uma conta controlada antes de abrir o cadastro ao público. Em produção, quando o envio de um novo link falha, o token recém-criado é removido e links anteriores ainda válidos são preservados.
@@ -200,8 +202,10 @@ Confirme, nesta ordem:
 5. Recuperação envia um link utilizável uma única vez.
 6. Rotas autenticadas rejeitam chamadas sem o cookie de sessão ou um Bearer token válido.
 7. O navegador não possui JWT no `localStorage`, o logout remove o cookie e mutações sem antiforgery são rejeitadas.
-8. Conta demo, CRUD de transações, importação e exportação funcionam.
-9. Os workflows do GitHub terminam sem pular lint ou testes.
+8. Alterar a senha no perfil mantém a sessão atual e encerra uma sessão aberta em outro navegador.
+9. Redefinir a senha por link encerra todas as sessões anteriores.
+10. Conta demo, CRUD de transações, importação e exportação funcionam.
+11. Os workflows do GitHub terminam sem pular lint ou testes.
 
 ## Rede
 

@@ -60,6 +60,7 @@ builder.Services.AddScoped<PasswordPolicyService>();
 builder.Services.AddScoped<JwTokenService>();
 builder.Services.AddScoped<AuthCookieService>();
 builder.Services.AddScoped<CookieAntiforgeryFilter>();
+builder.Services.AddScoped<SessionValidationService>();
 builder.Services.AddScoped<PasswordResetTokenService>();
 builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<BankSyncService>();
@@ -106,6 +107,19 @@ builder.Services.AddAuthentication(options =>
             }
 
             return Task.CompletedTask;
+        },
+        OnTokenValidated = async context =>
+        {
+            var sessionValidator = context.HttpContext.RequestServices
+                .GetRequiredService<SessionValidationService>();
+
+            if (context.Principal is null ||
+                !await sessionValidator.IsCurrentAsync(
+                    context.Principal,
+                    context.HttpContext.RequestAborted))
+            {
+                context.Fail("Sessão revogada.");
+            }
         },
         OnChallenge = async context =>
         {

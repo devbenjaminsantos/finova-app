@@ -8,6 +8,8 @@ namespace FinanceDashboard.Api.Services.Auth
 {
     public class JwTokenService
     {
+        public const string SessionVersionClaimType = "finova:session_version";
+
         private readonly IConfiguration _configuration;
 
         public JwTokenService(IConfiguration configuration)
@@ -30,7 +32,8 @@ namespace FinanceDashboard.Api.Services.Auth
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(SessionVersionClaimType, user.SessionVersion.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));

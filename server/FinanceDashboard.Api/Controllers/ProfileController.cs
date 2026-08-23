@@ -22,6 +22,8 @@ namespace FinanceDashboard.Api.Controllers
         private readonly CurrentUserService _currentUserService;
         private readonly PasswordHasher _passwordHasher;
         private readonly PasswordPolicyService _passwordPolicyService;
+        private readonly JwTokenService _tokenService;
+        private readonly AuthCookieService _authCookieService;
         private readonly IConfiguration _configuration;
         private readonly PublicDashboardTokenService _publicDashboardTokenService;
 
@@ -30,6 +32,8 @@ namespace FinanceDashboard.Api.Controllers
             CurrentUserService currentUserService,
             PasswordHasher passwordHasher,
             PasswordPolicyService passwordPolicyService,
+            JwTokenService tokenService,
+            AuthCookieService authCookieService,
             AuditLogService auditLogService,
             IConfiguration configuration,
             PublicDashboardTokenService publicDashboardTokenService)
@@ -38,6 +42,8 @@ namespace FinanceDashboard.Api.Controllers
             _currentUserService = currentUserService;
             _passwordHasher = passwordHasher;
             _passwordPolicyService = passwordPolicyService;
+            _tokenService = tokenService;
+            _authCookieService = authCookieService;
             _auditLogService = auditLogService;
             _configuration = configuration;
             _publicDashboardTokenService = publicDashboardTokenService;
@@ -233,6 +239,7 @@ namespace FinanceDashboard.Api.Controllers
                 }
 
                 user.PasswordHash = _passwordHasher.HashPassword(user, dto.NewPassword);
+                user.SessionVersion += 1;
                 changedPassword = true;
             }
 
@@ -251,6 +258,11 @@ namespace FinanceDashboard.Api.Controllers
                 summary: changedPassword
                     ? "Perfil atualizado com alteração de senha."
                     : BuildProfileSummary(dto));
+
+            if (changedPassword)
+            {
+                _authCookieService.Write(Response, _tokenService.GenerateToken(user));
+            }
 
             return Ok(ToAuthUserResponse(user));
         }

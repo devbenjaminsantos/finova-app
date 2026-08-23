@@ -519,8 +519,16 @@ public class AuthControllerTests
         var refreshedUser = await context.Users.SingleAsync();
 
         Assert.NotNull(tokenEntity.UsedAtUtc);
+        Assert.Equal(2, refreshedUser.SessionVersion);
         Assert.True(CreatePasswordHasher().VerifyPassword(refreshedUser, "NovaSenha456!"));
         Assert.False(CreatePasswordHasher().VerifyPassword(refreshedUser, "SenhaSegura123!"));
+        Assert.Contains(
+            $"{AuthCookieService.CookieName}=",
+            controller.Response.Headers.SetCookie.ToString());
+        Assert.Contains(
+            "expires=",
+            controller.Response.Headers.SetCookie.ToString(),
+            StringComparison.OrdinalIgnoreCase);
         Assert.NotNull(ok.Value);
     }
 

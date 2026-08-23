@@ -489,6 +489,7 @@ namespace FinanceDashboard.Api.Controllers
             }
 
             resetToken.User.PasswordHash = _passwordHasher.HashPassword(resetToken.User, dto.NewPassword);
+            resetToken.User.SessionVersion += 1;
             resetToken.UsedAtUtc = now;
 
             await _context.SaveChangesAsync();
@@ -498,6 +499,8 @@ namespace FinanceDashboard.Api.Controllers
                 entityId: resetToken.User.Id.ToString(),
                 userId: resetToken.User.Id,
                 summary: "Senha redefinida com sucesso.");
+
+            _authCookieService.Delete(Response);
 
             return Ok(new { message = "Senha redefinida com sucesso." });
         }

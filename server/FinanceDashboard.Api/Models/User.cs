@@ -13,6 +13,7 @@ namespace FinanceDashboard.Api.Models
         public int MonthlyReportDay { get; set; } = 1;
         public bool PublicDashboardEnabled { get; set; }
         public string PasswordHash { get; set; } = string.Empty;
+        public int SessionVersion { get; set; } = 1;
         public int FailedLoginAttempts { get; set; }
         public DateTime? LockoutEndsAtUtc { get; set; }
         public DateTime? LastFailedLoginAtUtc { get; set; }
