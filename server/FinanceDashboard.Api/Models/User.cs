@@ -12,6 +12,9 @@ namespace FinanceDashboard.Api.Models
         public bool MonthlyReportEmailsEnabled { get; set; }
         public int MonthlyReportDay { get; set; } = 1;
         public bool PublicDashboardEnabled { get; set; }
+        public string? PublicDashboardTokenHash { get; set; }
+        public bool IsDemoAccount { get; set; }
+        public DateTime? DemoExpiresAtUtc { get; set; }
         public string PasswordHash { get; set; } = string.Empty;
         public int SessionVersion { get; set; } = 1;
         public int FailedLoginAttempts { get; set; }

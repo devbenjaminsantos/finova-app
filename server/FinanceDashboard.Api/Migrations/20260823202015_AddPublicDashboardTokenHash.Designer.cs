@@ -4,6 +4,7 @@ using FinanceDashboard.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceDashboard.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260823202015_AddPublicDashboardTokenHash")]
+    partial class AddPublicDashboardTokenHash
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -536,9 +539,6 @@ namespace FinanceDashboard.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DemoExpiresAtUtc")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -555,9 +555,6 @@ namespace FinanceDashboard.Api.Migrations
 
                     b.Property<int>("GoalAlertThresholdPercent")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsDemoAccount")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastFailedLoginAtUtc")
                         .HasColumnType("datetime2");
@@ -605,8 +602,6 @@ namespace FinanceDashboard.Api.Migrations
                     b.HasIndex("PublicDashboardTokenHash")
                         .IsUnique()
                         .HasFilter("[PublicDashboardTokenHash] IS NOT NULL");
-
-                    b.HasIndex("IsDemoAccount", "DemoExpiresAtUtc");
 
                     b.ToTable("Users", t =>
                         {

@@ -109,8 +109,10 @@ No `App Service > Configuração > Variáveis de ambiente`, configure:
 - `Smtp__FromName`
 - `Smtp__EnableSsl`
 - `Demo__Enabled`
+- `Demo__Name`
 - `Demo__Email`
-- `Demo__Password`
+- `Demo__ResetLockTimeoutSeconds`
+- `Demo__SessionLifetimeHours`
 - `Pluggy__ClientId`, quando a integração estiver em uso
 - `Pluggy__ClientSecret`, quando a integração estiver em uso
 
@@ -127,7 +129,10 @@ Smtp__Port=587
 Smtp__FromName=Finova
 Smtp__EnableSsl=true
 Demo__Enabled=true
+Demo__Name=Conta Demo
 Demo__Email=demo@finova.app
+Demo__ResetLockTimeoutSeconds=15
+Demo__SessionLifetimeHours=2
 ```
 
 `Client__BaseUrl` é obrigatório e deve ser uma URL absoluta confiável. Ele é usado nos links de confirmação, redefinição de senha e painel público.
@@ -140,7 +145,9 @@ A autenticação do navegador usa cookie `HttpOnly`. Em produção, o cookie é 
 - valide login, logout e requisições `POST`, `PUT` e `DELETE` no domínio final;
 - prefira domínios customizados de frontend e API sob o mesmo site registrável, reduzindo dependência de cookies tratados pelo navegador como terceiros.
 
-Se o App Service usar mais de uma instância, persista o key ring do ASP.NET Core Data Protection antes de considerar o antiforgery estável entre instâncias.
+No Azure App Service, o ASP.NET Core persiste automaticamente o key ring em `%HOME%/ASP.NET/DataProtection-Keys`, armazenamento de rede compartilhado entre as instâncias do mesmo deployment slot. Isso atende o antiforgery quando a API escala horizontalmente dentro do slot atual.
+
+Deployment slots diferentes não compartilham esse key ring. Antes de introduzir staging com slot swap, configure um provedor externo comum, como Azure Blob Storage, Key Vault, SQL ou Redis, e valide a leitura das chaves pelos dois slots. As chaves automáticas do App Service também não ficam protegidas em repouso; trate um key ring externo com proteção explícita como endurecimento necessário antes de ampliar a estratégia de slots.
 
 O backend usa somente SMTP por meio de `IEmailSender`. Não há dependência de runtime do Azure Communication Services.
 
@@ -164,7 +171,9 @@ Depois de uma migration nova:
 dotnet ef database update --project server/FinanceDashboard.Api/FinanceDashboard.Api.csproj
 ```
 
-A migration `AddUserSessionVersion` precisa ser aplicada antes de publicar a API que valida versões de sessão. Após essa implantação, JWTs emitidos pela versão anterior não terão a nova claim e serão rejeitados; esse novo login único é esperado. Trocas de senha posteriores revogam as demais sessões do usuário, e redefinições por link revogam todas.
+As migrations `AddUserSessionVersion`, `AddPublicDashboardTokenHash` e `AddIsolatedDemoAccounts` precisam ser aplicadas antes de publicar esta versão da API. Após a primeira, JWTs emitidos pela versão anterior não terão a nova claim e serão rejeitados; esse novo login único é esperado. Trocas de senha posteriores revogam as demais sessões do usuário, e redefinições por link revogam todas.
+
+A migration do painel público invalida os links legados baseados no ID do usuário. Para cada painel que já estava ativo, abra o perfil e use **Gerar novo link** uma vez depois do deploy. O token bruto aparece somente nessa emissão ou em uma rotação; o banco armazena apenas o hash.
 
 ## E-mail e recuperação de senha
 
@@ -177,6 +186,18 @@ PasswordReset__ExposeResetUrlInResponse=true
 ```
 
 Nunca deixe essa opção ativa em produção pública.
+
+As notificações financeiras usam um lock transacional do SQL Server para impedir que instâncias concorrentes processem a mesma referência ao mesmo tempo. Uma falha SMTP libera a entrega para nova tentativa. Ainda existe uma janela rara de duplicidade se o provedor aceitar o e-mail e o processo terminar antes do commit no banco; monitore os logs e o histórico de entregas, pois SMTP e Azure SQL não participam da mesma transação distribuída.
+
+## Conta demo
+
+Cada chamada aceita por `POST /api/auth/demo-login` cria uma conta efêmera própria, com e-mail interno derivado de `Demo__Email`, senha aleatória inacessível e cinco transações de apresentação. Visitantes simultâneos não compartilham movimentações, preferências, links públicos nem histórico de auditoria.
+
+A sessão deixa de ser aceita depois de `Demo__SessionLifetimeHours`, limitado pelo código entre uma e duas horas para acompanhar a validade do cookie e do JWT. No acesso demo seguinte, contas vencidas e todos os seus dados são removidos. Contas demo não participam da automação SMTP.
+
+Criação e limpeza usam a execution strategy do EF, transação serializável e `sp_getapplock`, coordenando instâncias conectadas ao mesmo Azure SQL. O endpoint possui ainda um limite próprio de cinco chamadas por minuto por IP. Como a limpeza acontece no acesso seguinte, configure uma rotina independente de retenção se a demo deixar de receber acessos por longos períodos.
+
+Esta versão não exclui automaticamente a conta compartilhada usada no fluxo antigo, porque um endereço configurado incorretamente poderia pertencer a um usuário real. Depois do deploy, localize o registro com o antigo `Demo__Email`, confirme manualmente seu ID e seus dados e só então remova ou desative essa conta.
 
 ## Transferência ou recriação
 
@@ -204,8 +225,10 @@ Confirme, nesta ordem:
 7. O navegador não possui JWT no `localStorage`, o logout remove o cookie e mutações sem antiforgery são rejeitadas.
 8. Alterar a senha no perfil mantém a sessão atual e encerra uma sessão aberta em outro navegador.
 9. Redefinir a senha por link encerra todas as sessões anteriores.
-10. Conta demo, CRUD de transações, importação e exportação funcionam.
-11. Os workflows do GitHub terminam sem pular lint ou testes.
+10. Ativar o painel público emite um link, rotacioná-lo invalida o anterior e revogá-lo retorna `404` em seguida.
+11. A conta demo restaura os dados sem alterar contas reais; CRUD de transações, importação e exportação funcionam.
+12. Duas execuções concorrentes da automação não registram nem enviam a mesma referência duas vezes.
+13. Os workflows do GitHub terminam sem pular lint ou testes.
 
 ## Rede
 

@@ -10,15 +10,30 @@ namespace FinanceDashboard.Api.Services.Notifications
         private readonly AppDbContext _context;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<FinancialEmailAutomationService> _logger;
+        private readonly INotificationDeliveryCoordinator _deliveryCoordinator;
 
         public FinancialEmailAutomationService(
             AppDbContext context,
             IEmailSender emailSender,
             ILogger<FinancialEmailAutomationService> logger)
+            : this(
+                context,
+                emailSender,
+                logger,
+                new DatabaseNotificationDeliveryCoordinator(context))
+        {
+        }
+
+        public FinancialEmailAutomationService(
+            AppDbContext context,
+            IEmailSender emailSender,
+            ILogger<FinancialEmailAutomationService> logger,
+            INotificationDeliveryCoordinator deliveryCoordinator)
         {
             _context = context;
             _emailSender = emailSender;
             _logger = logger;
+            _deliveryCoordinator = deliveryCoordinator;
         }
 
         public async Task ProcessAsync(DateTime utcNow, CancellationToken cancellationToken = default)
@@ -34,7 +49,10 @@ namespace FinanceDashboard.Api.Services.Notifications
             var nextMonthStart = monthStart.AddMonths(1);
 
             var users = await _context.Users
-                .Where(user => user.EmailConfirmed && user.EmailGoalAlertsEnabled)
+                .Where(user =>
+                    !user.IsDemoAccount &&
+                    user.EmailConfirmed &&
+                    user.EmailGoalAlertsEnabled)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
@@ -79,18 +97,6 @@ namespace FinanceDashboard.Api.Services.Notifications
                         goal.Category,
                         user.GoalAlertThresholdPercent);
 
-                    var alreadySent = await _context.NotificationDeliveries
-                        .AnyAsync(delivery =>
-                            delivery.UserId == user.Id &&
-                            delivery.NotificationType == NotificationTypes.GoalAlert &&
-                            delivery.ReferenceKey == referenceKey,
-                            cancellationToken);
-
-                    if (alreadySent)
-                    {
-                        continue;
-                    }
-
                     var progressPercent = (int)Math.Floor(spentCents * 100m / goal.AmountCents);
                     var goalLabel = string.IsNullOrWhiteSpace(goal.Category)
                         ? "orcamento geral"
@@ -98,25 +104,24 @@ namespace FinanceDashboard.Api.Services.Notifications
 
                     try
                     {
-                        await _emailSender.SendBudgetGoalAlertEmailAsync(
-                            user.Email,
-                            user.Name,
-                            month,
-                            goalLabel,
-                            progressPercent,
-                            ConvertCentsToAmount(spentCents),
-                            ConvertCentsToAmount(goal.AmountCents));
-
-                        _context.NotificationDeliveries.Add(new NotificationDelivery
-                        {
-                            UserId = user.Id,
-                            NotificationType = NotificationTypes.GoalAlert,
-                            ReferenceKey = referenceKey,
-                            Subject = $"Alerta de meta mensal - {goalLabel}",
-                            SentAtUtc = utcNow
-                        });
-
-                        await _context.SaveChangesAsync(cancellationToken);
+                        await _deliveryCoordinator.TryDeliverAsync(
+                            new NotificationDelivery
+                            {
+                                UserId = user.Id,
+                                NotificationType = NotificationTypes.GoalAlert,
+                                ReferenceKey = referenceKey,
+                                Subject = $"Alerta de meta mensal - {goalLabel}",
+                                SentAtUtc = utcNow
+                            },
+                            () => _emailSender.SendBudgetGoalAlertEmailAsync(
+                                user.Email,
+                                user.Name,
+                                month,
+                                goalLabel,
+                                progressPercent,
+                                ConvertCentsToAmount(spentCents),
+                                ConvertCentsToAmount(goal.AmountCents)),
+                            cancellationToken);
                     }
                     catch (Exception exception)
                     {
@@ -138,7 +143,10 @@ namespace FinanceDashboard.Api.Services.Notifications
             var reportEnd = reportMonthDate.AddMonths(1);
 
             var users = await _context.Users
-                .Where(user => user.EmailConfirmed && user.MonthlyReportEmailsEnabled)
+                .Where(user =>
+                    !user.IsDemoAccount &&
+                    user.EmailConfirmed &&
+                    user.MonthlyReportEmailsEnabled)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
@@ -150,18 +158,6 @@ namespace FinanceDashboard.Api.Services.Notifications
                 }
 
                 var referenceKey = $"{reportMonth}|day-{user.MonthlyReportDay}";
-
-                var alreadySent = await _context.NotificationDeliveries
-                    .AnyAsync(delivery =>
-                        delivery.UserId == user.Id &&
-                        delivery.NotificationType == NotificationTypes.MonthlyReport &&
-                        delivery.ReferenceKey == referenceKey,
-                        cancellationToken);
-
-                if (alreadySent)
-                {
-                    continue;
-                }
 
                 var transactions = await _context.Transactions
                     .Where(transaction =>
@@ -218,27 +214,26 @@ namespace FinanceDashboard.Api.Services.Notifications
 
                 try
                 {
-                    await _emailSender.SendMonthlySummaryEmailAsync(
-                        user.Email,
-                        user.Name,
-                        reportMonth,
-                        ConvertCentsToAmount(incomeCents),
-                        ConvertCentsToAmount(expenseCents),
-                        ConvertCentsToAmount(incomeCents - expenseCents),
-                        topExpenseCategory?.Category,
-                        topExpenseCategory is null ? null : ConvertCentsToAmount(topExpenseCategory.TotalCents),
-                        goalSummaries);
-
-                    _context.NotificationDeliveries.Add(new NotificationDelivery
-                    {
-                        UserId = user.Id,
-                        NotificationType = NotificationTypes.MonthlyReport,
-                        ReferenceKey = referenceKey,
-                        Subject = $"Resumo mensal - {reportMonth}",
-                        SentAtUtc = utcNow
-                    });
-
-                    await _context.SaveChangesAsync(cancellationToken);
+                    await _deliveryCoordinator.TryDeliverAsync(
+                        new NotificationDelivery
+                        {
+                            UserId = user.Id,
+                            NotificationType = NotificationTypes.MonthlyReport,
+                            ReferenceKey = referenceKey,
+                            Subject = $"Resumo mensal - {reportMonth}",
+                            SentAtUtc = utcNow
+                        },
+                        () => _emailSender.SendMonthlySummaryEmailAsync(
+                            user.Email,
+                            user.Name,
+                            reportMonth,
+                            ConvertCentsToAmount(incomeCents),
+                            ConvertCentsToAmount(expenseCents),
+                            ConvertCentsToAmount(incomeCents - expenseCents),
+                            topExpenseCategory?.Category,
+                            topExpenseCategory is null ? null : ConvertCentsToAmount(topExpenseCategory.TotalCents),
+                            goalSummaries),
+                        cancellationToken);
                 }
                 catch (Exception exception)
                 {

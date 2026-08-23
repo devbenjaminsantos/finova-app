@@ -11,6 +11,18 @@ export function updatePublicDashboardSettings(enabled) {
   });
 }
 
+export function rotatePublicDashboardToken() {
+  return apiRequest("/profile/public-dashboard/rotate", {
+    method: "POST",
+  });
+}
+
+export function revokePublicDashboardToken() {
+  return apiRequest("/profile/public-dashboard", {
+    method: "DELETE",
+  });
+}
+
 export function getPublicDashboard(token) {
   return apiRequest(`/public-dashboard/${token}`);
 }

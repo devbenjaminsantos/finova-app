@@ -23,6 +23,10 @@ export const translations = {
       showPassword: "Mostrar",
       hidePassword: "Ocultar",
       loading: "Carregando...",
+      routeLoadErrorTitle: "Não foi possível abrir esta página",
+      routeLoadErrorMessage:
+        "O conteúdo pode ter sido atualizado ou a conexão foi interrompida.",
+      reloadPage: "Recarregar página",
       save: "Salvar",
       cancel: "Cancelar",
       backToLogin: "Voltar para o login",
@@ -134,7 +138,7 @@ export const translations = {
       demoEyebrow: "Experimente antes de se cadastrar",
       demoTitle: "Explore a conta demo",
       demoDescription:
-        "Explore todas as funcionalidades sem criar conta e sem preencher cadastro.",
+        "Explore todas as funcionalidades em uma sessão temporária e isolada. Use apenas dados fictícios.",
       demoButton: "Entrar como demonstração",
       demoButtonLoading: "Abrindo demonstração...",
       demoDivider: "ou use sua conta",
@@ -201,11 +205,22 @@ export const translations = {
       publicDashboardOpen: "Abrir painel público",
       publicDashboardEmpty:
         "Ative o painel público quando quiser compartilhar seus gráficos em modo leitura.",
+      publicDashboardHiddenLink:
+        "Por segurança, o link ativo não é exibido novamente. Gere um novo link para copiá-lo.",
+      publicDashboardMissingLink:
+        "Este painel ainda não possui um link ativo. Gere um novo link para compartilhar.",
+      publicDashboardRotate: "Gerar novo link",
+      publicDashboardRevoke: "Revogar link",
       publicDashboardEnabledSuccess: "Painel público ativado com sucesso.",
       publicDashboardDisabledSuccess: "Painel público desativado com sucesso.",
+      publicDashboardRotatedSuccess:
+        "Novo link gerado. O link anterior deixou de funcionar.",
+      publicDashboardRevokedSuccess: "Link público revogado com sucesso.",
       publicDashboardCopied: "Link copiado para a área de transferência.",
       publicDashboardCopyError: "Não foi possível copiar o link automaticamente.",
       publicDashboardUpdateError: "Não foi possível atualizar o painel público.",
+      publicDashboardRotateError: "Não foi possível gerar um novo link público.",
+      publicDashboardRevokeError: "Não foi possível revogar o link público.",
       changePasswordTitle: "Alterar senha",
       changePasswordSubtitle:
         "Preencha os campos abaixo apenas quando quiser trocar sua senha. Se preferir, deixe tudo em branco.",
@@ -941,6 +956,10 @@ export const translations = {
       showPassword: "Show",
       hidePassword: "Hide",
       loading: "Loading...",
+      routeLoadErrorTitle: "Unable to open this page",
+      routeLoadErrorMessage:
+        "The content may have been updated or the connection was interrupted.",
+      reloadPage: "Reload page",
       save: "Save",
       cancel: "Cancel",
       backToLogin: "Back to login",
@@ -1051,7 +1070,8 @@ export const translations = {
       resetPageSubtitle: "Create a new secure password.",
       demoEyebrow: "Try it before you sign up",
       demoTitle: "Explore the demo account",
-      demoDescription: "Explore every feature without creating an account or filling out forms.",
+      demoDescription:
+        "Explore every feature in a temporary, isolated session. Use fictitious data only.",
       demoButton: "Enter demo mode",
       demoButtonLoading: "Opening demo...",
       demoDivider: "or use your account",
@@ -1118,11 +1138,22 @@ export const translations = {
       publicDashboardOpen: "Open public dashboard",
       publicDashboardEmpty:
         "Enable the public dashboard whenever you want to share your charts in read-only mode.",
+      publicDashboardHiddenLink:
+        "For security, the active link is not displayed again. Generate a new link to copy it.",
+      publicDashboardMissingLink:
+        "This dashboard does not have an active link yet. Generate a new link to share it.",
+      publicDashboardRotate: "Generate new link",
+      publicDashboardRevoke: "Revoke link",
       publicDashboardEnabledSuccess: "Public dashboard enabled successfully.",
       publicDashboardDisabledSuccess: "Public dashboard disabled successfully.",
+      publicDashboardRotatedSuccess:
+        "New link generated. The previous link no longer works.",
+      publicDashboardRevokedSuccess: "Public link revoked successfully.",
       publicDashboardCopied: "Link copied to clipboard.",
       publicDashboardCopyError: "Unable to copy the link automatically.",
       publicDashboardUpdateError: "Unable to update the public dashboard.",
+      publicDashboardRotateError: "Unable to generate a new public link.",
+      publicDashboardRevokeError: "Unable to revoke the public link.",
       changePasswordTitle: "Change password",
       changePasswordSubtitle:
         "Fill in the fields below only when you want to replace your current password. Otherwise, leave them blank.",

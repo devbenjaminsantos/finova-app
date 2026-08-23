@@ -25,16 +25,38 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [x] Revogar as demais sessões e renovar a atual após troca de senha no perfil.
   - [x] Criar migration e cobrir validação, redefinição e troca de senha com testes.
   - [ ] Aplicar a migration e validar a revogação no ambiente Azure ativo.
-- [ ] Permitir rotação e revogação do token do painel público.
+- [ ] Substituir o identificador previsível do painel público por token revogável.
+  - [x] Gerar token aleatório de 256 bits e persistir somente o hash SHA-256.
+  - [x] Exibir o valor bruto somente na emissão ou rotação.
+  - [x] Permitir rotação e revogação imediata pela tela de perfil.
+  - [x] Cobrir emissão, consulta, rotação e revogação com testes de API e frontend.
+  - [ ] Aplicar a migration e gerar novos links para painéis que já estavam ativos na Azure.
 
 ## Confiabilidade operacional
 
-- [ ] Garantir idempotência das notificações em múltiplas instâncias da API.
-- [ ] Persistir as chaves do ASP.NET Core Data Protection antes de escalar a API horizontalmente.
-- [ ] Isolar melhor a conta demo compartilhada, com política de limpeza e proteção contra uso concorrente abusivo.
+- [ ] Reduzir duplicidade de notificações em múltiplas instâncias da API.
+  - [x] Coordenar cada entrega com `sp_getapplock` e registro transacional no Azure SQL.
+  - [x] Liberar nova tentativa quando o envio SMTP falhar.
+  - [x] Cobrir orquestração de entrega única, repetição e falha com testes unitários.
+  - [ ] Validar duas instâncias concorrentes contra o Azure SQL ativo.
+  - [ ] Monitorar a janela rara entre o aceite do SMTP e o commit no banco, que não pode ser atômica sem suporte de idempotência do provedor.
+- [x] Confirmar persistência compartilhada do ASP.NET Core Data Protection entre instâncias do mesmo slot no Azure App Service.
+- [ ] Adotar key ring externo antes de usar troca de deployment slots, pois slots diferentes não compartilham chaves.
+- [ ] Isolar a conta demo, com expiração e proteção contra uso concorrente abusivo.
+  - [x] Criar uma conta efêmera independente por acesso, sem compartilhar dados entre visitantes.
+  - [x] Expirar cada conta após duas horas e remover contas vencidas no acesso seguinte.
+  - [x] Serializar criação e limpeza entre instâncias com `sp_getapplock` e transação `Serializable`.
+  - [x] Não apagar nenhuma conta apenas por coincidir com o e-mail-base configurado.
+  - [x] Limitar o endpoint anônimo a cinco chamadas por minuto por IP.
+  - [x] Excluir contas demo da automação SMTP.
+  - [x] Cobrir preservação de usuários reais, isolamento, expiração lógica e acessos concorrentes com testes unitários.
+  - [ ] Identificar e remover manualmente a antiga conta compartilhada somente após confirmar seu ID e propriedade no banco ativo.
+  - [ ] Validar criação e limpeza contra o Azure SQL ativo e monitorar abuso do endpoint anônimo.
 - [ ] Verificar entrega real de cadastro, confirmação, recuperação de senha e notificações após a migração da Azure.
 
 ## Desempenho e manutenção
 
-- [ ] Dividir o bundle do frontend por rota e medir o carregamento inicial novamente.
-- [ ] Repetir a revisão de endpoints, dependências e documentação antes da próxima versão pública.
+- [x] Dividir o bundle do frontend por rota e medir o carregamento inicial novamente.
+  - [x] Carregar páginas com `React.lazy` e fallback acessível.
+  - [x] Confirmar build com núcleo de 467,81 kB e gráficos em chunk separado de 370,86 kB.
+- [x] Repetir a revisão de endpoints, dependências e documentação antes da próxima versão pública.

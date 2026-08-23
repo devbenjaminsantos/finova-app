@@ -132,7 +132,22 @@ namespace FinanceDashboard.Api.Controllers
                 });
             }
 
-            user.PublicDashboardEnabled = dto.Enabled;
+            string? issuedToken = null;
+
+            if (dto.Enabled)
+            {
+                if (!user.PublicDashboardEnabled || string.IsNullOrWhiteSpace(user.PublicDashboardTokenHash))
+                {
+                    issuedToken = IssuePublicDashboardToken(user);
+                }
+
+                user.PublicDashboardEnabled = true;
+            }
+            else
+            {
+                RevokePublicDashboard(user);
+            }
+
             await _context.SaveChangesAsync();
 
             await _auditLogService.WriteAsync(
@@ -145,6 +160,71 @@ namespace FinanceDashboard.Api.Controllers
                 summary: dto.Enabled
                     ? "Dashboard público ativado para leitura."
                     : "Dashboard público desativado.");
+
+            return Ok(ToPublicDashboardSettingsResponse(user, issuedToken));
+        }
+
+        [HttpPost("public-dashboard/rotate")]
+        public async Task<ActionResult<PublicDashboardSettingsResponse>> RotatePublicDashboardToken()
+        {
+            var userId = _currentUserService.GetRequiredUserId();
+            var user = await _context.Users.FirstOrDefaultAsync(existing => existing.Id == userId);
+
+            if (user is null)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Title = "Usuário não encontrado.",
+                    Status = StatusCodes.Status404NotFound
+                });
+            }
+
+            if (!user.PublicDashboardEnabled)
+            {
+                return Conflict(new ProblemDetails
+                {
+                    Title = "Ative o painel público antes de rotacionar o link.",
+                    Status = StatusCodes.Status409Conflict
+                });
+            }
+
+            var issuedToken = IssuePublicDashboardToken(user);
+            await _context.SaveChangesAsync();
+
+            await _auditLogService.WriteAsync(
+                action: "profile.public-dashboard.rotated",
+                entityType: "User",
+                entityId: user.Id.ToString(),
+                userId: user.Id,
+                summary: "Link do dashboard público rotacionado; links anteriores foram revogados.");
+
+            return Ok(ToPublicDashboardSettingsResponse(user, issuedToken));
+        }
+
+        [HttpDelete("public-dashboard")]
+        public async Task<ActionResult<PublicDashboardSettingsResponse>> RevokePublicDashboardToken()
+        {
+            var userId = _currentUserService.GetRequiredUserId();
+            var user = await _context.Users.FirstOrDefaultAsync(existing => existing.Id == userId);
+
+            if (user is null)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Title = "Usuário não encontrado.",
+                    Status = StatusCodes.Status404NotFound
+                });
+            }
+
+            RevokePublicDashboard(user);
+            await _context.SaveChangesAsync();
+
+            await _auditLogService.WriteAsync(
+                action: "profile.public-dashboard.revoked",
+                entityType: "User",
+                entityId: user.Id.ToString(),
+                userId: user.Id,
+                summary: "Link do dashboard público revogado.");
 
             return Ok(ToPublicDashboardSettingsResponse(user));
         }
@@ -326,15 +406,37 @@ namespace FinanceDashboard.Api.Controllers
             };
         }
 
-        private PublicDashboardSettingsResponse ToPublicDashboardSettingsResponse(User user)
+        private PublicDashboardSettingsResponse ToPublicDashboardSettingsResponse(
+            User user,
+            string? issuedToken = null)
         {
             return new PublicDashboardSettingsResponse
             {
                 Enabled = user.PublicDashboardEnabled,
-                PublicUrl = user.PublicDashboardEnabled
-                    ? $"{GetClientBaseUrl().TrimEnd('/')}/compartilhado/{_publicDashboardTokenService.Generate(user)}"
+                HasActiveToken = user.PublicDashboardEnabled &&
+                    !string.IsNullOrWhiteSpace(user.PublicDashboardTokenHash),
+                PublicUrl = user.PublicDashboardEnabled && !string.IsNullOrWhiteSpace(issuedToken)
+                    ? $"{GetClientBaseUrl().TrimEnd('/')}/compartilhado/{issuedToken}"
                     : null
             };
+        }
+
+        private string IssuePublicDashboardToken(User user)
+        {
+            var token = _publicDashboardTokenService.GenerateToken();
+            if (!_publicDashboardTokenService.TryHashToken(token, out var tokenHash))
+            {
+                throw new InvalidOperationException("Não foi possível proteger o token do dashboard público.");
+            }
+
+            user.PublicDashboardTokenHash = tokenHash;
+            return token;
+        }
+
+        private static void RevokePublicDashboard(User user)
+        {
+            user.PublicDashboardEnabled = false;
+            user.PublicDashboardTokenHash = null;
         }
 
         private static string BuildProfileSummary(ProfileUpdateRequest dto)
@@ -352,8 +454,7 @@ namespace FinanceDashboard.Api.Controllers
 
         private bool IsDemoUser(User user)
         {
-            var demoEmail = (_configuration["Demo:Email"] ?? "demo@finova.app").Trim().ToLowerInvariant();
-            return user.Email == demoEmail;
+            return user.IsDemoAccount;
         }
 
         private string GetClientBaseUrl()

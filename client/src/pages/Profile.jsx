@@ -9,6 +9,8 @@ import {
 } from "../lib/api/auth";
 import {
   getPublicDashboardSettings,
+  revokePublicDashboardToken,
+  rotatePublicDashboardToken,
   updatePublicDashboardSettings,
 } from "../lib/api/publicDashboard";
 import { isPasswordStrong } from "../lib/auth/passwordPolicy";
@@ -40,6 +42,7 @@ export default function Profile() {
   const [notificationDeliveries, setNotificationDeliveries] = useState([]);
   const [publicDashboard, setPublicDashboard] = useState({
     enabled: false,
+    hasActiveToken: false,
     publicUrl: "",
   });
   const [profileUser, setProfileUser] = useState(null);
@@ -70,6 +73,7 @@ export default function Profile() {
         setNotificationDeliveries(Array.isArray(deliveries) ? deliveries : []);
         setPublicDashboard({
           enabled: publicDashboardSettings?.enabled ?? false,
+          hasActiveToken: publicDashboardSettings?.hasActiveToken ?? false,
           publicUrl: publicDashboardSettings?.publicUrl ?? "",
         });
       } catch (err) {
@@ -182,6 +186,7 @@ export default function Profile() {
       const settings = await updatePublicDashboardSettings(enabled);
       setPublicDashboard({
         enabled: settings?.enabled ?? false,
+        hasActiveToken: settings?.hasActiveToken ?? false,
         publicUrl: settings?.publicUrl ?? "",
       });
       setPublicDashboardMessage(
@@ -189,6 +194,48 @@ export default function Profile() {
       );
     } catch (err) {
       setError(err.message || t("profile.publicDashboardUpdateError"));
+    } finally {
+      setIsUpdatingPublicDashboard(false);
+    }
+  }
+
+  async function handleRotatePublicDashboardLink() {
+    setIsUpdatingPublicDashboard(true);
+    setError("");
+    setSuccess("");
+    setPublicDashboardMessage("");
+
+    try {
+      const settings = await rotatePublicDashboardToken();
+      setPublicDashboard({
+        enabled: settings?.enabled ?? false,
+        hasActiveToken: settings?.hasActiveToken ?? false,
+        publicUrl: settings?.publicUrl ?? "",
+      });
+      setPublicDashboardMessage(t("profile.publicDashboardRotatedSuccess"));
+    } catch (err) {
+      setError(err.message || t("profile.publicDashboardRotateError"));
+    } finally {
+      setIsUpdatingPublicDashboard(false);
+    }
+  }
+
+  async function handleRevokePublicDashboardLink() {
+    setIsUpdatingPublicDashboard(true);
+    setError("");
+    setSuccess("");
+    setPublicDashboardMessage("");
+
+    try {
+      const settings = await revokePublicDashboardToken();
+      setPublicDashboard({
+        enabled: settings?.enabled ?? false,
+        hasActiveToken: settings?.hasActiveToken ?? false,
+        publicUrl: "",
+      });
+      setPublicDashboardMessage(t("profile.publicDashboardRevokedSuccess"));
+    } catch (err) {
+      setError(err.message || t("profile.publicDashboardRevokeError"));
     } finally {
       setIsUpdatingPublicDashboard(false);
     }
@@ -538,36 +585,65 @@ export default function Profile() {
 
             {publicDashboard.enabled ? (
               <div className="d-grid gap-3">
-                <div>
-                  <label className="form-label text-dark fw-medium" htmlFor="publicDashboardUrl">
-                    {t("profile.publicDashboardLinkLabel")}
-                  </label>
-                  <input
-                    id="publicDashboardUrl"
-                    type="text"
-                    className="form-control finova-input"
-                    value={publicDashboard.publicUrl}
-                    readOnly
-                  />
-                  <div className="form-text">{t("profile.publicDashboardLinkHelp")}</div>
-                </div>
+                {publicDashboard.publicUrl ? (
+                  <div>
+                    <label className="form-label text-dark fw-medium" htmlFor="publicDashboardUrl">
+                      {t("profile.publicDashboardLinkLabel")}
+                    </label>
+                    <input
+                      id="publicDashboardUrl"
+                      type="text"
+                      className="form-control finova-input"
+                      value={publicDashboard.publicUrl}
+                      readOnly
+                    />
+                    <div className="form-text">{t("profile.publicDashboardLinkHelp")}</div>
+                  </div>
+                ) : (
+                  <p className="finova-subtitle mb-0">
+                    {publicDashboard.hasActiveToken
+                      ? t("profile.publicDashboardHiddenLink")
+                      : t("profile.publicDashboardMissingLink")}
+                  </p>
+                )}
 
                 <div className="finova-actions-row">
+                  {publicDashboard.publicUrl ? (
+                    <>
+                      <button
+                        type="button"
+                        className="btn finova-btn-light"
+                        onClick={handleCopyPublicDashboardLink}
+                        disabled={isUpdatingPublicDashboard}
+                      >
+                        {t("profile.publicDashboardCopy")}
+                      </button>
+                      <a
+                        href={publicDashboard.publicUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn finova-btn-primary"
+                      >
+                        {t("profile.publicDashboardOpen")}
+                      </a>
+                    </>
+                  ) : null}
                   <button
                     type="button"
                     className="btn finova-btn-light"
-                    onClick={handleCopyPublicDashboardLink}
+                    onClick={handleRotatePublicDashboardLink}
+                    disabled={isUpdatingPublicDashboard}
                   >
-                    {t("profile.publicDashboardCopy")}
+                    {t("profile.publicDashboardRotate")}
                   </button>
-                  <a
-                    href={publicDashboard.publicUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn finova-btn-primary"
+                  <button
+                    type="button"
+                    className="btn btn-outline-danger"
+                    onClick={handleRevokePublicDashboardLink}
+                    disabled={isUpdatingPublicDashboard}
                   >
-                    {t("profile.publicDashboardOpen")}
-                  </a>
+                    {t("profile.publicDashboardRevoke")}
+                  </button>
                 </div>
               </div>
             ) : (

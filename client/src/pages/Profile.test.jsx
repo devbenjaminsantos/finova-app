@@ -10,6 +10,8 @@ vi.mock("../lib/api/auth", () => ({
 
 vi.mock("../lib/api/publicDashboard", () => ({
   getPublicDashboardSettings: vi.fn(),
+  revokePublicDashboardToken: vi.fn(),
+  rotatePublicDashboardToken: vi.fn(),
   updatePublicDashboardSettings: vi.fn(),
 }));
 
@@ -20,6 +22,8 @@ import {
 } from "../lib/api/auth";
 import {
   getPublicDashboardSettings,
+  revokePublicDashboardToken,
+  rotatePublicDashboardToken,
   updatePublicDashboardSettings,
 } from "../lib/api/publicDashboard";
 
@@ -46,6 +50,7 @@ describe("Profile page", () => {
     ]);
     getPublicDashboardSettings.mockResolvedValue({
       enabled: true,
+      hasActiveToken: true,
       publicUrl: "https://finova.app/compartilhado/teste",
     });
   });
@@ -103,6 +108,7 @@ describe("Profile page", () => {
   it("toggles public dashboard sharing", async () => {
     updatePublicDashboardSettings.mockResolvedValue({
       enabled: false,
+      hasActiveToken: false,
       publicUrl: null,
     });
 
@@ -114,5 +120,59 @@ describe("Profile page", () => {
     await waitFor(() => {
       expect(updatePublicDashboardSettings).toHaveBeenCalledWith(false);
     });
+  });
+
+  it("does not expose an existing public token after settings are reloaded", async () => {
+    getPublicDashboardSettings.mockResolvedValue({
+      enabled: true,
+      hasActiveToken: true,
+      publicUrl: null,
+    });
+
+    render(<Profile />);
+
+    expect(
+      await screen.findByText(
+        "Por segurança, o link ativo não é exibido novamente. Gere um novo link para copiá-lo."
+      )
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText("Link compartilhável")).not.toBeInTheDocument();
+  });
+
+  it("rotates and reveals a newly issued public link", async () => {
+    getPublicDashboardSettings.mockResolvedValue({
+      enabled: true,
+      hasActiveToken: true,
+      publicUrl: null,
+    });
+    rotatePublicDashboardToken.mockResolvedValue({
+      enabled: true,
+      hasActiveToken: true,
+      publicUrl: "https://finova.app/compartilhado/novo",
+    });
+
+    render(<Profile />);
+    fireEvent.click(await screen.findByRole("button", { name: "Gerar novo link" }));
+
+    expect(
+      await screen.findByDisplayValue("https://finova.app/compartilhado/novo")
+    ).toBeInTheDocument();
+    expect(rotatePublicDashboardToken).toHaveBeenCalledOnce();
+  });
+
+  it("revokes and disables public sharing", async () => {
+    revokePublicDashboardToken.mockResolvedValue({
+      enabled: false,
+      hasActiveToken: false,
+      publicUrl: null,
+    });
+
+    render(<Profile />);
+    fireEvent.click(await screen.findByRole("button", { name: "Revogar link" }));
+
+    await waitFor(() => {
+      expect(revokePublicDashboardToken).toHaveBeenCalledOnce();
+    });
+    expect(screen.getByText("Link público revogado com sucesso.")).toBeInTheDocument();
   });
 });

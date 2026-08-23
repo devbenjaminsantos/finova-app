@@ -2,6 +2,7 @@ using System.Security.Claims;
 using FinanceDashboard.Api.Controllers;
 using FinanceDashboard.Api.Data;
 using FinanceDashboard.Api.DTOs;
+using FinanceDashboard.Api.DTOs.Profile;
 using FinanceDashboard.Api.Models;
 using FinanceDashboard.Api.Services.Audit;
 using FinanceDashboard.Api.Services.Auth;
@@ -138,19 +139,101 @@ public class ProfileControllerTests
 
         var controller = CreateController(context, 7);
 
-        var result = await controller.UpdatePublicDashboardSettings(new FinanceDashboard.Api.DTOs.Profile.PublicDashboardSettingsRequest
+        var result = await controller.UpdatePublicDashboardSettings(new PublicDashboardSettingsRequest
         {
             Enabled = true
         });
 
         var ok = Assert.IsType<OkObjectResult>(result.Result);
-        var payload = Assert.IsType<FinanceDashboard.Api.DTOs.Profile.PublicDashboardSettingsResponse>(ok.Value);
+        var payload = Assert.IsType<PublicDashboardSettingsResponse>(ok.Value);
         var refreshedUser = await context.Users.SingleAsync();
+        var token = GetTokenFromPublicUrl(payload.PublicUrl);
+        var tokenService = new PublicDashboardTokenService();
 
         Assert.True(payload.Enabled);
+        Assert.True(payload.HasActiveToken);
         Assert.NotNull(payload.PublicUrl);
         Assert.Contains("/compartilhado/", payload.PublicUrl);
         Assert.True(refreshedUser.PublicDashboardEnabled);
+        Assert.NotNull(refreshedUser.PublicDashboardTokenHash);
+        Assert.Equal(64, refreshedUser.PublicDashboardTokenHash.Length);
+        Assert.NotEqual(token, refreshedUser.PublicDashboardTokenHash);
+        Assert.True(tokenService.TryHashToken(token, out var tokenHash));
+        Assert.Equal(refreshedUser.PublicDashboardTokenHash, tokenHash);
+    }
+
+    [Fact]
+    public async Task GetPublicDashboardSettings_DoesNotExposeExistingToken()
+    {
+        using var context = CreateContext();
+        var tokenService = new PublicDashboardTokenService();
+        var token = tokenService.GenerateToken();
+        Assert.True(tokenService.TryHashToken(token, out var tokenHash));
+
+        context.Users.Add(CreateUser(publicDashboardEnabled: true, publicDashboardTokenHash: tokenHash));
+        await context.SaveChangesAsync();
+
+        var controller = CreateController(context, 7);
+        var result = await controller.GetPublicDashboardSettings();
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var payload = Assert.IsType<PublicDashboardSettingsResponse>(ok.Value);
+
+        Assert.True(payload.Enabled);
+        Assert.True(payload.HasActiveToken);
+        Assert.Null(payload.PublicUrl);
+    }
+
+    [Fact]
+    public async Task RotatePublicDashboardToken_ReplacesStoredHashAndReturnsNewLink()
+    {
+        using var context = CreateContext();
+        var tokenService = new PublicDashboardTokenService();
+        var originalToken = tokenService.GenerateToken();
+        Assert.True(tokenService.TryHashToken(originalToken, out var originalHash));
+
+        context.Users.Add(CreateUser(publicDashboardEnabled: true, publicDashboardTokenHash: originalHash));
+        await context.SaveChangesAsync();
+
+        var controller = CreateController(context, 7);
+        var result = await controller.RotatePublicDashboardToken();
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var payload = Assert.IsType<PublicDashboardSettingsResponse>(ok.Value);
+        var rotatedToken = GetTokenFromPublicUrl(payload.PublicUrl);
+        var refreshedUser = await context.Users.SingleAsync();
+
+        Assert.NotEqual(originalToken, rotatedToken);
+        Assert.NotEqual(originalHash, refreshedUser.PublicDashboardTokenHash);
+        Assert.True(tokenService.TryHashToken(rotatedToken, out var rotatedHash));
+        Assert.Equal(rotatedHash, refreshedUser.PublicDashboardTokenHash);
+        Assert.Contains(context.AuditLogs, log => log.Action == "profile.public-dashboard.rotated");
+    }
+
+    [Fact]
+    public async Task RevokePublicDashboardToken_DisablesDashboardAndDeletesHash()
+    {
+        using var context = CreateContext();
+        var tokenService = new PublicDashboardTokenService();
+        var token = tokenService.GenerateToken();
+        Assert.True(tokenService.TryHashToken(token, out var tokenHash));
+
+        context.Users.Add(CreateUser(publicDashboardEnabled: true, publicDashboardTokenHash: tokenHash));
+        await context.SaveChangesAsync();
+
+        var controller = CreateController(context, 7);
+        var result = await controller.RevokePublicDashboardToken();
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var payload = Assert.IsType<PublicDashboardSettingsResponse>(ok.Value);
+        var refreshedUser = await context.Users.SingleAsync();
+
+        Assert.False(payload.Enabled);
+        Assert.False(payload.HasActiveToken);
+        Assert.Null(payload.PublicUrl);
+        Assert.False(refreshedUser.PublicDashboardEnabled);
+        Assert.Null(refreshedUser.PublicDashboardTokenHash);
+        Assert.Contains(context.AuditLogs, log => log.Action == "profile.public-dashboard.revoked");
     }
 
     private static AppDbContext CreateContext()
@@ -198,7 +281,7 @@ public class ProfileControllerTests
             new AuthCookieService(new FakeWebHostEnvironment()),
             new AuditLogService(context, httpContextAccessor),
             configuration,
-            new PublicDashboardTokenService(configuration));
+            new PublicDashboardTokenService());
 
         controller.ControllerContext = new ControllerContext
         {
@@ -218,6 +301,26 @@ public class ProfileControllerTests
         };
 
         return new AppPasswordHasher(new PasswordHasher<User>()).HashPassword(entity, password);
+    }
+
+    private static User CreateUser(bool publicDashboardEnabled, string? publicDashboardTokenHash)
+    {
+        return new User
+        {
+            Id = 7,
+            Name = "Keller",
+            Email = "keller@finova.app",
+            EmailConfirmed = true,
+            PasswordHash = HashPassword("SenhaSegura123!"),
+            PublicDashboardEnabled = publicDashboardEnabled,
+            PublicDashboardTokenHash = publicDashboardTokenHash
+        };
+    }
+
+    private static string GetTokenFromPublicUrl(string? publicUrl)
+    {
+        Assert.False(string.IsNullOrWhiteSpace(publicUrl));
+        return new Uri(publicUrl).Segments[^1];
     }
 
     private sealed class FakeWebHostEnvironment : IWebHostEnvironment

@@ -39,8 +39,18 @@ namespace FinanceDashboard.Api.Data
                 entity.Property(user => user.SessionVersion)
                     .HasDefaultValue(1);
 
+                entity.Property(user => user.PublicDashboardTokenHash)
+                    .HasMaxLength(64)
+                    .IsFixedLength();
+
                 entity.HasIndex(user => user.Email)
                     .IsUnique();
+
+                entity.HasIndex(user => user.PublicDashboardTokenHash)
+                    .IsUnique()
+                    .HasFilter("[PublicDashboardTokenHash] IS NOT NULL");
+
+                entity.HasIndex(user => new { user.IsDemoAccount, user.DemoExpiresAtUtc });
 
                 entity.ToTable(table =>
                 {

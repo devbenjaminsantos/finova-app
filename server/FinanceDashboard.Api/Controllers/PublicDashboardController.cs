@@ -24,9 +24,10 @@ namespace FinanceDashboard.Api.Controllers
         }
 
         [HttpGet("{token}")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<ActionResult<PublicDashboardResponse>> Get(string token)
         {
-            if (!_publicDashboardTokenService.TryReadUserId(token, out var userId))
+            if (!_publicDashboardTokenService.TryHashToken(token, out var tokenHash))
             {
                 return NotFound(new ProblemDetails
                 {
@@ -35,13 +36,16 @@ namespace FinanceDashboard.Api.Controllers
                 });
             }
 
+            var now = DateTime.UtcNow;
             var user = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(existing => existing.Id == userId);
+                .FirstOrDefaultAsync(existing =>
+                    existing.PublicDashboardEnabled &&
+                    existing.PublicDashboardTokenHash == tokenHash &&
+                    (!existing.IsDemoAccount ||
+                        (existing.DemoExpiresAtUtc.HasValue && existing.DemoExpiresAtUtc > now)));
 
-            if (user is null ||
-                !user.PublicDashboardEnabled ||
-                !_publicDashboardTokenService.IsValid(user, token))
+            if (user is null)
             {
                 return NotFound(new ProblemDetails
                 {
@@ -52,7 +56,7 @@ namespace FinanceDashboard.Api.Controllers
 
             var transactions = await _context.Transactions
                 .AsNoTracking()
-                .Where(transaction => transaction.UserId == userId)
+                .Where(transaction => transaction.UserId == user.Id)
                 .OrderByDescending(transaction => transaction.Date)
                 .Select(transaction => new PublicDashboardTransactionResponse
                 {

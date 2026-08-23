@@ -74,6 +74,38 @@ public class SessionValidationServiceTests
         Assert.False(isCurrent);
     }
 
+    [Fact]
+    public async Task IsCurrentAsync_RejectsExpiredDemoAccount()
+    {
+        using var context = CreateContext();
+        var user = CreateUser(sessionVersion: 1);
+        user.IsDemoAccount = true;
+        user.DemoExpiresAtUtc = DateTime.UtcNow.AddMinutes(-1);
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+        var service = new SessionValidationService(context);
+
+        var isCurrent = await service.IsCurrentAsync(CreatePrincipal(sessionVersion: 1));
+
+        Assert.False(isCurrent);
+    }
+
+    [Fact]
+    public async Task IsCurrentAsync_AcceptsActiveDemoAccount()
+    {
+        using var context = CreateContext();
+        var user = CreateUser(sessionVersion: 1);
+        user.IsDemoAccount = true;
+        user.DemoExpiresAtUtc = DateTime.UtcNow.AddMinutes(30);
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+        var service = new SessionValidationService(context);
+
+        var isCurrent = await service.IsCurrentAsync(CreatePrincipal(sessionVersion: 1));
+
+        Assert.True(isCurrent);
+    }
+
     private static AppDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()

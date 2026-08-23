@@ -4,6 +4,7 @@ using FinanceDashboard.Api.Models;
 using FinanceDashboard.Api.Services.Audit;
 using FinanceDashboard.Api.Services.Auth;
 using FinanceDashboard.Api.Services.Email;
+using FinanceDashboard.Api.Services.Demo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,7 @@ namespace FinanceDashboard.Api.Controllers
         private readonly AuthCookieService _authCookieService;
         private readonly PasswordResetTokenService _tokenUtility;
         private readonly IEmailSender _emailSender;
+        private readonly DemoAccountPreparationService _demoAccountPreparationService;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
         private readonly ILogger<AuthController> _logger;
@@ -42,6 +44,7 @@ namespace FinanceDashboard.Api.Controllers
             AuthCookieService authCookieService,
             PasswordResetTokenService tokenUtility,
             IEmailSender emailSender,
+            DemoAccountPreparationService demoAccountPreparationService,
             IConfiguration configuration,
             IWebHostEnvironment environment,
             ILogger<AuthController> logger)
@@ -54,6 +57,7 @@ namespace FinanceDashboard.Api.Controllers
             _authCookieService = authCookieService;
             _tokenUtility = tokenUtility;
             _emailSender = emailSender;
+            _demoAccountPreparationService = demoAccountPreparationService;
             _configuration = configuration;
             _environment = environment;
             _logger = logger;
@@ -236,6 +240,7 @@ namespace FinanceDashboard.Api.Controllers
         }
 
         [HttpPost("demo-login")]
+        [EnableRateLimiting("demo")]
         public async Task<ActionResult<AuthResponse>> DemoLogin()
         {
             if (!_configuration.GetValue("Demo:Enabled", true))
@@ -247,36 +252,24 @@ namespace FinanceDashboard.Api.Controllers
                 });
             }
 
-            var demoEmail = _configuration["Demo:Email"] ?? "demo@finova.app";
-            var normalizedEmail = demoEmail.Trim().ToLowerInvariant();
+            var options = DemoAccountOptions.FromConfiguration(_configuration);
+            User user;
 
-            var user = await _context.Users
-                .Include(existing => existing.Transactions)
-                .FirstOrDefaultAsync(existing => existing.Email == normalizedEmail);
-
-            if (user is null)
+            try
             {
-                user = new User
-                {
-                    Name = "Conta Demo",
-                    Email = normalizedEmail,
-                    EmailConfirmed = true,
-                    OnboardingOptIn = false
-                };
-                user.PasswordHash = _passwordHasher.HashPassword(
-                    user,
-                    _configuration["Demo:Password"] ?? "FinovaDemo@2026");
-
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+                user = await _demoAccountPreparationService.PrepareAsync(
+                    options,
+                    HttpContext.RequestAborted);
             }
-
-            if (!user.Transactions.Any())
+            catch (DemoAccountPreparationUnavailableException exception)
             {
-                // A conta demo só é populada quando estiver vazia.
-                // Isso me deixa reutilizar o mesmo usuário sem duplicar movimentações.
-                SeedDemoTransactions(user.Id);
-                await _context.SaveChangesAsync();
+                _logger.LogWarning(exception, "A preparação da conta demo excedeu o tempo limite.");
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new ProblemDetails
+                {
+                    Title = "Conta demo temporariamente ocupada. Tente novamente em instantes.",
+                    Status = StatusCodes.Status503ServiceUnavailable
+                });
             }
 
             await _auditLogService.WriteAsync(
@@ -534,8 +527,7 @@ namespace FinanceDashboard.Api.Controllers
 
         private bool IsDemoUser(User user)
         {
-            var demoEmail = (_configuration["Demo:Email"] ?? "demo@finova.app").Trim().ToLowerInvariant();
-            return user.Email == demoEmail;
+            return user.IsDemoAccount;
         }
 
         private static bool IsDuplicateEmailViolation(DbUpdateException exception)
@@ -692,58 +684,5 @@ namespace FinanceDashboard.Api.Controllers
                 : "http://localhost:5173";
         }
 
-        private void SeedDemoTransactions(int userId)
-        {
-            var today = DateTime.UtcNow.Date;
-
-            // Estes dados foram pensados para preencher dashboard,
-            // categorias, filtros e exportações já no primeiro acesso da demo.
-            _context.Transactions.AddRange(
-                new Transaction
-                {
-                    UserId = userId,
-                    Description = "Salário",
-                    Category = "Receita fixa",
-                    AmountCents = 720000,
-                    Date = today.AddDays(-5),
-                    Type = "income"
-                },
-                new Transaction
-                {
-                    UserId = userId,
-                    Description = "Mercado do mês",
-                    Category = "Alimentação",
-                    AmountCents = 86540,
-                    Date = today.AddDays(-4),
-                    Type = "expense"
-                },
-                new Transaction
-                {
-                    UserId = userId,
-                    Description = "Aluguel",
-                    Category = "Moradia",
-                    AmountCents = 180000,
-                    Date = today.AddDays(-3),
-                    Type = "expense"
-                },
-                new Transaction
-                {
-                    UserId = userId,
-                    Description = "Freelance",
-                    Category = "Receita extra",
-                    AmountCents = 125000,
-                    Date = today.AddDays(-2),
-                    Type = "income"
-                },
-                new Transaction
-                {
-                    UserId = userId,
-                    Description = "Assinaturas digitais",
-                    Category = "Assinaturas",
-                    AmountCents = 8990,
-                    Date = today.AddDays(-1),
-                    Type = "expense"
-                });
-        }
     }
 }

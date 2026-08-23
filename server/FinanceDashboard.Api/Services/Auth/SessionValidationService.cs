@@ -26,10 +26,16 @@ namespace FinanceDashboard.Api.Services.Auth
                 return false;
             }
 
+            var now = DateTime.UtcNow;
+
             return await _context.Users
                 .AsNoTracking()
                 .AnyAsync(
-                    user => user.Id == userId && user.SessionVersion == sessionVersion,
+                    user =>
+                        user.Id == userId &&
+                        user.SessionVersion == sessionVersion &&
+                        (!user.IsDemoAccount ||
+                            (user.DemoExpiresAtUtc.HasValue && user.DemoExpiresAtUtc > now)),
                     cancellationToken);
         }
     }

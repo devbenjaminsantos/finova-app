@@ -4,11 +4,13 @@ using FinanceDashboard.Api.DTOs;
 using FinanceDashboard.Api.Models;
 using FinanceDashboard.Api.Services.Audit;
 using FinanceDashboard.Api.Services.Auth;
+using FinanceDashboard.Api.Services.Demo;
 using FinanceDashboard.Api.Services.Email;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -259,6 +261,296 @@ public class AuthControllerTests
         var setCookie = controller.Response.Headers.SetCookie.ToString();
         Assert.Contains($"{AuthCookieService.CookieName}=", setCookie);
         Assert.Contains("expires=", setCookie, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task DemoLogin_PreservesExistingAccounts_AndCreatesIsolatedSession()
+    {
+        using var context = CreateContext();
+        var demoUser = new User
+        {
+            Name = "Nome alterado",
+            Email = "demo@finova.app",
+            EmailConfirmed = false,
+            OnboardingOptIn = true,
+            EmailGoalAlertsEnabled = true,
+            GoalAlertThresholdPercent = 95,
+            MonthlyReportEmailsEnabled = true,
+            MonthlyReportDay = 20,
+            PublicDashboardEnabled = true,
+            PublicDashboardTokenHash = new string('a', 64),
+            PasswordHash = HashPassword("SenhaAlterada123!"),
+            SessionVersion = 7,
+            FailedLoginAttempts = 4,
+            LockoutEndsAtUtc = DateTime.UtcNow.AddMinutes(10),
+            LastFailedLoginAtUtc = DateTime.UtcNow
+        };
+        var realUser = new User
+        {
+            Name = "Usuário Real",
+            Email = "real@finova.app",
+            EmailConfirmed = true,
+            PasswordHash = HashPassword("SenhaSegura123!")
+        };
+        context.Users.AddRange(demoUser, realUser);
+        await context.SaveChangesAsync();
+
+        context.Transactions.AddRange(
+            new Transaction
+            {
+                UserId = demoUser.Id,
+                Description = "Dado contaminado",
+                Category = "Teste",
+                AmountCents = 9999,
+                Date = DateTime.UtcNow.Date,
+                Type = "expense"
+            },
+            new Transaction
+            {
+                UserId = realUser.Id,
+                Description = "Dado real",
+                Category = "Teste",
+                AmountCents = 1234,
+                Date = DateTime.UtcNow.Date,
+                Type = "income"
+            });
+        context.FinancialAccounts.Add(new FinancialAccount
+        {
+            UserId = demoUser.Id,
+            AccountName = "Conta contaminada",
+            AccountType = "wallet",
+            Provider = "manual",
+            InstitutionName = "Demo",
+            Status = "connected"
+        });
+        context.RecurringRules.Add(new RecurringRule
+        {
+            UserId = demoUser.Id,
+            PublicId = "demo-recurring",
+            Description = "Recorrência contaminada",
+            Category = "Teste",
+            AmountCents = 1000,
+            Type = "expense",
+            StartDate = DateTime.UtcNow.Date,
+            EndDate = DateTime.UtcNow.Date.AddMonths(2),
+            CreatedAtUtc = DateTime.UtcNow
+        });
+        context.InstallmentPlans.Add(new InstallmentPlan
+        {
+            UserId = demoUser.Id,
+            PublicId = "demo-installment",
+            Description = "Parcelamento contaminado",
+            Category = "Teste",
+            AmountPerInstallmentCents = 1000,
+            InstallmentCount = 2,
+            StartDate = DateTime.UtcNow.Date,
+            CreatedAtUtc = DateTime.UtcNow
+        });
+        context.TransactionTags.Add(new TransactionTag { UserId = demoUser.Id, Name = "contaminada" });
+        context.BudgetGoals.Add(new BudgetGoal
+        {
+            UserId = demoUser.Id,
+            Month = DateTime.UtcNow.ToString("yyyy-MM"),
+            Category = "Teste",
+            AmountCents = 10000
+        });
+        context.NotificationDeliveries.Add(new NotificationDelivery
+        {
+            UserId = demoUser.Id,
+            NotificationType = "goal",
+            ReferenceKey = "demo-old-delivery",
+            Subject = "Notificação anterior",
+            SentAtUtc = DateTime.UtcNow
+        });
+        context.EmailVerificationTokens.Add(new EmailVerificationToken
+        {
+            UserId = demoUser.Id,
+            TokenHash = "demo-verification-token",
+            CreatedAtUtc = DateTime.UtcNow,
+            ExpiresAtUtc = DateTime.UtcNow.AddHours(1)
+        });
+        context.PasswordResetTokens.Add(new PasswordResetToken
+        {
+            UserId = demoUser.Id,
+            TokenHash = "demo-password-token",
+            CreatedAtUtc = DateTime.UtcNow,
+            ExpiresAtUtc = DateTime.UtcNow.AddHours(1)
+        });
+        context.AuditLogs.Add(new AuditLog
+        {
+            UserId = demoUser.Id,
+            Action = "transaction.created",
+            EntityType = "Transaction",
+            Summary = "Descrição que não deve vazar.",
+            CreatedAtUtc = DateTime.UtcNow
+        });
+        await context.SaveChangesAsync();
+
+        var controller = CreateController(
+            context,
+            configurationValues: new Dictionary<string, string?>
+            {
+                ["Demo:Name"] = "Conta Demo",
+                ["Demo:Email"] = demoUser.Email
+            });
+
+        var result = await controller.DemoLogin();
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var payload = Assert.IsType<AuthResponse>(ok.Value);
+        var isolatedDemo = await context.Users.SingleAsync(user => user.IsDemoAccount);
+
+        Assert.True(payload.User.IsDemo);
+        Assert.Equal(isolatedDemo.Id, payload.User.Id);
+        Assert.NotEqual(demoUser.Id, isolatedDemo.Id);
+        Assert.Equal("Conta Demo", isolatedDemo.Name);
+        Assert.StartsWith("demo+", isolatedDemo.Email);
+        Assert.EndsWith("@finova.app", isolatedDemo.Email);
+        Assert.True(isolatedDemo.EmailConfirmed);
+        Assert.False(isolatedDemo.OnboardingOptIn);
+        Assert.False(isolatedDemo.EmailGoalAlertsEnabled);
+        Assert.Equal(80, isolatedDemo.GoalAlertThresholdPercent);
+        Assert.False(isolatedDemo.MonthlyReportEmailsEnabled);
+        Assert.Equal(1, isolatedDemo.MonthlyReportDay);
+        Assert.False(isolatedDemo.PublicDashboardEnabled);
+        Assert.Null(isolatedDemo.PublicDashboardTokenHash);
+        Assert.Equal(1, isolatedDemo.SessionVersion);
+        Assert.NotNull(isolatedDemo.DemoExpiresAtUtc);
+        Assert.InRange(
+            isolatedDemo.DemoExpiresAtUtc.Value,
+            DateTime.UtcNow.AddMinutes(119),
+            DateTime.UtcNow.AddHours(2).AddMinutes(1));
+
+        var demoTransactions = await context.Transactions
+            .Where(transaction => transaction.UserId == isolatedDemo.Id)
+            .ToListAsync();
+        Assert.Equal(5, demoTransactions.Count);
+        Assert.DoesNotContain(demoTransactions, transaction => transaction.Description == "Dado contaminado");
+        Assert.Contains(demoTransactions, transaction => transaction.Description == "Salário");
+        Assert.Contains(context.Users, user => user.Id == demoUser.Id);
+        Assert.Single(context.Transactions.Where(transaction => transaction.UserId == realUser.Id));
+        Assert.Single(context.Transactions.Where(transaction => transaction.UserId == demoUser.Id));
+        Assert.Single(context.FinancialAccounts.Where(account => account.UserId == demoUser.Id));
+        Assert.Single(context.RecurringRules.Where(rule => rule.UserId == demoUser.Id));
+        Assert.Single(context.InstallmentPlans.Where(plan => plan.UserId == demoUser.Id));
+        Assert.Single(context.TransactionTags.Where(tag => tag.UserId == demoUser.Id));
+        Assert.Single(context.BudgetGoals.Where(goal => goal.UserId == demoUser.Id));
+        Assert.Single(context.NotificationDeliveries.Where(delivery => delivery.UserId == demoUser.Id));
+        Assert.Single(context.EmailVerificationTokens.Where(token => token.UserId == demoUser.Id));
+        Assert.Single(context.PasswordResetTokens.Where(token => token.UserId == demoUser.Id));
+        Assert.Contains(context.AuditLogs, log => log.Summary.Contains("não deve vazar"));
+        Assert.Contains(context.AuditLogs, log =>
+            log.Action == "auth.demo-created" && log.UserId == isolatedDemo.Id);
+        Assert.Contains(context.AuditLogs, log =>
+            log.Action == "auth.demo-login" && log.UserId == isolatedDemo.Id);
+    }
+
+    [Fact]
+    public async Task DemoPreparation_ConcurrentRequests_CreateIndependentAccounts()
+    {
+        var databaseName = Guid.NewGuid().ToString();
+        var databaseRoot = new InMemoryDatabaseRoot();
+
+        await using (var seedContext = CreateContext(databaseName, databaseRoot))
+        {
+            seedContext.Users.Add(new User
+            {
+                Name = "Conta Demo",
+                Email = "demo@finova.app",
+                EmailConfirmed = true,
+                PasswordHash = HashPassword("DemoReset123!"),
+                SessionVersion = 1
+            });
+            await seedContext.SaveChangesAsync();
+        }
+
+        await using var firstContext = CreateContext(databaseName, databaseRoot);
+        await using var secondContext = CreateContext(databaseName, databaseRoot);
+        var options = new DemoAccountOptions
+        {
+            Name = "Conta Demo",
+            Email = "demo@finova.app",
+            LockTimeout = TimeSpan.FromSeconds(5)
+        };
+        var firstService = new DemoAccountPreparationService(firstContext, CreatePasswordHasher());
+        var secondService = new DemoAccountPreparationService(secondContext, CreatePasswordHasher());
+
+        await Task.WhenAll(
+            firstService.PrepareAsync(options),
+            secondService.PrepareAsync(options));
+
+        await using var verificationContext = CreateContext(databaseName, databaseRoot);
+        var demoUsers = await verificationContext.Users
+            .Where(user => user.IsDemoAccount)
+            .ToListAsync();
+
+        Assert.Equal(2, demoUsers.Count);
+        Assert.Equal(2, demoUsers.Select(user => user.Email).Distinct().Count());
+        Assert.All(demoUsers, user => Assert.Equal(1, user.SessionVersion));
+        Assert.All(demoUsers, user =>
+            Assert.Equal(
+                5,
+                verificationContext.Transactions.Count(transaction => transaction.UserId == user.Id)));
+        Assert.Equal(2, verificationContext.AuditLogs.Count(log => log.Action == "auth.demo-created"));
+    }
+
+    [Fact]
+    public async Task DemoPreparation_DoesNotShareDataBetweenSessions()
+    {
+        using var context = CreateContext();
+        var options = new DemoAccountOptions
+        {
+            Name = "Conta Demo",
+            Email = "demo@finova.app",
+            LockTimeout = TimeSpan.FromSeconds(5),
+            SessionLifetime = TimeSpan.FromHours(2)
+        };
+        var service = new DemoAccountPreparationService(context, CreatePasswordHasher());
+
+        var user = await service.PrepareAsync(options);
+        var transaction = await context.Transactions.FirstAsync(existing => existing.UserId == user.Id);
+        transaction.Description = "Apresentação em andamento";
+        await context.SaveChangesAsync();
+
+        var preparedAgain = await service.PrepareAsync(options);
+
+        Assert.NotEqual(user.Id, preparedAgain.Id);
+        Assert.Equal(1, preparedAgain.SessionVersion);
+        Assert.Contains(
+            context.Transactions,
+            existing => existing.Description == "Apresentação em andamento");
+        Assert.DoesNotContain(
+            context.Transactions.Where(existing => existing.UserId == preparedAgain.Id),
+            existing => existing.Description == "Apresentação em andamento");
+        Assert.Equal(2, context.Users.Count(userEntity => userEntity.IsDemoAccount));
+        Assert.Equal(2, context.AuditLogs.Count(log => log.Action == "auth.demo-created"));
+    }
+
+    [Fact]
+    public async Task DemoPreparation_RemovesExpiredAccountsAndTheirData()
+    {
+        using var context = CreateContext();
+        var options = new DemoAccountOptions
+        {
+            Name = "Conta Demo",
+            Email = "demo@finova.app",
+            LockTimeout = TimeSpan.FromSeconds(5),
+            SessionLifetime = TimeSpan.FromHours(2)
+        };
+        var service = new DemoAccountPreparationService(context, CreatePasswordHasher());
+
+        var expiredUser = await service.PrepareAsync(options);
+        expiredUser.DemoExpiresAtUtc = DateTime.UtcNow.AddMinutes(-1);
+        await context.SaveChangesAsync();
+
+        var currentUser = await service.PrepareAsync(options);
+
+        Assert.NotEqual(expiredUser.Id, currentUser.Id);
+        Assert.DoesNotContain(context.Users, user => user.Id == expiredUser.Id);
+        Assert.DoesNotContain(context.Transactions, transaction => transaction.UserId == expiredUser.Id);
+        Assert.DoesNotContain(context.AuditLogs, log => log.UserId == expiredUser.Id);
+        Assert.Single(context.Users.Where(user => user.IsDemoAccount));
+        Assert.Equal(5, context.Transactions.Count(transaction => transaction.UserId == currentUser.Id));
     }
 
     [Fact]
@@ -576,10 +868,14 @@ public class AuthControllerTests
         Assert.Equal(PasswordPolicyService.DefaultMessage, problem.Title);
     }
 
-    private static AppDbContext CreateContext()
+    private static AppDbContext CreateContext(
+        string? databaseName = null,
+        InMemoryDatabaseRoot? databaseRoot = null)
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .UseInMemoryDatabase(
+                databaseName ?? Guid.NewGuid().ToString(),
+                databaseRoot ?? new InMemoryDatabaseRoot())
             .Options;
 
         return new AppDbContext(options);
@@ -621,6 +917,7 @@ public class AuthControllerTests
             new AuthCookieService(environment),
             new PasswordResetTokenService(),
             emailSender ?? new FakeEmailSender(),
+            new DemoAccountPreparationService(context, CreatePasswordHasher()),
             configuration,
             environment,
             NullLogger<AuthController>.Instance);

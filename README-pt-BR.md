@@ -134,8 +134,10 @@ Configurações esperadas:
 - `Smtp__FromName`
 - `Smtp__EnableSsl`
 - `Demo__Enabled`
+- `Demo__Name`
 - `Demo__Email`
-- `Demo__Password`
+- `Demo__ResetLockTimeoutSeconds`
+- `Demo__SessionLifetimeHours`
 - `Pluggy__ClientId`
 - `Pluggy__ClientSecret`
 

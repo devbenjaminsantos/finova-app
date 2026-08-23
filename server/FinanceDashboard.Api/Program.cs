@@ -6,7 +6,9 @@ using FinanceDashboard.Api.Services.Auth;
 using FinanceDashboard.Api.Services.BankSync;
 using FinanceDashboard.Api.Services.BankSync.Pluggy;
 using FinanceDashboard.Api.Services.CurrentUser;
+using FinanceDashboard.Api.Services.Demo;
 using FinanceDashboard.Api.Services.Email;
+using FinanceDashboard.Api.Services.Notifications;
 using FinanceDashboard.Api.Services.PublicDashboard;
 using FinanceDashboard.Api.Services.Recurring;
 using Microsoft.AspNetCore.Diagnostics;
@@ -66,7 +68,9 @@ builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<BankSyncService>();
 builder.Services.AddScoped<RecurringTransactionGenerationService>();
 builder.Services.AddScoped<PublicDashboardTokenService>();
-builder.Services.AddScoped<FinanceDashboard.Api.Services.Notifications.FinancialEmailAutomationService>();
+builder.Services.AddScoped<DemoAccountPreparationService>();
+builder.Services.AddScoped<INotificationDeliveryCoordinator, DatabaseNotificationDeliveryCoordinator>();
+builder.Services.AddScoped<FinancialEmailAutomationService>();
 builder.Services.AddScoped<IBankSyncProvider, PluggyBankSyncProvider>();
 builder.Services.AddScoped<CurrentUserService>();
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
@@ -191,6 +195,17 @@ builder.Services.AddRateLimiter(options =>
             {
                 AutoReplenishment = true,
                 PermitLimit = 30,
+                QueueLimit = 0,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+
+    options.AddPolicy("demo", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 5,
                 QueueLimit = 0,
                 Window = TimeSpan.FromMinutes(1)
             }));
