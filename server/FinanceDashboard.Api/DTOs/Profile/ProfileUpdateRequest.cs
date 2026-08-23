@@ -18,8 +18,10 @@ namespace FinanceDashboard.Api.DTOs
         [Range(1, 28)]
         public int MonthlyReportDay { get; set; } = 1;
 
+        [StringLength(128)]
         public string CurrentPassword { get; set; } = string.Empty;
 
+        [StringLength(128)]
         public string NewPassword { get; set; } = string.Empty;
     }
 }

@@ -1,6 +1,6 @@
 # Finova
 
-Finova is a full-stack personal finance application built to make day-to-day money management clearer, safer, and easier to inspect. It started as a finance dashboard and evolved into a SaaS-style product with authentication, demo access, transaction management, financial charts, budgets, recurring entries, account organization, exports, notifications, public read-only sharing, and Azure production deployment.
+Finova is a full-stack personal finance application built to make day-to-day money management clearer, safer, and easier to inspect. It started as a finance dashboard and evolved into a SaaS-style product with authentication, demo access, transaction management, financial charts, budgets, recurring entries, account organization, exports, notifications, public read-only sharing, and deployment workflows targeting Azure.
 
 Portuguese version: [README-pt-BR.md](README-pt-BR.md)
 
@@ -52,16 +52,15 @@ Finova helps users:
 - SQL Server
 - JWT Bearer Authentication
 - Scalar.AspNetCore
-- Azure Communication Services Email or SMTP
-- Pluggy integration structure for Open Finance flows
+- SMTP email delivery behind an `IEmailSender` abstraction
+- Pluggy backend foundation for future Open Finance flows
 
 ### Infrastructure
 
 - Azure Static Web Apps
 - Azure App Service
 - Azure SQL Database
-- Azure Communication Services Email
-- Application Insights
+- GitHub Actions for validated frontend and API deployments
 
 ## Architecture At A Glance
 
@@ -71,7 +70,7 @@ Finova/
 |-- server/
 |   |-- FinanceDashboard.Api/        # ASP.NET Core API
 |   |-- docker-compose.yml           # Local SQL Server
-|   `-- .env.example                 # Local database env example
+|   `-- .env.example                 # Local environment example
 |-- tests/
 |   `-- FinanceDashboard.Api.Tests/  # Backend test project
 |-- docs/
@@ -84,18 +83,15 @@ Finova/
 
 The frontend calls the API through `VITE_API_URL`. In production, this value must point to the App Service API URL, including `/api`.
 
-## Production
+## Deployment
 
-Current production resources:
+The repository is prepared for this Azure architecture:
 
 - Frontend: `Azure Static Web Apps`
 - Backend: `Azure App Service`
 - Database: `Azure SQL Database`
 
-Current links:
-
-- Frontend: `https://polite-ground-038630210.7.azurestaticapps.net`
-- API health check: `https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/health`
+Deployment URLs are environment-specific and intentionally not hardcoded here. After a resource transfer or recreation, use the commands and post-deployment checklist in the [Azure deployment guide](docs/azure-deploy.md) before treating an environment as active.
 
 The planned custom domain is `finovawallet`.
 
@@ -128,10 +124,6 @@ Expected configuration:
 - `Jwt__Audience`
 - `Cors__AllowedOrigins__0`
 - `Client__BaseUrl`
-- `Email__Provider`
-- `AzureCommunicationServices__Email__ConnectionString`
-- `AzureCommunicationServices__Email__SenderAddress`
-- `AzureCommunicationServices__Email__SenderName`
 - `Notifications__Enabled`
 - `Notifications__ProcessingIntervalMinutes`
 - `Smtp__Host`
@@ -182,10 +174,10 @@ For local frontend development, `client/src/lib/api/http.js` falls back to:
 http://localhost:5278/api
 ```
 
-For production builds, configure:
+For production builds, configure the active App Service URL:
 
 ```text
-VITE_API_URL=https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/api
+VITE_API_URL=https://YOUR-API-HOST.azurewebsites.net/api
 ```
 
 ## Database Migrations
@@ -211,7 +203,9 @@ Frontend:
 
 ```powershell
 cd client
+npm run lint
 npm test
+npm run build
 ```
 
 End-to-end:
@@ -234,4 +228,6 @@ npm run test:e2e
 - Keep local backend configuration out of Git.
 - Store SQL Server passwords only in safe local or cloud secret stores.
 - Keep password reset links out of logs in production.
+- Keep `Client__BaseUrl` pinned to the trusted frontend origin.
+- Keep rate limiting enabled on public authentication endpoints.
 - Invalidate sessions when tokens expire or when the user stays inactive for too long.

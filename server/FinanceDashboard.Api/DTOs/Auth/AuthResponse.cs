@@ -6,6 +6,12 @@ namespace FinanceDashboard.Api.DTOs
         public AuthUserResponse User { get; set; } = new();
     }
 
+    public class RegistrationResponse
+    {
+        public AuthUserResponse User { get; set; } = new();
+        public bool VerificationEmailSent { get; set; }
+    }
+
     public class AuthUserResponse
     {
         public int Id { get; set; }

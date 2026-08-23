@@ -9,7 +9,7 @@ import {
   clearStoredSession,
   consumePostLoginRedirect,
   consumeStoredLogoutReason,
-  getLogoutMessage,
+  getLogoutMessageKey,
   getStoredToken,
   getStoredUser,
   hasValidSession,
@@ -84,7 +84,7 @@ describe("auth storage helpers", () => {
     vi.setSystemTime(new Date("2026-04-14T12:31:00.000Z"));
 
     expect(hasValidSession()).toBe(false);
-    expect(getLogoutMessage(consumeStoredLogoutReason())).toContain("inatividade");
+    expect(getLogoutMessageKey(consumeStoredLogoutReason())).toBe("common.sessionIdle");
   });
 
   it("refreshes the activity timestamp when requested", () => {

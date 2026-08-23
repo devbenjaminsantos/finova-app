@@ -6,10 +6,12 @@ namespace FinanceDashboard.Api.DTOs
     {
         [Required]
         [StringLength(40, MinimumLength = 2)]
+        [RegularExpression("^(bank_account|wallet|cash|credit_card)$")]
         public string AccountType { get; set; } = "bank_account";
 
         [Required]
         [StringLength(40, MinimumLength = 2)]
+        [RegularExpression("^(manual|pluggy)$")]
         public string Provider { get; set; } = string.Empty;
 
         [Required]

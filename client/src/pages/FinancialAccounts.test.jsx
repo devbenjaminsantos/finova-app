@@ -7,7 +7,6 @@ vi.mock("../lib/api/financialAccounts", () => ({
   getFinancialAccounts: vi.fn(),
   createFinancialAccount: vi.fn(),
   deleteFinancialAccount: vi.fn(),
-  syncFinancialAccount: vi.fn(),
   updateFinancialAccount: vi.fn(),
 }));
 
@@ -19,7 +18,6 @@ import {
   createFinancialAccount,
   deleteFinancialAccount,
   getFinancialAccounts,
-  syncFinancialAccount,
   updateFinancialAccount,
 } from "../lib/api/financialAccounts";
 import { useTransactions } from "../features/transactions/useTransactions";
@@ -62,15 +60,15 @@ describe("FinancialAccounts page", () => {
 
     expect(await screen.findByText("Nubank")).toBeInTheDocument();
     expect(screen.getByText("Conta principal")).toBeInTheDocument();
-    expect(screen.getAllByText("Conta bancaria").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Conta bancária").length).toBeGreaterThan(0);
     expect(screen.getByText("Pendente")).toBeInTheDocument();
-    expect(screen.getByText("Manual por enquanto")).toBeInTheDocument();
+    expect(screen.getByText("Controle manual")).toBeInTheDocument();
     expect(screen.getByText(/Conta principal - final 1234/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Remover uma conta nao apaga suas transacoes\./i)
+      screen.getByText(/Remover uma conta não apaga suas transações\./i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Esta conta possui 2 transacao\(oes\) vinculada\(s\)\./i)
+      screen.getByText(/Esta conta tem 2 transação\(ões\) vinculada\(s\)\./i)
     ).toBeInTheDocument();
   });
 
@@ -92,13 +90,13 @@ describe("FinancialAccounts page", () => {
     renderPage();
     await screen.findByText("Nubank");
 
-    fireEvent.change(screen.getByLabelText("Instituicao"), {
+    fireEvent.change(screen.getByLabelText("Instituição"), {
       target: { value: "Banco Inter" },
     });
     fireEvent.change(screen.getByLabelText("Nome da conta"), {
       target: { value: "Reserva" },
     });
-    fireEvent.change(screen.getByLabelText("Mascara"), {
+    fireEvent.change(screen.getByLabelText("Final"), {
       target: { value: "4321" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Adicionar conta" }));
@@ -117,71 +115,8 @@ describe("FinancialAccounts page", () => {
 
     expect(await screen.findByText("Banco Inter")).toBeInTheDocument();
     expect(
-      screen.getByText("Conta financeira adicionada para uso manual e futuras importacoes.")
+      screen.getByText("Conta adicionada com sucesso.")
     ).toBeInTheDocument();
-  });
-
-  it("synchronizes an account and refreshes transactions", async () => {
-    const reloadTransactions = vi.fn().mockResolvedValue(undefined);
-    useTransactions.mockReturnValue({
-      loadAll: reloadTransactions,
-    });
-
-    syncFinancialAccount.mockResolvedValue({
-      financialAccountId: 1,
-      importedCount: 0,
-      skippedCount: 0,
-      syncedAtUtc: "2026-04-16T18:30:00Z",
-      status: "connected",
-      message: "Sincronizacao concluida.",
-    });
-
-    getFinancialAccounts
-      .mockResolvedValueOnce([
-        {
-          id: 1,
-          accountType: "bank_account",
-          provider: "manual",
-          institutionName: "Nubank",
-          institutionCode: null,
-          accountName: "Conta principal",
-          accountMask: "1234",
-          externalAccountId: null,
-          status: "pending",
-          lastSyncedAtUtc: null,
-          linkedTransactionsCount: 2,
-        },
-      ])
-      .mockResolvedValueOnce([
-        {
-          id: 1,
-          accountType: "bank_account",
-          provider: "manual",
-          institutionName: "Nubank",
-          institutionCode: null,
-          accountName: "Conta principal",
-          accountMask: "1234",
-          externalAccountId: null,
-          status: "connected",
-          lastSyncedAtUtc: "2026-04-16T18:30:00Z",
-          linkedTransactionsCount: 2,
-        },
-      ]);
-
-    renderPage();
-    await screen.findByText("Nubank");
-
-    fireEvent.click(screen.getByRole("button", { name: "Sincronizar" }));
-
-    await waitFor(() => {
-      expect(syncFinancialAccount).toHaveBeenCalledWith(1);
-    });
-
-    await waitFor(() => {
-      expect(reloadTransactions).toHaveBeenCalled();
-    });
-
-    expect(await screen.findByText("Conectada")).toBeInTheDocument();
   });
 
   it("edits a registered financial account", async () => {
@@ -206,10 +141,10 @@ describe("FinancialAccounts page", () => {
     fireEvent.change(screen.getByLabelText("Nome da conta"), {
       target: { value: "Reserva imediata" },
     });
-    fireEvent.change(screen.getByLabelText("Mascara"), {
+    fireEvent.change(screen.getByLabelText("Final"), {
       target: { value: "7777" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Salvar alteracoes" }));
+    fireEvent.click(screen.getByRole("button", { name: "Salvar alterações" }));
 
     await waitFor(() => {
       expect(updateFinancialAccount).toHaveBeenCalledWith(1, {
@@ -252,7 +187,7 @@ describe("FinancialAccounts page", () => {
     });
 
     expect(
-      await screen.findByText("Conta removida. As transacoes foram preservadas e seguiram sem vinculacao.")
+      await screen.findByText("Conta removida. As transações foram preservadas e seguiram sem vinculação.")
     ).toBeInTheDocument();
     expect(screen.queryByText("Nubank")).not.toBeInTheDocument();
 

@@ -54,7 +54,7 @@ vi.mock("../features/transactions/components/TransactionImportModal", () => ({
           })
         }
       >
-        Confirmar importacao mock
+        Confirmar importação mock
       </button>
     ) : null,
 }));
@@ -244,6 +244,35 @@ describe("Transactions page", () => {
     expect(rows[1][3]).toBe("trabalho");
   });
 
+  it("exports monetary values and localized metadata to PDF", () => {
+    render(<Transactions />);
+
+    fireEvent.change(screen.getByPlaceholderText(/buscar/i), {
+      target: { value: "mercado" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Exportar PDF" }));
+
+    expect(mockExportPdf).toHaveBeenCalledTimes(1);
+    const [document] = mockExportPdf.mock.calls[0];
+
+    expect(document.columns).toEqual(["Data", "Descrição", "Categoria", "Tipo", "Valor"]);
+    expect(document.rows).toHaveLength(1);
+    expect(document.rows[0]).toEqual([
+      "11/04/2026",
+      "Mercado",
+      "Alimentacao",
+      "Despesa",
+      "R$ 150,00",
+    ]);
+    expect(document).toMatchObject({
+      emptyMessage: "Nenhuma transação encontrada para os filtros selecionados.",
+      generatedAtLabel: "Gerado em",
+      pageLabel: "Página",
+      pageOfLabel: "de",
+      locale: "pt-BR",
+    });
+  });
+
   it("shows the transaction origin badges, tags and installment progress", () => {
     render(<Transactions />);
 
@@ -252,21 +281,21 @@ describe("Transactions page", () => {
     expect(screen.getAllByText("#casa").length).toBeGreaterThan(0);
     expect(screen.getByText("Regras recorrentes")).toBeInTheDocument();
     expect(screen.getByText("Regras ativas")).toBeInTheDocument();
-    expect(screen.getByText("Proximo ciclo previsto")).toBeInTheDocument();
+    expect(screen.getByText("Próximo ciclo previsto")).toBeInTheDocument();
     expect(screen.getByText("Condominio")).toBeInTheDocument();
-    expect(screen.getByText("Proxima geracao")).toBeInTheDocument();
+    expect(screen.getByText("Próxima geração")).toBeInTheDocument();
     expect(screen.getAllByText("Parcela 2/3").length).toBeGreaterThan(0);
     expect(screen.getByText(/1 parcela\(s\) restantes/i)).toBeInTheDocument();
     expect(screen.getByText("Compras parceladas")).toBeInTheDocument();
-    expect(screen.getByText("Divida em aberto")).toBeInTheDocument();
+    expect(screen.getByText("Dívida em aberto")).toBeInTheDocument();
     expect(screen.getByText("Compras em andamento")).toBeInTheDocument();
-    expect(screen.getByText("Proximas parcelas")).toBeInTheDocument();
+    expect(screen.getByText("Próximas parcelas")).toBeInTheDocument();
     expect(screen.getByText("Valor total")).toBeInTheDocument();
-    expect(screen.getByText("Ja lancado")).toBeInTheDocument();
+    expect(screen.getByText("Já lançado")).toBeInTheDocument();
     expect(screen.getByText("Saldo restante")).toBeInTheDocument();
     expect(screen.getByText("Parcelas futuras")).toBeInTheDocument();
-    expect(screen.getByText("Proxima parcela")).toBeInTheDocument();
-    expect(screen.getByText("Progresso da quitacao")).toBeInTheDocument();
+    expect(screen.getByText("Próxima parcela")).toBeInTheDocument();
+    expect(screen.getByText("Progresso da quitação")).toBeInTheDocument();
     expect(screen.getByText(/Parcela 3 em/i)).toBeInTheDocument();
   });
 
@@ -274,10 +303,10 @@ describe("Transactions page", () => {
     render(<Transactions />);
 
     fireEvent.click(screen.getByRole("button", { name: "Importar arquivo" }));
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar importacao mock" }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar importação mock" }));
 
     expect(
-      await screen.findByText("1 transacao importada com sucesso via CSV.")
+      await screen.findByText("1 transação importada com sucesso via CSV.")
     ).toBeInTheDocument();
   });
 

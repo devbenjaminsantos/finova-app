@@ -3,8 +3,37 @@ import {
   rememberPostLoginRedirect,
   touchSessionActivity,
 } from "./auth";
+import i18n from "../../i18n/i18n";
 
 const API_URL = resolveApiUrl();
+
+const ERROR_CODE_TRANSLATIONS = {
+  EMAIL_ALREADY_REGISTERED: "auth:emailAlreadyRegisteredError",
+  EMAIL_NOT_CONFIRMED: "auth:emailNotConfirmedError",
+  INVALID_CREDENTIALS: "auth:invalidCredentialsError",
+  INVALID_RESET_TOKEN: "auth:invalidResetTokenError",
+  INVALID_VERIFICATION_TOKEN: "auth:invalidVerificationTokenError",
+  LOGIN_LOCKED: "auth:loginLockedError",
+  PASSWORD_POLICY: "passwordPolicy:message",
+};
+
+const STATUS_TRANSLATIONS = {
+  400: "common:requestInvalid",
+  401: "common:requestUnauthorized",
+  403: "common:requestForbidden",
+  404: "common:requestNotFound",
+  409: "common:requestConflict",
+  429: "common:requestRateLimited",
+};
+
+export class ApiError extends Error {
+  constructor(message, status, code = null) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
 
 export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem("token");
@@ -24,20 +53,18 @@ export async function apiRequest(path, options = {}) {
       headers,
     });
   } catch {
-    throw new Error(
-      "Não foi possível conectar com a API. Verifique se o back-end está publicado e acessível."
-    );
+    throw new ApiError(i18n.t("common:networkError"), 0);
   }
 
   if (response.status === 401 && token) {
     rememberPostLoginRedirect(window.location.pathname);
     clearStoredSession("expired");
     window.location.href = "/login";
-    throw new Error("Sua sessão expirou. Faça login novamente.");
+    throw new ApiError(i18n.t("common:sessionExpired"), response.status);
   }
 
   if (!response.ok) {
-    let message = "Erro na requisição";
+    let errorPayload = null;
 
     try {
       const contentType = response.headers.get("content-type") || "";
@@ -47,24 +74,18 @@ export async function apiRequest(path, options = {}) {
         contentType.includes("application/problem+json") ||
         contentType.includes("+json")
       ) {
-        const data = await response.json();
-        message =
-          data?.message ||
-          data?.error ||
-          data?.detail ||
-          data?.title ||
-          message;
-      } else {
-        const text = (await response.text()).trim();
-        if (text) {
-          message = text;
-        }
+        errorPayload = await response.json();
       }
     } catch {
-      // Mantém a mensagem padrão se a leitura da resposta falhar.
+      // A interface usa uma mensagem localizada mesmo se a resposta for inválida.
     }
 
-    throw new Error(message);
+    const code = typeof errorPayload?.code === "string" ? errorPayload.code : null;
+    const translationKey = ERROR_CODE_TRANSLATIONS[code] ||
+      STATUS_TRANSLATIONS[response.status] ||
+      "common:requestFailed";
+
+    throw new ApiError(i18n.t(translationKey), response.status, code);
   }
 
   if (response.status === 204) {

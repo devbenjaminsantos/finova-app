@@ -1,6 +1,6 @@
 # Finova
 
-Finova é uma aplicação full stack de controle financeiro pessoal criada para tornar a gestão do dinheiro mais clara, segura e fácil de acompanhar. O projeto começou como um painel financeiro e evoluiu para um produto com cara de SaaS: autenticação, conta demo, gestão de transações, gráficos, metas, recorrências, parcelamentos, contas financeiras, exportações, notificações, painel público em modo leitura e deploy em produção no Azure.
+Finova é uma aplicação full stack de controle financeiro pessoal criada para tornar a gestão do dinheiro mais clara, segura e fácil de acompanhar. O projeto começou como um painel financeiro e evoluiu para um produto com cara de SaaS: autenticação, conta demo, gestão de transações, gráficos, metas, recorrências, parcelamentos, contas financeiras, exportações, notificações, painel público em modo leitura e workflows de implantação voltados para a Azure.
 
 English version: [README.md](README.md)
 
@@ -52,16 +52,15 @@ O Finova permite:
 - SQL Server
 - JWT Bearer Authentication
 - Scalar.AspNetCore
-- Azure Communication Services Email ou SMTP
-- Estrutura de integração Pluggy para fluxos de Open Finance
+- envio de e-mail por SMTP atrás da abstração `IEmailSender`
+- base de backend Pluggy para futuros fluxos de Open Finance
 
 ### Infraestrutura
 
 - Azure Static Web Apps
 - Azure App Service
 - Azure SQL Database
-- Azure Communication Services Email
-- Application Insights
+- GitHub Actions para deploy validado do frontend e da API
 
 ## Arquitetura em resumo
 
@@ -71,7 +70,7 @@ Finova/
 |-- server/
 |   |-- FinanceDashboard.Api/        # API ASP.NET Core
 |   |-- docker-compose.yml           # SQL Server local
-|   `-- .env.example                 # Exemplo de env do banco local
+|   `-- .env.example                 # Exemplo de ambiente local
 |-- tests/
 |   `-- FinanceDashboard.Api.Tests/  # Testes automatizados do backend
 |-- docs/
@@ -84,18 +83,15 @@ Finova/
 
 O frontend chama a API por meio de `VITE_API_URL`. Em produção, essa variável deve apontar para a URL do App Service com `/api`.
 
-## Produção
+## Implantação
 
-Recursos atuais:
+O repositório está preparado para esta arquitetura na Azure:
 
 - Frontend: `Azure Static Web Apps`
 - Backend: `Azure App Service`
 - Banco: `Azure SQL Database`
 
-Links atuais:
-
-- Frontend: `https://polite-ground-038630210.7.azurestaticapps.net`
-- Health check da API: `https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/health`
+As URLs de deploy dependem do ambiente e não ficam fixadas aqui. Depois de uma transferência ou recriação de recursos, use os comandos e a validação pós-deploy do [guia de deploy no Azure](docs/azure-deploy.md) antes de considerar um ambiente ativo.
 
 O domínio customizado planejado é `finovawallet`.
 
@@ -128,10 +124,6 @@ Configurações esperadas:
 - `Jwt__Audience`
 - `Cors__AllowedOrigins__0`
 - `Client__BaseUrl`
-- `Email__Provider`
-- `AzureCommunicationServices__Email__ConnectionString`
-- `AzureCommunicationServices__Email__SenderAddress`
-- `AzureCommunicationServices__Email__SenderName`
 - `Notifications__Enabled`
 - `Notifications__ProcessingIntervalMinutes`
 - `Smtp__Host`
@@ -182,10 +174,10 @@ Em desenvolvimento local, `client/src/lib/api/http.js` usa o fallback:
 http://localhost:5278/api
 ```
 
-Em builds de produção, configure:
+Em builds de produção, configure a URL do App Service ativo:
 
 ```text
-VITE_API_URL=https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/api
+VITE_API_URL=https://HOST-DA-SUA-API.azurewebsites.net/api
 ```
 
 ## Migrações
@@ -211,7 +203,9 @@ Frontend:
 
 ```powershell
 cd client
+npm run lint
 npm test
+npm run build
 ```
 
 End-to-end:
@@ -234,4 +228,6 @@ npm run test:e2e
 - Manter configurações locais do backend fora do Git.
 - Guardar senhas do SQL Server apenas em ambientes seguros.
 - Não expor links de redefinição de senha em logs de produção.
+- Manter `Client__BaseUrl` fixado na origem confiável do frontend.
+- Manter o rate limit ativo nos endpoints públicos de autenticação.
 - Invalidar sessões quando o token expirar ou quando houver inatividade prolongada.

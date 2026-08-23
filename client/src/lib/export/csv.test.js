@@ -20,4 +20,14 @@ describe("csv export helpers", () => {
     expect(csv).toContain('"Plano ""Premium"""');
     expect(csv).toContain('"Linha 1\nLinha 2; final"');
   });
+
+  it("neutralizes spreadsheet formulas in user-controlled cells", () => {
+    const csv = buildCsv([
+      ["Descricao", "Categoria"],
+      ["=HYPERLINK(\"https://example.com\")", "  @SUM(A1:A2)"],
+    ]);
+
+    expect(csv).toContain('"\'=HYPERLINK(""https://example.com"")"');
+    expect(csv).toContain("'  @SUM(A1:A2)");
+  });
 });

@@ -97,7 +97,7 @@ describe("Home page", () => {
   it("shows default widgets on home", async () => {
     renderHome();
 
-    const historyMatches = await screen.findAllByText("Historico recente");
+    const historyMatches = await screen.findAllByText("Histórico recente");
     expect(historyMatches.length).toBeGreaterThan(0);
     expect(screen.getAllByText("Resumo financeiro").length).toBeGreaterThan(0);
     expect(screen.getByText("Saldo global em todas as contas")).toBeInTheDocument();

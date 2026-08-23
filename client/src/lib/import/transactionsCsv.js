@@ -5,6 +5,7 @@ import {
   parseImportMoneyToCents,
   resolveImportCategory,
 } from "./transactionImportUtils";
+import { TransactionImportError } from "./TransactionImportError";
 
 const HEADER_ALIASES = {
   data: "date",
@@ -131,7 +132,7 @@ export function parseTransactionsCsv(text) {
   const normalizedText = String(text ?? "").trim();
 
   if (!normalizedText) {
-    throw new Error("O arquivo CSV esta vazio.");
+    throw new TransactionImportError("CSV_EMPTY");
   }
 
   const delimiter = detectDelimiter(normalizedText);
@@ -141,13 +142,13 @@ export function parseTransactionsCsv(text) {
     .filter(Boolean);
 
   if (lines.length < 2) {
-    throw new Error("O CSV precisa ter cabecalho e pelo menos uma linha de dados.");
+    throw new TransactionImportError("CSV_WITHOUT_DATA");
   }
 
   const headers = mapHeaders(splitCsvLine(lines[0], delimiter));
 
   if (!headers.includes("date") || !headers.includes("description")) {
-    throw new Error("O CSV precisa conter as colunas Data e Descricao.");
+    throw new TransactionImportError("CSV_REQUIRED_COLUMNS");
   }
 
   if (
@@ -156,9 +157,7 @@ export function parseTransactionsCsv(text) {
     !headers.includes("creditAmount") &&
     !headers.includes("debitAmount")
   ) {
-    throw new Error(
-      "O CSV precisa conter uma coluna de Valor, Valor em centavos, Credito ou Debito."
-    );
+    throw new TransactionImportError("CSV_AMOUNT_COLUMN");
   }
 
   return lines.slice(1).map((line, lineIndex) => {
@@ -175,7 +174,7 @@ export function parseTransactionsCsv(text) {
     );
 
     if (!type || !date || !description || !Number.isFinite(amountCents) || amountCents <= 0) {
-      throw new Error(`A linha ${lineIndex + 2} do CSV esta invalida e precisa ser revisada.`);
+      throw new TransactionImportError("CSV_INVALID_ROW", { row: lineIndex + 2 });
     }
 
     return {

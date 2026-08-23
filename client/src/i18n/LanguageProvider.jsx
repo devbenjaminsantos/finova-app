@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import i18n, { STORAGE_KEY } from "./i18n";
 import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, translations } from "./translations";
@@ -126,10 +126,10 @@ export function LanguageProvider({ children }) {
     };
   }, [i18nInstance]);
 
-  function setLanguage(nextLanguage) {
+  const setLanguage = useCallback((nextLanguage) => {
     i18nInstance.changeLanguage(nextLanguage);
     setLanguageState(nextLanguage);
-  }
+  }, [i18nInstance]);
 
   const value = useMemo(() => {
     const baseValue = createI18nValue(language);
@@ -137,11 +137,13 @@ export function LanguageProvider({ children }) {
       ...baseValue,
       setLanguage,
     };
-  }, [language]);
+  }, [language, setLanguage]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
+// The context hook intentionally lives beside its provider.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useI18n() {
   return useContext(LanguageContext);
 }

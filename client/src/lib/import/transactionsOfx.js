@@ -4,6 +4,7 @@ import {
   parseImportMoneyToCents,
   resolveImportCategory,
 } from "./transactionImportUtils";
+import { TransactionImportError } from "./TransactionImportError";
 
 const OFX_TYPE_ALIASES = {
   credit: "income",
@@ -61,13 +62,13 @@ export function parseTransactionsOfx(text) {
   const normalizedText = String(text ?? "").trim();
 
   if (!normalizedText) {
-    throw new Error("O arquivo OFX esta vazio.");
+    throw new TransactionImportError("OFX_EMPTY");
   }
 
   const blocks = getTransactionBlocks(normalizedText);
 
   if (blocks.length === 0) {
-    throw new Error("Não foi encontrada nenhuma transação válida no OFX.");
+    throw new TransactionImportError("OFX_WITHOUT_TRANSACTIONS");
   }
 
   return blocks.map((block, index) => {
@@ -89,7 +90,9 @@ export function parseTransactionsOfx(text) {
       !Number.isFinite(amountCentsSigned) ||
       amountCentsSigned === 0
     ) {
-      throw new Error(`A transacao ${index + 1} do OFX esta invalida e precisa ser revisada.`);
+      throw new TransactionImportError("OFX_INVALID_TRANSACTION", {
+        transaction: index + 1,
+      });
     }
 
     return {

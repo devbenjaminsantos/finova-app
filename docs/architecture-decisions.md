@@ -37,13 +37,19 @@ Impactos:
 
 ## Provedor de e-mail abstraído
 
-O backend suporta SMTP e Azure Communication Services Email.
+Os fluxos de negócio dependem de `IEmailSender`, e a implementação de runtime usa SMTP genérico. A dependência direta do Azure Communication Services Email foi removida para facilitar portabilidade entre contas e provedores.
 
 Motivos:
 
-- permitir desenvolvimento local com SMTP
-- usar um provedor gerenciado em produção
-- trocar implementação sem reescrever os fluxos de negócio
+- usar o mesmo contrato em desenvolvimento e produção
+- evitar acoplamento do domínio a um SDK de nuvem
+- permitir trocar o serviço SMTP sem reescrever os fluxos de negócio
+
+Impactos:
+
+- host, porta, credenciais e remetente SMTP precisam ser configurados por ambiente
+- falhas de envio não devem invalidar links anteriores ainda válidos
+- a entrega real precisa ser validada depois de cada mudança de infraestrutura
 
 ## Contas financeiras como camada central
 
@@ -105,4 +111,3 @@ Motivos:
 - facilitar investigação de alterações importantes
 - proteger a leitura operacional contra logs irrelevantes
 - separar logs técnicos de eventos de negócio quando possível
-

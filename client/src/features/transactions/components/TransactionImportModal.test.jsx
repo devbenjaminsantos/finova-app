@@ -35,11 +35,7 @@ describe("TransactionImportModal", () => {
     expect(input).not.toBeNull();
     await fireEvent.change(input, { target: { files: [file] } });
 
-    await waitFor(() => {
-      expect(
-        screen.getAllByText((content) => content.toLowerCase().includes("histor")).length
-      ).toBeGreaterThan(0);
-    });
+    expect(await screen.findByText("Já existe no histórico")).toBeInTheDocument();
 
     const checkboxes = screen.getAllByRole("checkbox");
     expect(checkboxes[0]).not.toBeChecked();
@@ -156,7 +152,7 @@ describe("TransactionImportModal", () => {
     fireEvent.change(screen.getByLabelText("Aplicar categoria"), {
       target: { value: healthOption?.getAttribute("value") ?? "" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Aplicar cat." }));
+    fireEvent.click(screen.getByRole("button", { name: "Aplicar categoria" }));
 
     const categorySelects = screen.getAllByDisplayValue(healthOption?.textContent ?? "");
     expect(categorySelects.length).toBeGreaterThanOrEqual(2);
@@ -224,7 +220,7 @@ describe("TransactionImportModal", () => {
 
     expect(await screen.findByText("Revisar categoria")).toBeInTheDocument();
     expect(
-      await screen.findByText((content) => content.includes("ainda pedem revisao manual"))
+      await screen.findByText((content) => content.includes("ainda pedem revisão manual"))
     ).toBeInTheDocument();
   });
 
@@ -256,7 +252,7 @@ describe("TransactionImportModal", () => {
       expect(screen.getByText("Mercado")).toBeInTheDocument();
     });
 
-    fireEvent.change(screen.getByLabelText("Substituir descricao"), {
+    fireEvent.change(screen.getByLabelText("Substituir descrição"), {
       target: { value: "Compra cartao final 1234" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Substituir" }));
@@ -304,7 +300,7 @@ describe("TransactionImportModal", () => {
       expect(screen.getByText("Mercado")).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Confirmar importacao/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Confirmar importação/i }));
 
     await waitFor(() => {
       expect(onImport).toHaveBeenCalledWith(

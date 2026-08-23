@@ -58,9 +58,9 @@ describe("Profile page", () => {
     expect(screen.getByLabelText("Quando enviar o aviso")).toHaveValue("90");
     expect(screen.getByLabelText("Receber resumo mensal")).toBeChecked();
     expect(screen.getByLabelText("Dia do envio")).toHaveValue("5");
-    expect(screen.getByText("Historico de notificacoes")).toBeInTheDocument();
+    expect(screen.getByText("Histórico de notificações")).toBeInTheDocument();
     expect(screen.getByText("Alerta de meta mensal - orcamento geral")).toBeInTheDocument();
-    expect(screen.getByText("Dashboard publico")).toBeInTheDocument();
+    expect(screen.getByText("Painel público")).toBeInTheDocument();
     expect(screen.getByDisplayValue("https://finova.app/compartilhado/teste")).toBeInTheDocument();
   });
 
@@ -107,9 +107,9 @@ describe("Profile page", () => {
     });
 
     render(<Profile />);
-    await screen.findByText("Dashboard publico");
+    await screen.findByText("Painel público");
 
-    fireEvent.click(screen.getByLabelText("Dashboard publico ativo"));
+    fireEvent.click(screen.getByLabelText("Painel público ativo"));
 
     await waitFor(() => {
       expect(updatePublicDashboardSettings).toHaveBeenCalledWith(false);

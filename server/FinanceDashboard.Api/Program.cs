@@ -14,9 +14,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,10 +43,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.Configure<PluggyOptions>(
     builder.Configuration.GetSection(PluggyOptions.SectionName));
-builder.Services.Configure<EmailOptions>(
-    builder.Configuration.GetSection(EmailOptions.SectionName));
-builder.Services.Configure<AzureCommunicationServicesEmailOptions>(
-    builder.Configuration.GetSection(AzureCommunicationServicesEmailOptions.SectionName));
 builder.Services.Configure<NotificationOptions>(
     builder.Configuration.GetSection(NotificationOptions.SectionName));
 builder.Services.AddMemoryCache();
@@ -67,26 +65,15 @@ builder.Services.AddScoped<RecurringTransactionGenerationService>();
 builder.Services.AddScoped<PublicDashboardTokenService>();
 builder.Services.AddScoped<FinanceDashboard.Api.Services.Notifications.FinancialEmailAutomationService>();
 builder.Services.AddScoped<IBankSyncProvider, PluggyBankSyncProvider>();
-builder.Services.AddScoped<IBankSyncProvider, PlaceholderBankSyncProvider>();
 builder.Services.AddScoped<CurrentUserService>();
-builder.Services.AddScoped<SmtpEmailSender>();
-builder.Services.AddScoped<AzureCommunicationServicesEmailSender>();
-builder.Services.AddScoped<IEmailSender>(serviceProvider =>
-{
-    var options = serviceProvider
-        .GetRequiredService<Microsoft.Extensions.Options.IOptions<EmailOptions>>()
-        .Value;
-
-    return string.Equals(options.Provider, "AzureCommunicationServices", StringComparison.OrdinalIgnoreCase)
-        ? serviceProvider.GetRequiredService<AzureCommunicationServicesEmailSender>()
-        : serviceProvider.GetRequiredService<SmtpEmailSender>();
-});
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<FinanceDashboard.Api.Services.Notifications.FinancialEmailAutomationHostedService>();
 
 var jwtKey = GetRequiredJwtKey(builder.Configuration);
 var allowedOrigins = GetAllowedCorsOrigins(builder.Configuration);
+_ = GetRequiredClientBaseUrl(builder.Configuration);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -145,6 +132,31 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.ContentType = "application/problem+json";
+        await context.HttpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        {
+            Status = StatusCodes.Status429TooManyRequests,
+            Title = "Muitas solicitações. Aguarde um momento antes de tentar novamente."
+        }, cancellationToken: cancellationToken);
+    };
+
+    options.AddPolicy("auth", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: $"{httpContext.Connection.RemoteIpAddress}:{httpContext.Request.Path.Value?.ToLowerInvariant()}",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 30,
+                QueueLimit = 0,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+});
+
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddOpenApi();
@@ -152,7 +164,7 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-LogEmailConfigurationStatus(app);
+ValidateSmtpConfiguration(app);
 
 app.UseExceptionHandler(exceptionHandlerApp =>
 {
@@ -207,8 +219,23 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors("frontend");
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+    app.Use(async (context, next) =>
+    {
+        context.Response.Headers.XContentTypeOptions = "nosniff";
+        context.Response.Headers.XFrameOptions = "DENY";
+        context.Response.Headers["Referrer-Policy"] = "no-referrer";
+        context.Response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+        context.Response.Headers.ContentSecurityPolicy = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'";
+        await next();
+    });
+}
+
 app.UseHttpsRedirection();
+app.UseCors("frontend");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -217,34 +244,24 @@ app.MapControllers();
 
 app.Run();
 
-static void LogEmailConfigurationStatus(WebApplication app)
+static void ValidateSmtpConfiguration(WebApplication app)
 {
     var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("EmailConfiguration");
-    var provider = app.Configuration["Email:Provider"] ?? "Smtp";
-
-    logger.LogInformation("Provedor de e-mail configurado: {Provider}.", provider);
-
-    if (string.Equals(provider, "AzureCommunicationServices", StringComparison.OrdinalIgnoreCase))
-    {
-        var connectionString = app.Configuration["AzureCommunicationServices:Email:ConnectionString"];
-        var senderAddress = app.Configuration["AzureCommunicationServices:Email:SenderAddress"];
-
-        if (string.IsNullOrWhiteSpace(connectionString) || string.IsNullOrWhiteSpace(senderAddress))
-        {
-            logger.LogWarning(
-                "Azure Communication Services Email incompleto. Verifique AzureCommunicationServices__Email__ConnectionString e AzureCommunicationServices__Email__SenderAddress.");
-        }
-
-        return;
-    }
+    logger.LogInformation("Provedor de e-mail configurado: SMTP.");
 
     var smtpHost = app.Configuration["Smtp:Host"];
     var smtpFromEmail = app.Configuration["Smtp:FromEmail"];
 
     if (string.IsNullOrWhiteSpace(smtpHost) || string.IsNullOrWhiteSpace(smtpFromEmail))
     {
-        logger.LogWarning(
-            "SMTP incompleto. Como Email__Provider não está definido como AzureCommunicationServices, a API tentará usar SMTP. Verifique Smtp__Host e Smtp__FromEmail.");
+        const string message = "SMTP incompleto. Verifique Smtp__Host e Smtp__FromEmail.";
+
+        if (!app.Environment.IsDevelopment())
+        {
+            throw new InvalidOperationException(message);
+        }
+
+        logger.LogWarning(message);
     }
 }
 
@@ -285,4 +302,18 @@ static string[] GetAllowedCorsOrigins(IConfiguration configuration)
     }
 
     return allowedOrigins;
+}
+
+static string GetRequiredClientBaseUrl(IConfiguration configuration)
+{
+    var clientBaseUrl = configuration["Client:BaseUrl"]?.TrimEnd('/');
+
+    if (!Uri.TryCreate(clientBaseUrl, UriKind.Absolute, out var clientUri) ||
+        clientUri.Scheme is not ("http" or "https"))
+    {
+        throw new InvalidOperationException(
+            "Client:BaseUrl não configurada. Defina uma URL absoluta para o frontend.");
+    }
+
+    return clientBaseUrl;
 }

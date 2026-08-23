@@ -68,9 +68,12 @@ export default function ResetPassword() {
 
           <form onSubmit={handleSubmit} className="d-grid gap-3">
             <div>
-              <label className="form-label text-dark fw-medium">{t("common.newPassword")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="reset-new-password">
+                {t("common.newPassword")}
+              </label>
               <div className="input-group">
                 <input
+                  id="reset-new-password"
                   type={isNewPasswordVisible ? "text" : "password"}
                   className="form-control finova-input"
                   value={newPassword}
@@ -88,9 +91,12 @@ export default function ResetPassword() {
             </div>
 
             <div>
-              <label className="form-label text-dark fw-medium">{t("common.confirmPassword")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="reset-confirm-password">
+                {t("common.confirmPassword")}
+              </label>
               <div className="input-group">
                 <input
+                  id="reset-confirm-password"
                   type={isConfirmPasswordVisible ? "text" : "password"}
                   className="form-control finova-input"
                   value={confirmPassword}

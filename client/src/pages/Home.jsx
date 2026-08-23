@@ -544,14 +544,6 @@ export default function Home() {
     };
   }, [user, onboardingCompleted]);
 
-  function handleToggleWidget(widgetKey) {
-    const nextWidgets = saveHomeWidgets(user, {
-      ...widgets,
-      [widgetKey]: !widgets[widgetKey],
-    });
-    setWidgets(nextWidgets);
-  }
-
   function handleResetWidgets() {
     const nextWidgets = saveHomeWidgets(user, DEFAULT_HOME_WIDGETS);
     setWidgets(nextWidgets);
@@ -571,8 +563,11 @@ export default function Home() {
         <div className="finova-page-header-side">
           <div className="d-grid gap-2">
             <div>
-              <label className="form-label text-dark fw-medium">{t("pages.homePeriod")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="home-period">
+                {t("pages.homePeriod")}
+              </label>
               <select
+                id="home-period"
                 className="form-select finova-select"
                 value={period}
                 onChange={(event) => setPeriod(event.target.value)}
@@ -586,8 +581,11 @@ export default function Home() {
             </div>
 
             <div>
-              <label className="form-label text-dark fw-medium">{t("pages.displayedAccountLabel")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="home-account">
+                {t("pages.displayedAccountLabel")}
+              </label>
               <select
+                id="home-account"
                 className="form-select finova-select"
                 value={accountFilter}
                 onChange={(event) => setAccountFilter(event.target.value)}

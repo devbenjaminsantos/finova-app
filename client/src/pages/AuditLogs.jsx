@@ -45,7 +45,7 @@ export default function AuditLogs() {
     return () => {
       active = false;
     };
-  }, [limit]);
+  }, [limit, t]);
 
   const visibleLogs = useMemo(
     () => logs.filter((log) => VISIBLE_AUDIT_ACTIONS.has(log.action)),
@@ -63,8 +63,11 @@ export default function AuditLogs() {
         </div>
 
         <div className="finova-page-header-side">
-          <label className="form-label text-dark fw-medium">{t("pages.historyLimit")}</label>
+          <label className="form-label text-dark fw-medium" htmlFor="history-limit">
+            {t("pages.historyLimit")}
+          </label>
           <select
+            id="history-limit"
             className="form-select finova-select"
             value={limit}
             onChange={(event) => setLimit(Number(event.target.value))}

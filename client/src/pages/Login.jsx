@@ -7,7 +7,7 @@ import {
   consumePostLoginRedirect,
   consumeStoredLogoutReason,
   demoLoginRequest,
-  getLogoutMessage,
+  getLogoutMessageKey,
   hasValidSession,
   loginRequest,
   resendEmailVerificationRequest,
@@ -21,7 +21,11 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState("");
-  const [info, setInfo] = useState(() => getLogoutMessage(consumeStoredLogoutReason()));
+  const [errorCode, setErrorCode] = useState(null);
+  const [info, setInfo] = useState(() => {
+    const messageKey = getLogoutMessageKey(consumeStoredLogoutReason());
+    return messageKey ? t(messageKey) : "";
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDemoSubmitting, setIsDemoSubmitting] = useState(false);
   const [isResendingVerification, setIsResendingVerification] = useState(false);
@@ -31,11 +35,12 @@ export default function Login() {
   }
 
   const shouldShowResendVerification =
-    /confirme seu e-mail|confirm your email/i.test(error) && email.trim();
+    errorCode === "EMAIL_NOT_CONFIRMED" && email.trim();
 
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
+    setErrorCode(null);
     setInfo("");
     setIsSubmitting(true);
 
@@ -45,6 +50,7 @@ export default function Login() {
       navigate(consumePostLoginRedirect(), { replace: true });
     } catch (requestError) {
       setError(requestError.message || t("auth.loginError"));
+      setErrorCode(requestError.code || null);
     } finally {
       setIsSubmitting(false);
     }
@@ -52,6 +58,7 @@ export default function Login() {
 
   async function handleDemoLogin() {
     setError("");
+    setErrorCode(null);
     setInfo(t("auth.preparingDemo"));
     setIsDemoSubmitting(true);
 
@@ -75,8 +82,8 @@ export default function Login() {
     setIsResendingVerification(true);
 
     try {
-      const response = await resendEmailVerificationRequest(email);
-      setInfo(response.message || t("auth.resendVerificationSuccess"));
+      await resendEmailVerificationRequest(email);
+      setInfo(t("auth.resendVerificationSuccess"));
     } catch (requestError) {
       setError(requestError.message || t("auth.verifyError"));
     } finally {
@@ -136,8 +143,11 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="d-grid gap-3">
             <div>
-              <label className="form-label text-dark fw-medium">{t("common.email")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="login-email">
+                {t("common.email")}
+              </label>
               <input
+                id="login-email"
                 type="email"
                 className="form-control finova-input"
                 value={email}
@@ -150,7 +160,9 @@ export default function Login() {
 
             <div>
               <div className="d-flex justify-content-between align-items-center">
-                <label className="form-label text-dark fw-medium">{t("common.password")}</label>
+                <label className="form-label text-dark fw-medium" htmlFor="login-password">
+                  {t("common.password")}
+                </label>
                 <Link
                   to="/forgot-password"
                   className="small text-decoration-none fw-semibold mb-2 finova-auth-link"
@@ -160,6 +172,7 @@ export default function Login() {
               </div>
               <div className="input-group">
                 <input
+                  id="login-password"
                   type={isPasswordVisible ? "text" : "password"}
                   className="form-control finova-input"
                   value={password}

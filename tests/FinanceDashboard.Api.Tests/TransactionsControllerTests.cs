@@ -321,6 +321,45 @@ public class TransactionsControllerTests
     }
 
     [Fact]
+    public async Task Import_RejectsFinancialAccountFromAnotherUser()
+    {
+        using var context = CreateContext();
+        context.FinancialAccounts.Add(new FinancialAccount
+        {
+            UserId = 99,
+            Provider = "manual",
+            InstitutionName = "Banco externo",
+            AccountName = "Conta externa",
+            Status = "pending"
+        });
+        await context.SaveChangesAsync();
+
+        var foreignAccountId = await context.FinancialAccounts.Select(account => account.Id).SingleAsync();
+        var controller = CreateController(context, userId: 15);
+        var dto = new TransactionImportRequest
+        {
+            ImportFormat = "csv",
+            Transactions =
+            {
+                new TransactionImportItemRequest
+                {
+                    Description = "Transacao indevida",
+                    Category = "Outros",
+                    AmountCents = 1000,
+                    Date = new DateTime(2026, 4, 11),
+                    Type = "expense",
+                    FinancialAccountId = foreignAccountId
+                }
+            }
+        };
+
+        var result = await controller.Import(dto);
+
+        Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Empty(context.Transactions);
+    }
+
+    [Fact]
     public async Task Update_ReturnsNotFound_WhenTransactionBelongsToAnotherUser()
     {
         using var context = CreateContext();
@@ -372,6 +411,39 @@ public class TransactionsControllerTests
         Assert.Equal(92000, entity.AmountCents);
         Assert.Equal("Mercado atualizado", payload.Description);
         Assert.Contains(context.AuditLogs, log => log.Action == "transaction.updated" && log.EntityId == ownedTransaction.Id.ToString());
+    }
+
+    [Fact]
+    public async Task Update_RejectsFinancialAccountFromAnotherUser()
+    {
+        using var context = CreateContext();
+        SeedTransactions(context);
+        context.FinancialAccounts.Add(new FinancialAccount
+        {
+            UserId = 2,
+            Provider = "manual",
+            InstitutionName = "Banco externo",
+            AccountName = "Conta externa",
+            Status = "pending"
+        });
+        await context.SaveChangesAsync();
+
+        var ownedTransaction = await context.Transactions.FirstAsync(transaction => transaction.UserId == 1);
+        var foreignAccountId = await context.FinancialAccounts.Select(account => account.Id).SingleAsync();
+        var controller = CreateController(context, userId: 1);
+
+        var result = await controller.Update(ownedTransaction.Id, new TransactionUpdateRequest
+        {
+            Description = ownedTransaction.Description,
+            Category = ownedTransaction.Category,
+            AmountCents = ownedTransaction.AmountCents,
+            Date = ownedTransaction.Date,
+            Type = ownedTransaction.Type,
+            FinancialAccountId = foreignAccountId
+        });
+
+        Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Null(ownedTransaction.FinancialAccountId);
     }
 
     [Fact]

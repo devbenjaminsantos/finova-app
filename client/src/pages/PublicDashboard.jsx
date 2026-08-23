@@ -51,7 +51,7 @@ export default function PublicDashboard() {
     };
   }, [token, t]);
 
-  const transactions = dashboard?.transactions ?? [];
+  const transactions = useMemo(() => dashboard?.transactions ?? [], [dashboard]);
 
   const selectedPeriodLabel = useMemo(
     () => periodOptions.find((option) => option.value === period)?.label ?? t("dashboard.focusMonth"),
@@ -89,8 +89,11 @@ export default function PublicDashboard() {
         </div>
 
         <div className="finova-page-header-side">
-          <label className="form-label text-dark fw-medium">{t("pages.dashboardPeriod")}</label>
+          <label className="form-label text-dark fw-medium" htmlFor="public-dashboard-period">
+            {t("pages.dashboardPeriod")}
+          </label>
           <select
+            id="public-dashboard-period"
             className="form-select finova-select"
             value={period}
             onChange={(event) => setPeriod(event.target.value)}

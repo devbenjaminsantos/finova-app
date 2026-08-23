@@ -8,6 +8,11 @@ describe("pdf export helpers", () => {
       subtitle: "Periodo filtrado",
       columns: ["Data", "Descricao", "Categoria", "Tipo", "Valor"],
       rows: [["14/04/2026", "Mercado", "Alimentacao", "Despesa", "R$ 120,00"]],
+      emptyMessage: "Nenhuma transacao encontrada.",
+      generatedAtLabel: "Gerado em",
+      pageLabel: "Pagina",
+      pageOfLabel: "de",
+      locale: "pt-BR",
     });
 
     expect(pdf.startsWith("%PDF-1.4")).toBe(true);

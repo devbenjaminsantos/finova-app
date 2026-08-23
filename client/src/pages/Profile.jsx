@@ -237,8 +237,11 @@ export default function Profile() {
               </div>
 
               <div className="col-12 col-md-6">
-                <label className="form-label text-dark fw-medium">{t("common.name")}</label>
+                <label className="form-label text-dark fw-medium" htmlFor="profile-name">
+                  {t("common.name")}
+                </label>
                 <input
+                  id="profile-name"
                   type="text"
                   className="form-control finova-input"
                   value={form.name}
@@ -251,8 +254,11 @@ export default function Profile() {
               </div>
 
               <div className="col-12 col-md-6">
-                <label className="form-label text-dark fw-medium">{t("common.email")}</label>
+                <label className="form-label text-dark fw-medium" htmlFor="profile-email">
+                  {t("common.email")}
+                </label>
                 <input
+                  id="profile-email"
                   type="email"
                   className="form-control finova-input"
                   value={form.email}
@@ -393,9 +399,12 @@ export default function Profile() {
               </div>
 
               <div className="col-12 col-md-4">
-                <label className="form-label text-dark fw-medium">{t("common.currentPassword")}</label>
+                <label className="form-label text-dark fw-medium" htmlFor="profile-current-password">
+                  {t("common.currentPassword")}
+                </label>
                 <div className="input-group">
                   <input
+                    id="profile-current-password"
                     type={isCurrentPasswordVisible ? "text" : "password"}
                     className="form-control finova-input"
                     value={form.currentPassword}
@@ -411,9 +420,12 @@ export default function Profile() {
               </div>
 
               <div className="col-12 col-md-4">
-                <label className="form-label text-dark fw-medium">{t("common.newPassword")}</label>
+                <label className="form-label text-dark fw-medium" htmlFor="profile-new-password">
+                  {t("common.newPassword")}
+                </label>
                 <div className="input-group">
                   <input
+                    id="profile-new-password"
                     type={isNewPasswordVisible ? "text" : "password"}
                     className="form-control finova-input"
                     value={form.newPassword}
@@ -430,9 +442,12 @@ export default function Profile() {
               </div>
 
               <div className="col-12 col-md-4">
-                <label className="form-label text-dark fw-medium">{t("common.confirmPassword")}</label>
+                <label className="form-label text-dark fw-medium" htmlFor="profile-confirm-password">
+                  {t("common.confirmPassword")}
+                </label>
                 <div className="input-group">
                   <input
+                    id="profile-confirm-password"
                     type={isConfirmPasswordVisible ? "text" : "password"}
                     className="form-control finova-input"
                     value={form.confirmPassword}

@@ -43,7 +43,15 @@ function toPdfHexString(value) {
   return `<${hex}>`;
 }
 
-function buildTableLines({ title, subtitle, columns, rows }) {
+function buildTableLines({
+  title,
+  subtitle,
+  columns,
+  rows,
+  emptyMessage,
+  generatedAtLabel,
+  locale,
+}) {
   const columnWidths = [12, 24, 18, 10, 14];
   const visibleRows = rows.map((row) => [
     row[0],
@@ -72,12 +80,12 @@ function buildTableLines({ title, subtitle, columns, rows }) {
             )
           )
         )
-      : ["Nenhuma transação encontrada para os filtros selecionados."];
+      : [emptyMessage];
 
   return [
     title,
     subtitle,
-    `Gerado em ${new Date().toLocaleString("pt-BR")}`,
+    `${generatedAtLabel} ${new Date().toLocaleString(locale)}`,
     "",
     headerLine,
     separatorLine,
@@ -96,7 +104,7 @@ function buildPageChunks(lines) {
   return pages;
 }
 
-function buildContentStream(lines, pageNumber, pageCount) {
+function buildContentStream(lines, pageNumber, pageCount, pageLabel, pageOfLabel) {
   const commands = [
     "BT",
     "/F1 12 Tf",
@@ -115,7 +123,9 @@ function buildContentStream(lines, pageNumber, pageCount) {
   });
 
   commands.push("T*");
-  commands.push(`${toPdfHexString(`Pagina ${pageNumber} de ${pageCount}`)} Tj`);
+  commands.push(
+    `${toPdfHexString(`${pageLabel} ${pageNumber} ${pageOfLabel} ${pageCount}`)} Tj`
+  );
   commands.push("ET");
 
   return commands.join("\n");
@@ -127,7 +137,7 @@ function buildPdfDocument(pageContents) {
   const fontObjectId = 3;
   let nextObjectId = 4;
 
-  pageContents.forEach((content, index) => {
+  pageContents.forEach((content) => {
     const contentObjectId = nextObjectId++;
     const pageObjectId = nextObjectId++;
 
@@ -181,11 +191,29 @@ function buildPdfDocument(pageContents) {
   return pdf;
 }
 
-export function buildTransactionsPdf({ title, subtitle, columns, rows }) {
-  const lines = buildTableLines({ title, subtitle, columns, rows });
+export function buildTransactionsPdf({
+  title,
+  subtitle,
+  columns,
+  rows,
+  emptyMessage,
+  generatedAtLabel,
+  pageLabel,
+  pageOfLabel,
+  locale,
+}) {
+  const lines = buildTableLines({
+    title,
+    subtitle,
+    columns,
+    rows,
+    emptyMessage,
+    generatedAtLabel,
+    locale,
+  });
   const pages = buildPageChunks(lines);
   const pageContents = pages.map((pageLines, index) =>
-    buildContentStream(pageLines, index + 1, pages.length)
+    buildContentStream(pageLines, index + 1, pages.length, pageLabel, pageOfLabel)
   );
 
   return buildPdfDocument(pageContents);
@@ -204,13 +232,8 @@ export function downloadPdf(filename, pdfContent) {
   URL.revokeObjectURL(url);
 }
 
-export function exportTransactionsToPdf({ filename, title, subtitle, columns, rows }) {
-  const pdfContent = buildTransactionsPdf({
-    title,
-    subtitle,
-    columns,
-    rows,
-  });
+export function exportTransactionsToPdf({ filename, ...documentOptions }) {
+  const pdfContent = buildTransactionsPdf(documentOptions);
 
   downloadPdf(filename, pdfContent);
 }

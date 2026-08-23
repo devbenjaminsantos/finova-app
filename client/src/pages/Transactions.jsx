@@ -72,7 +72,7 @@ function applyTransactionFilters(
 }
 
 export default function Transactions() {
-  const { t, formatCurrencyFromCents, formatDate } = useI18n();
+  const { t, formatCurrencyFromCents, formatDate, locale } = useI18n();
   const {
     transactions,
     installmentPlans = [],
@@ -506,17 +506,17 @@ export default function Transactions() {
         t("common.tags"),
         t("common.type"),
         t("common.value"),
-        "Cents",
+        t("transactions.exportAmountCents"),
       ],
       ...getExportRows(),
     ];
 
-    const monthLabel = month || "todos";
+    const monthLabel = month || t("transactions.exportAllPeriodsFilename");
     downloadCsv(`finova-transacoes-${monthLabel}.csv`, rows);
   }
 
   function exportFilteredTransactionsPdf() {
-    const monthLabel = month || "todos";
+    const monthLabel = month || t("transactions.exportAllPeriodsFilename");
 
     exportTransactionsToPdf({
       filename: `finova-transacoes-${monthLabel}.pdf`,
@@ -533,12 +533,21 @@ export default function Transactions() {
         t("common.date"),
         t("common.description"),
         t("common.category"),
-        t("common.tags"),
         t("common.type"),
         t("common.value"),
-        "Cents",
       ],
-      rows: getExportRows(),
+      rows: filtered.map((transaction) => [
+        formatDate(transaction.date),
+        transaction.description || "",
+        transaction.category || t("transactions.noCategory"),
+        transaction.type === "income" ? t("transactions.income") : t("transactions.expense"),
+        formatCurrencyFromCents(transaction.amountCents),
+      ]),
+      emptyMessage: t("transactions.pdfEmpty"),
+      generatedAtLabel: t("transactions.pdfGeneratedAt"),
+      pageLabel: t("transactions.pdfPage"),
+      pageOfLabel: t("transactions.pdfOf"),
+      locale,
     });
   }
 

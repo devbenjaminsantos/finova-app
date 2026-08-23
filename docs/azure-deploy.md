@@ -1,115 +1,106 @@
 # Deploy no Azure
 
-Este projeto usa três recursos separados no Azure:
+O Finova usa recursos independentes para frontend, API e banco:
 
-- frontend React/Vite em `Azure Static Web Apps`
-- backend ASP.NET Core em `Azure App Service`
-- banco em `Azure SQL Database`
+- React/Vite no `Azure Static Web Apps`
+- ASP.NET Core no `Azure App Service`
+- SQL Server no `Azure SQL Database`
+- SMTP externo para e-mails transacionais e notificações
 
-## Recursos
+Os nomes e hosts podem mudar após transferência de assinatura ou recriação de recursos. Por isso, este guia não trata URLs históricas como atuais.
 
-- Grupo de recursos: `rg-finova`
-- Static Web App: `polite-ground-038630210.7.azurestaticapps.net`
-- App Service: `finova-api`
-- Azure SQL Server: `finovasqlserver.database.windows.net`
-- Azure SQL Database: `finova-db`
+## Descobrir os recursos ativos
+
+Confirme primeiro a assinatura selecionada:
+
+```powershell
+az account show --query "{name:name,id:id,tenantId:tenantId}" --output table
+```
+
+Liste os recursos disponíveis:
+
+```powershell
+az group list --query "[].{name:name,location:location}" --output table
+az staticwebapp list --query "[].{name:name,group:resourceGroup,host:defaultHostname}" --output table
+az webapp list --query "[].{name:name,group:resourceGroup,host:defaultHostName,state:state}" --output table
+az sql server list --query "[].{name:name,group:resourceGroup,host:fullyQualifiedDomainName}" --output table
+```
+
+Depois de identificar o grupo e o servidor SQL:
+
+```powershell
+az sql db list --resource-group <GRUPO> --server <SERVIDOR-SQL> --output table
+```
+
+Não coloque IDs de assinatura, tokens, perfis de publicação, senhas ou connection strings na documentação.
 
 ## Frontend
 
-O workflow real do frontend está em:
+O workflow versionado está em:
 
 ```text
-.github/workflows/azure-static-web-apps-polite-ground-038630210.yml
+.github/workflows/azure-static-web-apps-thankful-dune-0335cc110.yml
 ```
 
-Configuração do Static Web Apps:
+Antes do deploy, ele executa `npm ci`, auditoria de dependências, lint, testes e build. O artefato `client/dist` é publicado sem um segundo build dentro da action do Azure.
 
-- `App location`: `client`
-- `Api location`: vazio
-- `Output location`: `dist`
+Secrets necessários no GitHub Actions:
 
-Secrets do GitHub Actions:
-
-- `AZURE_STATIC_WEB_APPS_API_TOKEN`
-- `AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GROUND_038630210`
+- `AZURE_STATIC_WEB_APPS_API_TOKEN_THANKFUL_DUNE_0335CC110`
 - `VITE_API_URL`
 
-Use `AZURE_STATIC_WEB_APPS_API_TOKEN` para o token do Static Web App atual. O secret com sufixo
-`POLITE_GROUND_038630210` ficou apenas como fallback de compatibilidade com o recurso antigo.
-
-Valor atual de `VITE_API_URL`:
+`VITE_API_URL` deve terminar em `/api`:
 
 ```text
-https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/api
+https://<HOST-DO-APP-SERVICE>/api
 ```
 
-## Backend
-
-O workflow da API está em:
+Se o Static Web App for recriado ou movido, copie um deployment token do recurso ativo e atualize o secret correspondente:
 
 ```text
-.github/workflows/deploy-api-azure.yml
+Azure Portal > Static Web App > Manage deployment token
+GitHub > Settings > Secrets and variables > Actions
 ```
 
-Ele publica o projeto:
-
-```text
-server/FinanceDashboard.Api/FinanceDashboard.Api.csproj
-```
-
-Secret do GitHub Actions:
-
-- `AZURE_WEBAPP_PUBLISH_PROFILE`
-
-Esse valor vem de:
-
-```text
-Azure Portal > App Service > Visão geral > Obter perfil de publicação
-```
-
-## Erro: token inválido do Static Web Apps
-
-Se o deploy do frontend falhar com:
+O erro abaixo normalmente indica token associado a outro recurso:
 
 ```text
 No matching Static Web App was found or the api key was invalid.
 ```
 
-confirme estes pontos:
+## Backend
 
-1. O workflow ativo deve ser `.github/workflows/azure-static-web-apps-polite-ground-038630210.yml`.
-2. O workflow deve usar o secret `AZURE_STATIC_WEB_APPS_API_TOKEN`.
-3. Esse secret deve conter o deployment token do recurso atual no Azure Static Web Apps.
-
-Para gerar/copiar o token correto:
+O workflow versionado está em:
 
 ```text
-Azure Portal > Static Web App atual > Manage deployment token
+.github/workflows/main_finova-api.yml
 ```
 
-Depois atualize o valor em:
+Ele restaura, compila, testa, audita dependências e publica:
 
 ```text
-GitHub > Settings > Secrets and variables > Actions > Repository secrets
+server/FinanceDashboard.Api/FinanceDashboard.Api.csproj
 ```
 
-Se o Static Web App foi recriado ou conectado a outro repositório, prefira resetar/copiar o token do
-recurso atual e salvar em `AZURE_STATIC_WEB_APPS_API_TOKEN`, em vez de reaproveitar um secret gerado
-com o nome do recurso antigo.
+Secret necessário:
 
-## Variáveis da API no App Service
+- `AZURE_WEBAPP_PUBLISH_PROFILE`
 
-No `Azure Portal > App Service > Configurações > Variáveis de ambiente`, configure:
+Após mover ou recriar o App Service, gere um novo perfil de publicação e substitua o secret. Um perfil antigo permanece vinculado ao recurso anterior.
+
+Como melhoria futura, o perfil de publicação pode ser substituído por autenticação OIDC. Essa troca exige criar a credencial federada na conta Azure ativa antes de alterar o workflow.
+
+## Variáveis da API
+
+No `App Service > Configuração > Variáveis de ambiente`, configure:
 
 - `Jwt__Key`
 - `Jwt__Issuer`
 - `Jwt__Audience`
 - `Cors__AllowedOrigins__0`
 - `Client__BaseUrl`
-- `Email__Provider`
-- `AzureCommunicationServices__Email__ConnectionString`
-- `AzureCommunicationServices__Email__SenderAddress`
-- `AzureCommunicationServices__Email__SenderName`
+- `Notifications__Enabled`
+- `Notifications__ProcessingIntervalMinutes`
 - `Smtp__Host`
 - `Smtp__Port`
 - `Smtp__Username`
@@ -120,16 +111,18 @@ No `Azure Portal > App Service > Configurações > Variáveis de ambiente`, conf
 - `Demo__Enabled`
 - `Demo__Email`
 - `Demo__Password`
+- `Pluggy__ClientId`, quando a integração estiver em uso
+- `Pluggy__ClientSecret`, quando a integração estiver em uso
 
-Valores esperados:
+Valores não secretos de referência:
 
 ```text
 Jwt__Issuer=FinanceDashboard
 Jwt__Audience=FinanceDashboard
-Cors__AllowedOrigins__0=https://polite-ground-038630210.7.azurestaticapps.net
-Client__BaseUrl=https://polite-ground-038630210.7.azurestaticapps.net
-Email__Provider=AzureCommunicationServices
-AzureCommunicationServices__Email__SenderName=Finova
+Cors__AllowedOrigins__0=https://<HOST-DO-FRONTEND>
+Client__BaseUrl=https://<HOST-DO-FRONTEND>
+Notifications__Enabled=true
+Notifications__ProcessingIntervalMinutes=60
 Smtp__Port=587
 Smtp__FromName=Finova
 Smtp__EnableSsl=true
@@ -137,80 +130,70 @@ Demo__Enabled=true
 Demo__Email=demo@finova.app
 ```
 
-Para usar o Azure Communication Services Email, configure `Email__Provider=AzureCommunicationServices`
-e preencha `AzureCommunicationServices__Email__ConnectionString` e
-`AzureCommunicationServices__Email__SenderAddress`. Se `Email__Provider` não estiver definido, a API usa
-SMTP por padrão; nesse caso, todos os campos `Smtp__*` necessários precisam estar preenchidos.
+`Client__BaseUrl` é obrigatório e deve ser uma URL absoluta confiável. Ele é usado nos links de confirmação, redefinição de senha e painel público.
 
-`Demo__Password` pode ser uma senha forte interna; o usuário final não precisa digitá-la quando usa o botão de demonstração.
+O backend usa somente SMTP por meio de `IEmailSender`. Não há dependência de runtime do Azure Communication Services.
 
-Em `Cadeias de conexão`, configure:
+## Banco de dados
 
-- `Nome`: `Default`
-- `Tipo`: `SQLAzure`
-
-Exemplo de valor:
+Configure a connection string com o nome `Default` no App Service. O código também aceita a variável:
 
 ```text
-Server=tcp:finovasqlserver.database.windows.net,1433;Initial Catalog=finova-db;Persist Security Info=False;User ID=finovadmin;Password=SUA-SENHA;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+ConnectionStrings__Default
 ```
 
-## Recuperação de senha
+Use criptografia e não registre o valor real no repositório:
 
-O fluxo usa tokens de uso único na tabela `PasswordResetTokens`.
+```text
+Server=tcp:<SERVIDOR>.database.windows.net,1433;Initial Catalog=<BANCO>;Persist Security Info=False;User ID=<USUARIO>;Password=<SENHA>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+```
 
-Depois de publicar a API, aplique a migration nova:
+Depois de uma migration nova:
 
 ```powershell
-cd server\FinanceDashboard.Api
-dotnet ef database update
+dotnet ef database update --project server/FinanceDashboard.Api/FinanceDashboard.Api.csproj
 ```
 
-Para produção, configure SMTP no `App Service`; sem SMTP, o token é gerado, mas o e-mail não será enviado.
+## E-mail e recuperação de senha
 
-Para testes controlados, é possível habilitar temporariamente:
+Valide o SMTP com uma conta controlada antes de abrir o cadastro ao público. Em produção, quando o envio de um novo link falha, o token recém-criado é removido e links anteriores ainda válidos são preservados.
+
+Somente em desenvolvimento controlado é possível expor a URL de redefinição na resposta:
 
 ```text
 PasswordReset__ExposeResetUrlInResponse=true
 ```
 
-Não deixe essa configuração ativa em produção aberta.
+Nunca deixe essa opção ativa em produção pública.
 
-## Domínio Customizado
+## Transferência ou recriação
 
-Para trocar o domínio do frontend:
+Após mover recursos para outra conta ou assinatura:
 
-1. Compre ou use um domínio existente.
-2. No `Static Web App`, abra `Custom domains`.
-3. Adicione o domínio desejado.
-4. Configure os registros DNS indicados pelo Azure.
-5. Aguarde a validação e emissão do certificado.
-6. Atualize no `App Service`:
-   - `Cors__AllowedOrigins__0=https://SEU-DOMINIO`
-   - `Client__BaseUrl=https://SEU-DOMINIO`
-7. Atualize links/documentação do projeto.
+1. Selecione a assinatura correta com `az account set --subscription <ID-OU-NOME>`.
+2. Consulte os novos hosts com os comandos deste guia.
+3. Atualize `VITE_API_URL` no GitHub.
+4. Atualize `Cors__AllowedOrigins__0` e `Client__BaseUrl` no App Service.
+5. Gere novos deployment token e publish profile.
+6. Reaplique variáveis, connection string, regras de rede e credenciais SMTP.
+7. Revise DNS e domínios customizados.
+8. Execute todas as validações abaixo.
 
-Se também quiser customizar o domínio da API, configure um domínio separado, por exemplo:
+## Validação pós-deploy
 
-```text
-api.seu-dominio.com
-```
+Confirme, nesta ordem:
 
-Depois atualize no GitHub Actions:
+1. `https://<HOST-DA-API>/health` responde `200` com `{"status":"ok"}`.
+2. O frontend carrega sem erro no console.
+3. Cadastro envia o e-mail de confirmação.
+4. Confirmação permite login.
+5. Recuperação envia um link utilizável uma única vez.
+6. Rotas autenticadas rejeitam chamadas sem JWT.
+7. Conta demo, CRUD de transações, importação e exportação funcionam.
+8. Os workflows do GitHub terminam sem pular lint ou testes.
 
-```text
-VITE_API_URL=https://api.seu-dominio.com/api
-```
+## Rede
 
-## Validações
+Na arquitetura atual, o frontend precisa alcançar a API pela internet. O App Service pode manter acesso público, enquanto JWT, CORS, rate limit e autorização protegem a superfície da aplicação.
 
-Teste estes endereços depois do deploy:
-
-- frontend: `https://polite-ground-038630210.7.azurestaticapps.net`
-- health da API: `https://finova-api-b9g4bpcadyegheed.brazilsouth-01.azurewebsites.net/health`
-- recuperação: `/forgot-password`
-- redefinição: `/reset-password?token=...`
-
-## Observação Sobre Acesso Público
-
-O `App Service` deve ficar `Public` no acesso de rede para o frontend conseguir chamar a API. A proteção dos endpoints continua sendo feita pelo JWT da própria aplicação.
+Não habilite uma configuração exclusivamente privada sem preparar a integração de rede necessária entre todos os componentes; isso torna a API inacessível ao Static Web App.

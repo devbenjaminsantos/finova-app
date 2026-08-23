@@ -10,6 +10,9 @@ namespace FinanceDashboard.Api.Services.BankSync.Pluggy
         [JsonPropertyName("status")]
         public string Status { get; set; } = string.Empty;
 
+        [JsonPropertyName("clientUserId")]
+        public string? ClientUserId { get; set; }
+
         [JsonPropertyName("connector")]
         public PluggyConnectorResponse? Connector { get; set; }
     }

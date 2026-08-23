@@ -4,7 +4,7 @@ test.describe("public routes", () => {
   test("login page loads with demo block", async ({ page }) => {
     await page.goto("/login");
 
-    await expect(page.getByRole("heading", { name: "Finova" })).toBeVisible();
+    await expect(page.getByRole("img", { name: "Logo da Finova" }).first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "Entrar" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Explore a conta demo" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Entrar como demonstração/i })).toBeVisible();
@@ -14,7 +14,7 @@ test.describe("public routes", () => {
     await page.goto("/register");
 
     await expect(page.getByRole("heading", { name: /Criar conta/i })).toBeVisible();
-    await expect(page.getByPlaceholder("Seu nome")).toBeVisible();
+    await expect(page.getByLabel("Nome")).toBeVisible();
     await expect(page.getByPlaceholder("seuemail@exemplo.com")).toBeVisible();
   });
 

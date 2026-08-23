@@ -78,6 +78,6 @@ describe("transactionsCsv import parser", () => {
     expect(() =>
       parseTransactionsCsv(`Descricao;Valor
 Mercado;120,00`)
-    ).toThrow(/Data e Descricao/i);
+    ).toThrow("CSV_REQUIRED_COLUMNS");
   });
 });

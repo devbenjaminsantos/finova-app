@@ -346,8 +346,16 @@ namespace FinanceDashboard.Api.Controllers
 
         private string GetClientBaseUrl()
         {
-            return _configuration["Client:BaseUrl"]?.Trim()
-                ?? $"{Request.Scheme}://{Request.Host.Value}";
+            var clientBaseUrl = _configuration["Client:BaseUrl"]?.TrimEnd('/');
+
+            if (!Uri.TryCreate(clientBaseUrl, UriKind.Absolute, out var clientUri) ||
+                clientUri.Scheme is not ("http" or "https"))
+            {
+                throw new InvalidOperationException(
+                    "Client:BaseUrl precisa ser uma URL absoluta configurada.");
+            }
+
+            return clientBaseUrl;
         }
     }
 }

@@ -1,11 +1,14 @@
 function escapeCsvValue(value) {
   const normalized = String(value ?? "");
+  const safeValue = /^[\t\r ]*[=+\-@]/.test(normalized)
+    ? `'${normalized}`
+    : normalized;
 
-  if (/[",;\n]/.test(normalized)) {
-    return `"${normalized.replace(/"/g, '""')}"`;
+  if (/[",;\n]/.test(safeValue)) {
+    return `"${safeValue.replace(/"/g, '""')}"`;
   }
 
-  return normalized;
+  return safeValue;
 }
 
 export function buildCsv(rows) {

@@ -62,7 +62,7 @@ public class AuthControllerTests
         });
 
         var created = Assert.IsType<ObjectResult>(result.Result);
-        var payload = Assert.IsType<AuthUserResponse>(created.Value);
+        var payload = Assert.IsType<RegistrationResponse>(created.Value);
         var user = await context.Users.SingleAsync();
 
         Assert.Equal(StatusCodes.Status201Created, created.StatusCode);
@@ -71,7 +71,30 @@ public class AuthControllerTests
         Assert.Single(context.EmailVerificationTokens);
         Assert.Contains(context.AuditLogs, log => log.Action == "auth.registered" && log.UserId == user.Id);
         Assert.NotNull(emailSender.LastVerificationUrl);
-        Assert.Equal(payload.Email, user.Email);
+        Assert.True(payload.VerificationEmailSent);
+        Assert.Equal(payload.User.Email, user.Email);
+    }
+
+    [Fact]
+    public async Task Register_ReportsPendingVerificationEmail_WhenSmtpFails()
+    {
+        using var context = CreateContext();
+        var emailSender = new FakeEmailSender { ThrowOnVerification = true };
+        var controller = CreateController(context, emailSender: emailSender);
+
+        var result = await controller.Register(new RegisterRequest
+        {
+            Name = "Novo Usuário",
+            Email = "novo@finova.app",
+            Password = "SenhaSegura123!"
+        });
+
+        var created = Assert.IsType<ObjectResult>(result.Result);
+        var payload = Assert.IsType<RegistrationResponse>(created.Value);
+
+        Assert.False(payload.VerificationEmailSent);
+        Assert.Single(context.Users);
+        Assert.Single(context.EmailVerificationTokens);
     }
 
     [Fact]
@@ -123,6 +146,55 @@ public class AuthControllerTests
         Assert.Equal(StatusCodes.Status403Forbidden, forbidden.StatusCode);
         Assert.Equal("Confirme seu e-mail antes de entrar.", problem.Title);
         Assert.Contains(context.AuditLogs, log => log.Action == "auth.login-blocked-unconfirmed-email");
+    }
+
+    [Fact]
+    public async Task Login_ReturnsGenericUnauthorized_WhenEmailDoesNotExist()
+    {
+        using var context = CreateContext();
+        var controller = CreateController(context);
+
+        var result = await controller.Login(new LoginRequest
+        {
+            Email = "inexistente@finova.app",
+            Password = "SenhaSegura123!"
+        });
+
+        var unauthorized = Assert.IsType<UnauthorizedObjectResult>(result.Result);
+        var problem = Assert.IsType<ProblemDetails>(unauthorized.Value);
+
+        Assert.Equal("E-mail ou senha inválidos.", problem.Title);
+    }
+
+    [Fact]
+    public async Task Login_DoesNotRevealUnconfirmedAccount_WhenPasswordIsWrong()
+    {
+        using var context = CreateContext();
+        var controller = CreateController(context);
+
+        var user = new User
+        {
+            Name = "Finova User",
+            Email = "user@finova.app",
+            EmailConfirmed = false,
+        };
+        user.PasswordHash = HashPassword("SenhaSegura123!", user);
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+
+        var result = await controller.Login(new LoginRequest
+        {
+            Email = user.Email,
+            Password = "SenhaErrada123!"
+        });
+
+        var unauthorized = Assert.IsType<UnauthorizedObjectResult>(result.Result);
+        var problem = Assert.IsType<ProblemDetails>(unauthorized.Value);
+
+        Assert.Equal("E-mail ou senha inválidos.", problem.Title);
+        Assert.DoesNotContain(
+            context.AuditLogs,
+            log => log.Action == "auth.login-blocked-unconfirmed-email");
     }
 
     [Fact]
@@ -269,6 +341,34 @@ public class AuthControllerTests
     }
 
     [Fact]
+    public async Task ResendEmailVerification_PreservesPreviousToken_WhenEmailFails()
+    {
+        using var context = CreateContext();
+        var emailSender = new FakeEmailSender();
+        var controller = CreateController(context, emailSender: emailSender);
+
+        await controller.Register(new RegisterRequest
+        {
+            Name = "Novo Usuário",
+            Email = "novo@finova.app",
+            Password = "SenhaSegura123!"
+        });
+
+        var previousToken = await context.EmailVerificationTokens.SingleAsync();
+        emailSender.ThrowOnVerification = true;
+
+        var result = await controller.ResendEmailVerification(new ResendEmailVerificationRequest
+        {
+            Email = "novo@finova.app"
+        });
+
+        Assert.IsType<OkObjectResult>(result);
+        var remainingToken = await context.EmailVerificationTokens.SingleAsync();
+        Assert.Equal(previousToken.Id, remainingToken.Id);
+        Assert.Null(remainingToken.UsedAtUtc);
+    }
+
+    [Fact]
     public async Task ForgotPassword_PersistsResetToken_AndReturnsUrl_WhenExposureIsEnabled()
     {
         using var context = CreateContext();
@@ -306,6 +406,42 @@ public class AuthControllerTests
         Assert.Single(context.PasswordResetTokens);
         Assert.Equal(payload.ResetUrl, emailSender.LastResetUrl);
         Assert.False(string.IsNullOrWhiteSpace(token));
+    }
+
+    [Fact]
+    public async Task ForgotPassword_PreservesPreviousToken_WhenEmailFailsInProduction()
+    {
+        using var context = CreateContext();
+        var emailSender = new FakeEmailSender();
+        var controller = CreateController(
+            context,
+            emailSender: emailSender,
+            environmentName: "Production",
+            configurationValues: new Dictionary<string, string?>
+            {
+                ["Client:BaseUrl"] = "https://finova.example",
+                ["PasswordReset:ExposeResetUrlInResponse"] = "false"
+            });
+
+        var user = new User
+        {
+            Name = "Finova User",
+            Email = "user@finova.app",
+            EmailConfirmed = true,
+        };
+        user.PasswordHash = HashPassword("SenhaSegura123!", user);
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+
+        await controller.ForgotPassword(new ForgotPasswordRequest { Email = user.Email });
+        var previousToken = await context.PasswordResetTokens.SingleAsync();
+
+        emailSender.ThrowOnPasswordReset = true;
+        await controller.ForgotPassword(new ForgotPasswordRequest { Email = user.Email });
+
+        var remainingToken = await context.PasswordResetTokens.SingleAsync();
+        Assert.Equal(previousToken.Id, remainingToken.Id);
+        Assert.Null(remainingToken.UsedAtUtc);
     }
 
     [Fact]
@@ -411,7 +547,8 @@ public class AuthControllerTests
     private static AuthController CreateController(
         AppDbContext context,
         FakeEmailSender? emailSender = null,
-        Dictionary<string, string?>? configurationValues = null)
+        Dictionary<string, string?>? configurationValues = null,
+        string environmentName = "Development")
     {
         var configData = new Dictionary<string, string?>
         {
@@ -442,7 +579,7 @@ public class AuthControllerTests
             new PasswordResetTokenService(),
             emailSender ?? new FakeEmailSender(),
             configuration,
-            new FakeWebHostEnvironment(),
+            new FakeWebHostEnvironment { EnvironmentName = environmentName },
             NullLogger<AuthController>.Instance);
 
         controller.ControllerContext = new ControllerContext
@@ -480,15 +617,27 @@ public class AuthControllerTests
     {
         public string? LastResetUrl { get; private set; }
         public string? LastVerificationUrl { get; private set; }
+        public bool ThrowOnPasswordReset { get; set; }
+        public bool ThrowOnVerification { get; set; }
 
         public Task SendPasswordResetEmailAsync(string toEmail, string name, string resetUrl)
         {
+            if (ThrowOnPasswordReset)
+            {
+                throw new InvalidOperationException("Falha SMTP simulada.");
+            }
+
             LastResetUrl = resetUrl;
             return Task.CompletedTask;
         }
 
         public Task SendEmailVerificationAsync(string toEmail, string name, string verificationUrl)
         {
+            if (ThrowOnVerification)
+            {
+                throw new InvalidOperationException("Falha SMTP simulada.");
+            }
+
             LastVerificationUrl = verificationUrl;
             return Task.CompletedTask;
         }

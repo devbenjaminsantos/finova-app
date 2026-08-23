@@ -2,12 +2,25 @@
 
 Este changelog registra os principais marcos de entrega do Finova. Ele é escrito em linguagem de produto para facilitar a leitura por pessoas técnicas e não técnicas.
 
-## Base atual de produção
+## Base atual de entrega
 
-- Aplicação publicada no Azure com frontend em Static Web Apps, API em App Service e banco em Azure SQL.
+- Arquitetura de deploy preparada para Azure Static Web Apps, App Service e Azure SQL.
 - Health check público disponível para validar a API.
 - Configuração de produção baseada em `VITE_API_URL`, apontando o frontend diretamente para a API com `/api`.
-- Estrutura inicial de observabilidade com Application Insights.
+- Logs estruturados da API e eventos de auditoria para fluxos relevantes.
+
+## Segurança e portabilidade
+
+- Validação de propriedade de contas financeiras em criação, edição e importação de transações.
+- Vínculo Pluggy restrito ao `clientUserId` do usuário autenticado.
+- Rate limit nos endpoints públicos de autenticação.
+- Respostas de login neutras para reduzir enumeração de contas.
+- Preservação de links válidos quando um novo envio de e-mail falha.
+- Neutralização de fórmulas em arquivos CSV exportados.
+- Cabeçalhos de segurança no frontend e na API.
+- Dependências npm e NuGet atualizadas e auditadas.
+- Substituição do Azure Communication Services Email por SMTP genérico.
+- Workflows de frontend e API com build, testes e auditoria antes do deploy.
 
 ## Autenticação e acesso
 
@@ -23,6 +36,7 @@ Este changelog registra os principais marcos de entrega do Finova. Ele é escrit
 - Filtros por período, tipo, categoria, conta e outros critérios.
 - Importação de transações com revisão e tratamento de duplicidades.
 - Exportação de dados financeiros.
+- Exportação em PDF com valor monetário preservado e metadados localizados em PT/EN.
 - Organização por categorias, tags e contas financeiras.
 - Suporte a metas mensais, metas por categoria, lançamentos recorrentes e compras parceladas.
 
@@ -36,7 +50,7 @@ Este changelog registra os principais marcos de entrega do Finova. Ele é escrit
 
 ## Notificações
 
-- Envio de e-mails por SMTP ou Azure Communication Services Email.
+- Envio de e-mails por SMTP por meio de uma abstração de domínio.
 - Alertas relacionados a metas.
 - Resumos mensais.
 - Estrutura de preferências de notificação.
@@ -46,6 +60,8 @@ Este changelog registra os principais marcos de entrega do Finova. Ele é escrit
 - Base de i18n para português e inglês.
 - Revisão de textos, acentuação e mensagens de interface.
 - Ajustes para reduzir mistura de idiomas entre frontend, backend e documentação.
+- Catálogo único PT/EN com teste automatizado de paridade e placeholders.
+- Rótulos de formulários associados aos controles e smoke E2E portátil no Chromium.
 
 ## Documentação
 
@@ -54,4 +70,3 @@ Este changelog registra os principais marcos de entrega do Finova. Ele é escrit
 - Guia de deploy no Azure.
 - Roadmap de produto e tecnologia.
 - Registro de decisões de arquitetura.
-

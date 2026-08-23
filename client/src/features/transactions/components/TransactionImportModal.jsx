@@ -8,6 +8,26 @@ import {
 import { parseTransactionsImport } from "../../../lib/import/transactionsImport";
 import { useI18n } from "../../../i18n/LanguageProvider";
 
+const MAX_IMPORT_FILE_SIZE_BYTES = 2 * 1024 * 1024;
+
+const IMPORT_ERROR_KEYS = {
+  CSV_EMPTY: "transactions.importErrorCsvEmpty",
+  CSV_WITHOUT_DATA: "transactions.importErrorCsvWithoutData",
+  CSV_REQUIRED_COLUMNS: "transactions.importErrorCsvRequiredColumns",
+  CSV_AMOUNT_COLUMN: "transactions.importErrorCsvAmountColumn",
+  CSV_INVALID_ROW: "transactions.importErrorCsvInvalidRow",
+  OFX_EMPTY: "transactions.importErrorOfxEmpty",
+  OFX_WITHOUT_TRANSACTIONS: "transactions.importErrorOfxWithoutTransactions",
+  OFX_INVALID_TRANSACTION: "transactions.importErrorOfxInvalidTransaction",
+};
+
+function resolveImportReadError(error, t) {
+  const translationKey = IMPORT_ERROR_KEYS[error?.code];
+  return translationKey
+    ? t(translationKey, error.details)
+    : t("transactions.importReadError");
+}
+
 export default function TransactionImportModal({
   isOpen,
   onClose,
@@ -225,6 +245,15 @@ export default function TransactionImportModal({
     setFeedback("");
 
     try {
+      if (file.size > MAX_IMPORT_FILE_SIZE_BYTES) {
+        setFileName(file.name);
+        setImportFormat("");
+        setPreview([]);
+        setSelectedIndexes(new Set());
+        setError(t("transactions.importFileTooLarge"));
+        return;
+      }
+
       const content = await file.text();
       const { format, transactions } = parseTransactionsImport(content, file.name);
       const reconciled = detectImportDuplicates(transactions, existingTransactions);
@@ -239,7 +268,7 @@ export default function TransactionImportModal({
       setImportFormat("");
       setPreview([]);
       setSelectedIndexes(new Set());
-      setError(requestError.message || t("transactions.importReadError"));
+      setError(resolveImportReadError(requestError, t));
     }
   }
 

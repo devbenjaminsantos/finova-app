@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTransactions } from "../features/transactions/useTransactions";
 import { useI18n } from "../i18n/LanguageProvider";
 import {
   createFinancialAccount,
   deleteFinancialAccount,
   getFinancialAccounts,
-  syncFinancialAccount,
   updateFinancialAccount,
 } from "../lib/api/financialAccounts";
 import { formatFinancialAccountLabel } from "../lib/financialAccounts/presentation";
@@ -103,12 +102,11 @@ export default function FinancialAccounts() {
   const [editingAccountId, setEditingAccountId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [syncingAccountId, setSyncingAccountId] = useState(null);
   const [removingAccountId, setRemovingAccountId] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  async function loadAccounts() {
+  const loadAccounts = useCallback(async () => {
     setIsLoading(true);
 
     try {
@@ -120,11 +118,11 @@ export default function FinancialAccounts() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [t]);
 
   useEffect(() => {
     loadAccounts();
-  }, []);
+  }, [loadAccounts]);
 
   const summary = useMemo(() => {
     const connectedCount = accounts.filter((account) => account.status === "connected").length;
@@ -220,29 +218,6 @@ export default function FinancialAccounts() {
       );
     } finally {
       setIsSubmitting(false);
-    }
-  }
-
-  async function handleSync(account) {
-    setError("");
-    setSuccess("");
-    setSyncingAccountId(account.id);
-
-    try {
-      const result = await syncFinancialAccount(account.id);
-      await loadAccounts();
-      await reloadTransactions();
-      setSuccess(
-        result?.message ||
-          t("accounts.syncSuccessFallback", {
-            institution: account.institutionName,
-            account: account.accountName,
-          })
-      );
-    } catch (err) {
-      setError(err.message || t("accounts.syncError"));
-    } finally {
-      setSyncingAccountId(null);
     }
   }
 
@@ -569,9 +544,7 @@ export default function FinancialAccounts() {
                   {accounts.map((account) => {
                     const statusMeta = getStatusMeta(account.status, t);
                     const accountTypeMeta = getAccountTypeMeta(account.accountType, t);
-                    const isSyncing = syncingAccountId === account.id;
                     const isRemoving = removingAccountId === account.id;
-                    const canSync = account.provider === "manual";
 
                     return (
                       <div key={account.id} className="finova-card-soft p-3">
@@ -631,23 +604,15 @@ export default function FinancialAccounts() {
                               type="button"
                               className="btn finova-btn-light"
                               onClick={() => handleStartEdit(account)}
-                              disabled={isSyncing || isRemoving}
+                              disabled={isRemoving}
                             >
                               {t("accounts.editButton")}
                             </button>
                             <button
                               type="button"
-                              className="btn finova-btn-light"
-                              onClick={() => handleSync(account)}
-                              disabled={isSyncing || isRemoving || !canSync}
-                            >
-                              {isSyncing ? t("accounts.syncing") : t("accounts.sync")}
-                            </button>
-                            <button
-                              type="button"
                               className="btn btn-outline-danger"
                               onClick={() => handleRemove(account)}
-                              disabled={isSyncing || isRemoving}
+                              disabled={isRemoving}
                             >
                               {isRemoving ? t("accounts.removing") : t("accounts.remove")}
                             </button>

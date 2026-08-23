@@ -217,7 +217,28 @@ namespace FinanceDashboard.Api.Controllers
                 });
             }
 
+            if (!_pluggyClient.IsConfigured)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Pluggy não configurado no back-end."
+                });
+            }
+
             var item = await _pluggyClient.GetItemAsync(dto.ItemId.Trim(), cancellationToken);
+
+            if (!string.Equals(
+                    item.ClientUserId,
+                    $"user:{userId}",
+                    StringComparison.Ordinal))
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Item Pluggy inválido para o usuário autenticado."
+                });
+            }
 
             account.ProviderItemId = item.Id;
             account.Status = NormalizeStatus(item.Status);
@@ -264,6 +285,25 @@ namespace FinanceDashboard.Api.Controllers
             if (account is null)
             {
                 return NotFound();
+            }
+
+            if (!string.Equals(account.Provider, "pluggy", StringComparison.OrdinalIgnoreCase) ||
+                string.IsNullOrWhiteSpace(account.ProviderItemId))
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Esta conta ainda não possui uma conexão Pluggy pronta para sincronização."
+                });
+            }
+
+            if (!_pluggyClient.IsConfigured)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Pluggy não configurado no back-end."
+                });
             }
 
             var result = await _bankSyncService.SyncAsync(account, cancellationToken);

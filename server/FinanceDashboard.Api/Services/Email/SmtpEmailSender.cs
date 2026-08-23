@@ -99,7 +99,7 @@ namespace FinanceDashboard.Api.Services.Email
                 $"""
                 Olá, {name}.
 
-                Aqui esta o seu resumo financeiro de {monthLabel}.
+                Aqui está o seu resumo financeiro de {monthLabel}.
 
                 Receitas: {incomeAmount:C}
                 Despesas: {expenseAmount:C}

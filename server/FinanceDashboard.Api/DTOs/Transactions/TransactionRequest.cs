@@ -24,6 +24,7 @@ namespace FinanceDashboard.Api.DTOs
 
         public int? FinancialAccountId { get; set; }
 
+        [MaxLength(10)]
         public List<string> TagNames { get; set; } = new();
 
         public bool IsRecurring { get; set; }

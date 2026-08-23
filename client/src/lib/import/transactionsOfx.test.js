@@ -64,6 +64,6 @@ OFXHEADER:100
   });
 
   it("throws when no statement transactions are found", () => {
-    expect(() => parseTransactionsOfx("<OFX></OFX>")).toThrow(/nenhuma transacao/i);
+    expect(() => parseTransactionsOfx("<OFX></OFX>")).toThrow("OFX_WITHOUT_TRANSACTIONS");
   });
 });

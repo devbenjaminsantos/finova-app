@@ -1,10 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import authEn from "./locales/en-US/auth.json";
-import commonEn from "./locales/en-US/common.json";
-import authPtBr from "./locales/pt-BR/auth.json";
-import commonPtBr from "./locales/pt-BR/common.json";
-import { DEFAULT_LANGUAGE } from "./translations";
+import { DEFAULT_LANGUAGE, translations } from "./translations";
 
 const STORAGE_KEY = "finova-language";
 
@@ -30,14 +26,8 @@ if (!i18n.isInitialized) {
       escapeValue: false,
     },
     resources: {
-      "pt-BR": {
-        common: commonPtBr,
-        auth: authPtBr,
-      },
-      "en-US": {
-        common: commonEn,
-        auth: authEn,
-      },
+      "pt-BR": translations["pt-BR"],
+      "en-US": translations["en-US"],
     },
   });
 }

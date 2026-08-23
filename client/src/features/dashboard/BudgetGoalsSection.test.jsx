@@ -11,13 +11,16 @@ vi.mock("../../lib/api/budgetGoals", () => ({
 
 import { getBudgetGoals } from "../../lib/api/budgetGoals";
 
+const now = new Date();
+const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
 const transactions = [
   {
     id: 1,
     description: "Mercado",
     category: "Alimentacao",
     amountCents: 90000,
-    date: "2026-04-10",
+    date: `${currentMonth}-10`,
     type: "expense",
   },
   {
@@ -25,7 +28,7 @@ const transactions = [
     description: "Aluguel",
     category: "Moradia",
     amountCents: 180000,
-    date: "2026-04-05",
+    date: `${currentMonth}-05`,
     type: "expense",
   },
   {
@@ -33,7 +36,7 @@ const transactions = [
     description: "Salario",
     category: "Salario",
     amountCents: 500000,
-    date: "2026-04-05",
+    date: `${currentMonth}-05`,
     type: "income",
   },
 ];
@@ -45,8 +48,8 @@ describe("BudgetGoalsSection", () => {
 
   it("highlights uncovered spending categories as suggestions", async () => {
     getBudgetGoals.mockResolvedValue([
-      { id: 1, month: "2026-04", category: "", amountCents: 300000 },
-      { id: 2, month: "2026-04", category: "Alimentacao", amountCents: 120000 },
+      { id: 1, month: currentMonth, category: "", amountCents: 300000 },
+      { id: 2, month: currentMonth, category: "Alimentacao", amountCents: 120000 },
     ]);
 
     render(<BudgetGoalsSection transactions={transactions} />);
@@ -72,7 +75,7 @@ describe("BudgetGoalsSection", () => {
       expect(getBudgetGoals).toHaveBeenCalledTimes(1);
     });
 
-    fireEvent.click(screen.getByRole("button", { name: /Proximo mes/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Próximo mês/i }));
 
     await waitFor(() => {
       expect(getBudgetGoals).toHaveBeenCalledTimes(2);

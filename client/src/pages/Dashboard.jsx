@@ -111,8 +111,11 @@ export default function Dashboard() {
         <div className="finova-page-header-side">
           <div className="d-grid gap-2">
             <div>
-              <label className="form-label text-dark fw-medium">{t("pages.dashboardPeriod")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="dashboard-period">
+                {t("pages.dashboardPeriod")}
+              </label>
               <select
+                id="dashboard-period"
                 className="form-select finova-select"
                 value={period}
                 onChange={(event) => setPeriod(event.target.value)}
@@ -126,8 +129,11 @@ export default function Dashboard() {
             </div>
 
             <div>
-              <label className="form-label text-dark fw-medium">{t("pages.displayedAccountLabel")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="dashboard-account">
+                {t("pages.displayedAccountLabel")}
+              </label>
               <select
+                id="dashboard-account"
                 className="form-select finova-select"
                 value={accountFilter}
                 onChange={(event) => setAccountFilter(event.target.value)}

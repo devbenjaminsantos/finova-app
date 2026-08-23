@@ -23,12 +23,12 @@ export default function VerifyEmail() {
       }
 
       try {
-        const response = await verifyEmailRequest(token);
+        await verifyEmailRequest(token);
         if (!active) {
           return;
         }
 
-        setSuccess(response.message || t("auth.verifySuccess"));
+        setSuccess(t("auth.verifySuccess"));
       } catch (requestError) {
         if (!active) {
           return;

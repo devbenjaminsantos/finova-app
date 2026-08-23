@@ -4,7 +4,7 @@ Este roadmap organiza a evolução do Finova em frentes de produto e tecnologia.
 
 ## Base atual
 
-O projeto já possui uma base de produto em produção:
+O projeto já possui uma base funcional consolidada e uma arquitetura de deploy no Azure. Após transferências ou recriações de recursos, o ambiente precisa passar pela validação pós-deploy documentada antes de ser apresentado como produção ativa:
 
 - autenticação com JWT, confirmação de e-mail e recuperação de senha
 - conta demo para apresentação do produto
@@ -16,7 +16,7 @@ O projeto já possui uma base de produto em produção:
 - notificações por e-mail para alertas e resumos
 - painel público somente leitura
 - auditoria para fluxos sensíveis
-- deploy no Azure com frontend, API, banco e observabilidade inicial
+- workflows de deploy para frontend e API, com banco Azure SQL
 
 ## Direção de produto
 
@@ -74,7 +74,7 @@ Prioridades:
 Prioridades:
 
 - ampliar testes automatizados dos fluxos críticos
-- fortalecer logs e métricas no Application Insights
+- integrar uma plataforma de métricas e rastreamento, como Application Insights
 - documentar rotinas de backup e recuperação
 - revisar tratamento de erro em frontend e backend
 - manter health checks simples e confiáveis
@@ -120,4 +120,3 @@ Prioridades:
 - melhorar monitoramento e alertas técnicos
 - documentar operação de produção
 - fortalecer testes end-to-end dos fluxos públicos e autenticados
-

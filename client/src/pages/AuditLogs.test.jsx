@@ -38,13 +38,13 @@ describe("AuditLogs page", () => {
     render(<AuditLogs />);
 
     await waitFor(() => {
-      expect(screen.getByText("Transacao adicionada")).toBeInTheDocument();
+      expect(screen.getByText("Transação adicionada")).toBeInTheDocument();
     });
 
     expect(screen.queryByText("IP: 127.0.0.1")).not.toBeInTheDocument();
     expect(screen.queryByText("Novo e-mail de confirmacao enviado.")).not.toBeInTheDocument();
     expect(
-      screen.getByText(/registro mais tecnico foi ocultado para manter este historico mais direto/i)
+      screen.getByText(/registro mais técnico foi ocultado para manter este histórico mais direto/i)
     ).toBeInTheDocument();
   });
 });

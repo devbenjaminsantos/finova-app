@@ -129,11 +129,11 @@ describe("Analyses page", () => {
 
     renderAnalyses();
 
-    expect(screen.getByText("Analises")).toBeInTheDocument();
-    expect(screen.getByText("Insights do periodo")).toBeInTheDocument();
+    expect(screen.getByText("Análises")).toBeInTheDocument();
+    expect(screen.getByText("Insights do período")).toBeInTheDocument();
     expect(screen.getByText("Comparativos")).toBeInTheDocument();
-    expect(screen.getByText("Metas do mes")).toBeInTheDocument();
-    expect(screen.getByText("Previsao dos proximos meses")).toBeInTheDocument();
+    expect(screen.getByText("Metas do mês")).toBeInTheDocument();
+    expect(screen.getByText("Previsão dos próximos meses")).toBeInTheDocument();
     expect(screen.getByText("Metas mockadas")).toBeInTheDocument();
   });
 });

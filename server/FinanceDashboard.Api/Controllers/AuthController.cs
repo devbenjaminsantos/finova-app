@@ -5,6 +5,7 @@ using FinanceDashboard.Api.Services.Audit;
 using FinanceDashboard.Api.Services.Auth;
 using FinanceDashboard.Api.Services.Email;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ namespace FinanceDashboard.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableRateLimiting("auth")]
     public class AuthController : ControllerBase
     {
         private const int MaxFailedLoginAttempts = 5;
@@ -53,7 +55,7 @@ namespace FinanceDashboard.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AuthUserResponse>> Register(RegisterRequest dto)
+        public async Task<ActionResult<RegistrationResponse>> Register(RegisterRequest dto)
         {
             var normalizedEmail = dto.Email.Trim().ToLowerInvariant();
 
@@ -65,7 +67,8 @@ namespace FinanceDashboard.Api.Controllers
                 return Conflict(new ProblemDetails
                 {
                     Title = "E-mail já cadastrado.",
-                    Status = StatusCodes.Status409Conflict
+                    Status = StatusCodes.Status409Conflict,
+                    Extensions = { ["code"] = "EMAIL_ALREADY_REGISTERED" }
                 });
             }
 
@@ -81,7 +84,8 @@ namespace FinanceDashboard.Api.Controllers
                 return BadRequest(new ProblemDetails
                 {
                     Title = PasswordPolicyService.DefaultMessage,
-                    Status = StatusCodes.Status400BadRequest
+                    Status = StatusCodes.Status400BadRequest,
+                    Extensions = { ["code"] = "PASSWORD_POLICY" }
                 });
             }
 
@@ -98,25 +102,24 @@ namespace FinanceDashboard.Api.Controllers
                 return Conflict(new ProblemDetails
                 {
                     Title = "E-mail já cadastrado.",
-                    Status = StatusCodes.Status409Conflict
+                    Status = StatusCodes.Status409Conflict,
+                    Extensions = { ["code"] = "EMAIL_ALREADY_REGISTERED" }
                 });
             }
 
-            // Eu invalido links anteriores antes de gerar um novo.
-            // Assim evito deixar vários links de confirmação ativos para a mesma conta.
-            await InvalidateActiveEmailVerificationTokensAsync(user.Id);
-            var verificationUrl = await CreateEmailVerificationTokenAsync(user);
+            var (_, verificationUrl) = await CreateEmailVerificationTokenAsync(user);
+            var verificationSent = false;
 
             try
             {
                 await _emailSender.SendEmailVerificationAsync(user.Email, user.Name, verificationUrl);
+                verificationSent = true;
             }
             catch (Exception exception)
             {
                 _logger.LogWarning(
                     exception,
-                    "Não foi possível enviar o e-mail de confirmação usando o provedor {Provider}.",
-                    ResolveEmailProvider());
+                    "Não foi possível enviar o e-mail de confirmação via SMTP.");
             }
 
             await _auditLogService.WriteAsync(
@@ -124,9 +127,15 @@ namespace FinanceDashboard.Api.Controllers
                 entityType: "User",
                 entityId: user.Id.ToString(),
                 userId: user.Id,
-                summary: "Conta criada e aguardando confirmação de e-mail.");
+                summary: verificationSent
+                    ? "Conta criada e e-mail de confirmação enviado."
+                    : "Conta criada; envio do e-mail de confirmação pendente.");
 
-            return StatusCode(StatusCodes.Status201Created, ToAuthUserResponse(user));
+            return StatusCode(StatusCodes.Status201Created, new RegistrationResponse
+            {
+                User = ToAuthUserResponse(user),
+                VerificationEmailSent = verificationSent
+            });
         }
 
         [HttpPost("login")]
@@ -140,11 +149,7 @@ namespace FinanceDashboard.Api.Controllers
 
             if (user is null)
             {
-                return NotFound(new ProblemDetails
-                {
-                    Title = "Usuário não encontrado.",
-                    Status = StatusCodes.Status404NotFound
-                });
+                return Unauthorized(InvalidCredentialsProblem());
             }
 
             if (user.LockoutEndsAtUtc is not null && user.LockoutEndsAtUtc <= now)
@@ -165,25 +170,8 @@ namespace FinanceDashboard.Api.Controllers
                 return StatusCode(StatusCodes.Status429TooManyRequests, new ProblemDetails
                 {
                     Title = "Muitas tentativas de login. Aguarde alguns minutos antes de tentar novamente.",
-                    Status = StatusCodes.Status429TooManyRequests
-                });
-            }
-
-            if (!user.EmailConfirmed)
-            {
-                // O bloqueio por e-mail não confirmado vem antes da senha
-                // porque a regra de acesso aqui depende primeiro da conta estar validada.
-                await _auditLogService.WriteAsync(
-                    action: "auth.login-blocked-unconfirmed-email",
-                    entityType: "User",
-                    entityId: user.Id.ToString(),
-                    userId: user.Id,
-                    summary: "Tentativa de login bloqueada por e-mail não confirmado.");
-
-                return StatusCode(StatusCodes.Status403Forbidden, new ProblemDetails
-                {
-                    Title = "Confirme seu e-mail antes de entrar.",
-                    Status = StatusCodes.Status403Forbidden
+                    Status = StatusCodes.Status429TooManyRequests,
+                    Extensions = { ["code"] = "LOGIN_LOCKED" }
                 });
             }
 
@@ -202,12 +190,23 @@ namespace FinanceDashboard.Api.Controllers
                         ? "Conta temporariamente bloqueada por excesso de senhas incorretas."
                         : "Tentativa de login com senha incorreta.");
 
-                return Unauthorized(new ProblemDetails
+                return Unauthorized(InvalidCredentialsProblem());
+            }
+
+            if (!user.EmailConfirmed)
+            {
+                await _auditLogService.WriteAsync(
+                    action: "auth.login-blocked-unconfirmed-email",
+                    entityType: "User",
+                    entityId: user.Id.ToString(),
+                    userId: user.Id,
+                    summary: "Tentativa de login bloqueada por e-mail não confirmado.");
+
+                return StatusCode(StatusCodes.Status403Forbidden, new ProblemDetails
                 {
-                    Title = user.LockoutEndsAtUtc is not null && user.LockoutEndsAtUtc > now
-                        ? "Senha incorreta. A conta foi bloqueada temporariamente por segurança."
-                        : "Senha incorreta.",
-                    Status = StatusCodes.Status401Unauthorized
+                    Title = "Confirme seu e-mail antes de entrar.",
+                    Status = StatusCodes.Status403Forbidden,
+                    Extensions = { ["code"] = "EMAIL_NOT_CONFIRMED" }
                 });
             }
 
@@ -261,7 +260,7 @@ namespace FinanceDashboard.Api.Controllers
 
             if (!user.Transactions.Any())
             {
-                // A conta demo sé é populada quando estiver vazia.
+                // A conta demo só é populada quando estiver vazia.
                 // Isso me deixa reutilizar o mesmo usuário sem duplicar movimentações.
                 SeedDemoTransactions(user.Id);
                 await _context.SaveChangesAsync();
@@ -295,27 +294,36 @@ namespace FinanceDashboard.Api.Controllers
                 });
             }
 
-            await InvalidateActiveEmailVerificationTokensAsync(user.Id);
-            var verificationUrl = await CreateEmailVerificationTokenAsync(user);
+            var (verificationToken, verificationUrl) = await CreateEmailVerificationTokenAsync(user);
+            var verificationSent = false;
 
             try
             {
                 await _emailSender.SendEmailVerificationAsync(user.Email, user.Name, verificationUrl);
+                verificationSent = true;
             }
             catch (Exception exception)
             {
                 _logger.LogWarning(
                     exception,
-                    "Não foi possível reenviar o e-mail de confirmação usando o provedor {Provider}.",
-                    ResolveEmailProvider());
+                    "Não foi possível reenviar o e-mail de confirmação via SMTP.");
             }
 
-            await _auditLogService.WriteAsync(
-                action: "auth.verification-resent",
-                entityType: "User",
-                entityId: user.Id.ToString(),
-                userId: user.Id,
-                summary: "Novo e-mail de confirmação enviado.");
+            if (verificationSent)
+            {
+                await InvalidateActiveEmailVerificationTokensAsync(user.Id, verificationToken.Id);
+                await _auditLogService.WriteAsync(
+                    action: "auth.verification-resent",
+                    entityType: "User",
+                    entityId: user.Id.ToString(),
+                    userId: user.Id,
+                    summary: "Novo e-mail de confirmação enviado.");
+            }
+            else
+            {
+                _context.EmailVerificationTokens.Remove(verificationToken);
+                await _context.SaveChangesAsync();
+            }
 
             return Ok(new
             {
@@ -341,7 +349,8 @@ namespace FinanceDashboard.Api.Controllers
                 return BadRequest(new ProblemDetails
                 {
                     Title = "Link de confirmação inválido ou expirado.",
-                    Status = StatusCodes.Status400BadRequest
+                    Status = StatusCodes.Status400BadRequest,
+                    Extensions = { ["code"] = "INVALID_VERIFICATION_TOKEN" }
                 });
             }
 
@@ -381,42 +390,32 @@ namespace FinanceDashboard.Api.Controllers
                 return Ok(response);
             }
 
-            var now = DateTime.UtcNow;
-            var activeTokens = await _context.PasswordResetTokens
-                .Where(token => token.UserId == user.Id && token.UsedAtUtc == null && token.ExpiresAtUtc > now)
-                .ToListAsync();
-
-            foreach (var token in activeTokens)
-            {
-                token.UsedAtUtc = now;
-            }
-
-            // Sempre invalido tokens ativos antes de criar outro.
-            // Isso reduz confusão com links antigos ainda no e-mail do usuário.
-            var rawToken = _tokenUtility.GenerateToken();
-            var resetToken = new PasswordResetToken
-            {
-                UserId = user.Id,
-                TokenHash = _tokenUtility.HashToken(rawToken),
-                CreatedAtUtc = now,
-                ExpiresAtUtc = now.AddMinutes(30)
-            };
-
-            _context.PasswordResetTokens.Add(resetToken);
-            await _context.SaveChangesAsync();
-
-            var resetUrl = BuildResetUrl(rawToken);
+            var (resetToken, resetUrl) = await CreatePasswordResetTokenAsync(user);
+            var resetEmailSent = false;
 
             try
             {
                 await _emailSender.SendPasswordResetEmailAsync(user.Email, user.Name, resetUrl);
+                resetEmailSent = true;
             }
             catch (Exception exception)
             {
                 _logger.LogWarning(
                     exception,
-                    "Não foi possível enviar e-mail de redefinição de senha usando o provedor {Provider}.",
-                    ResolveEmailProvider());
+                    "Não foi possível enviar e-mail de redefinição de senha via SMTP.");
+            }
+
+            var exposeResetUrl = _environment.IsDevelopment() ||
+                _configuration.GetValue("PasswordReset:ExposeResetUrlInResponse", false);
+
+            if (resetEmailSent || exposeResetUrl)
+            {
+                await InvalidateActivePasswordResetTokensAsync(user.Id, resetToken.Id);
+            }
+            else
+            {
+                _context.PasswordResetTokens.Remove(resetToken);
+                await _context.SaveChangesAsync();
             }
 
             await _auditLogService.WriteAsync(
@@ -424,9 +423,11 @@ namespace FinanceDashboard.Api.Controllers
                 entityType: "User",
                 entityId: user.Id.ToString(),
                 userId: user.Id,
-                summary: "Solicitação de redefinição de senha registrada.");
+                summary: resetEmailSent
+                    ? "Solicitação de redefinição de senha registrada e e-mail enviado."
+                    : "Solicitação de redefinição de senha registrada; envio do e-mail não concluído.");
 
-            if (_environment.IsDevelopment() || _configuration.GetValue("PasswordReset:ExposeResetUrlInResponse", false))
+            if (exposeResetUrl)
             {
                 response.ResetUrl = resetUrl;
             }
@@ -452,7 +453,8 @@ namespace FinanceDashboard.Api.Controllers
                 return BadRequest(new ProblemDetails
                 {
                     Title = "Link de redefinição inválido ou expirado.",
-                    Status = StatusCodes.Status400BadRequest
+                    Status = StatusCodes.Status400BadRequest,
+                    Extensions = { ["code"] = "INVALID_RESET_TOKEN" }
                 });
             }
 
@@ -461,7 +463,8 @@ namespace FinanceDashboard.Api.Controllers
                 return BadRequest(new ProblemDetails
                 {
                     Title = PasswordPolicyService.DefaultMessage,
-                    Status = StatusCodes.Status400BadRequest
+                    Status = StatusCodes.Status400BadRequest,
+                    Extensions = { ["code"] = "PASSWORD_POLICY" }
                 });
             }
 
@@ -539,30 +542,86 @@ namespace FinanceDashboard.Api.Controllers
             user.LockoutEndsAtUtc = null;
         }
 
-        private async Task<string> CreateEmailVerificationTokenAsync(User user)
+        private static ProblemDetails InvalidCredentialsProblem()
+        {
+            return new ProblemDetails
+            {
+                Title = "E-mail ou senha inválidos.",
+                Status = StatusCodes.Status401Unauthorized,
+                Extensions = { ["code"] = "INVALID_CREDENTIALS" }
+            };
+        }
+
+        private async Task<(EmailVerificationToken Token, string Url)> CreateEmailVerificationTokenAsync(User user)
         {
             var now = DateTime.UtcNow;
             var rawToken = _tokenUtility.GenerateToken();
 
-            _context.EmailVerificationTokens.Add(new EmailVerificationToken
+            var token = new EmailVerificationToken
             {
                 UserId = user.Id,
                 TokenHash = _tokenUtility.HashToken(rawToken),
                 CreatedAtUtc = now,
                 ExpiresAtUtc = now.AddHours(24)
-            });
+            };
+
+            _context.EmailVerificationTokens.Add(token);
 
             await _context.SaveChangesAsync();
 
-            return BuildEmailVerificationUrl(rawToken);
+            return (token, BuildEmailVerificationUrl(rawToken));
         }
 
-        private async Task InvalidateActiveEmailVerificationTokensAsync(int userId)
+        private async Task InvalidateActiveEmailVerificationTokensAsync(int userId, int exceptTokenId)
         {
             var now = DateTime.UtcNow;
 
             var activeTokens = await _context.EmailVerificationTokens
-                .Where(token => token.UserId == userId && token.UsedAtUtc == null && token.ExpiresAtUtc > now)
+                .Where(token =>
+                    token.UserId == userId &&
+                    token.Id != exceptTokenId &&
+                    token.UsedAtUtc == null &&
+                    token.ExpiresAtUtc > now)
+                .ToListAsync();
+
+            foreach (var token in activeTokens)
+            {
+                token.UsedAtUtc = now;
+            }
+
+            if (activeTokens.Count > 0)
+            {
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task<(PasswordResetToken Token, string Url)> CreatePasswordResetTokenAsync(User user)
+        {
+            var now = DateTime.UtcNow;
+            var rawToken = _tokenUtility.GenerateToken();
+            var token = new PasswordResetToken
+            {
+                UserId = user.Id,
+                TokenHash = _tokenUtility.HashToken(rawToken),
+                CreatedAtUtc = now,
+                ExpiresAtUtc = now.AddMinutes(30)
+            };
+
+            _context.PasswordResetTokens.Add(token);
+            await _context.SaveChangesAsync();
+
+            return (token, BuildResetUrl(rawToken));
+        }
+
+        private async Task InvalidateActivePasswordResetTokensAsync(int userId, int exceptTokenId)
+        {
+            var now = DateTime.UtcNow;
+            var activeTokens = await _context.PasswordResetTokens
+                .Where(token =>
+                    token.UserId == userId &&
+                    token.Id != exceptTokenId &&
+                    token.UsedAtUtc == null &&
+                    token.ExpiresAtUtc > now)
                 .ToListAsync();
 
             foreach (var token in activeTokens)
@@ -589,18 +648,24 @@ namespace FinanceDashboard.Api.Controllers
         private string ResolveClientBaseUrl()
         {
             var configuredBaseUrl = _configuration["Client:BaseUrl"]?.TrimEnd('/');
+
+            if (Uri.TryCreate(configuredBaseUrl, UriKind.Absolute, out var configuredUri) &&
+                configuredUri.Scheme is "http" or "https")
+            {
+                return configuredBaseUrl!;
+            }
+
+            if (!_environment.IsDevelopment())
+            {
+                throw new InvalidOperationException(
+                    "Client:BaseUrl precisa ser uma URL absoluta configurada em produção.");
+            }
+
             var requestOrigin = Request.Headers.Origin.FirstOrDefault()?.TrimEnd('/');
-
-            // Primeiro tento a URL oficial configurada no ambiente.
-            // Sem ela, aproveito a origem da requisição e, por último, uso localhost.
-            return !string.IsNullOrWhiteSpace(configuredBaseUrl)
-                ? configuredBaseUrl
-                : requestOrigin ?? "http://localhost:5173";
-        }
-
-        private string ResolveEmailProvider()
-        {
-            return _configuration["Email:Provider"] ?? "Smtp";
+            return Uri.TryCreate(requestOrigin, UriKind.Absolute, out var originUri) &&
+                   originUri.Scheme is "http" or "https"
+                ? requestOrigin!
+                : "http://localhost:5173";
         }
 
         private void SeedDemoTransactions(int userId)

@@ -43,13 +43,41 @@ public class FinancialAccountsControllerTests
     }
 
     [Fact]
-    public async Task Sync_UpdatesStatusAndLastSyncDate()
+    public async Task Sync_RejectsManualAccountWithoutPretendingToImportTransactions()
     {
         using var context = CreateContext();
         context.FinancialAccounts.Add(new FinancialAccount
         {
             UserId = 4,
             Provider = "manual",
+            InstitutionName = "Banco Finova",
+            AccountName = "Conta principal",
+            Status = "pending"
+        });
+        await context.SaveChangesAsync();
+
+        var accountId = await context.FinancialAccounts.Select(item => item.Id).SingleAsync();
+        var controller = CreateController(context, userId: 4);
+
+        var result = await controller.Sync(accountId, CancellationToken.None);
+
+        Assert.IsType<BadRequestObjectResult>(result.Result);
+        var entity = await context.FinancialAccounts.SingleAsync();
+
+        Assert.Equal("pending", entity.Status);
+        Assert.Null(entity.LastSyncedAtUtc);
+        Assert.DoesNotContain(context.AuditLogs, log => log.Action == "financial-account.synced");
+    }
+
+    [Fact]
+    public async Task Sync_UpdatesLinkedPluggyAccount()
+    {
+        using var context = CreateContext();
+        context.FinancialAccounts.Add(new FinancialAccount
+        {
+            UserId = 4,
+            Provider = "pluggy",
+            ProviderItemId = "item-123",
             InstitutionName = "Banco Finova",
             AccountName = "Conta principal",
             Status = "pending"
@@ -68,7 +96,6 @@ public class FinancialAccountsControllerTests
         Assert.Equal("connected", payload.Status);
         Assert.Equal("connected", entity.Status);
         Assert.NotNull(entity.LastSyncedAtUtc);
-        Assert.Equal(0, payload.ImportedCount);
         Assert.Contains(context.AuditLogs, log => log.Action == "financial-account.synced");
     }
 
@@ -132,6 +159,37 @@ public class FinancialAccountsControllerTests
         Assert.Contains(context.AuditLogs, log => log.Action == "financial-account.linked");
     }
 
+    [Fact]
+    public async Task LinkItem_RejectsItemOwnedByAnotherPluggyClientUser()
+    {
+        using var context = CreateContext();
+        context.FinancialAccounts.Add(new FinancialAccount
+        {
+            UserId = 9,
+            Provider = "pluggy",
+            InstitutionName = "Conta em configuracao",
+            AccountName = "Carteira principal",
+            Status = "pending"
+        });
+        await context.SaveChangesAsync();
+
+        var accountId = await context.FinancialAccounts.Select(item => item.Id).SingleAsync();
+        var controller = CreateController(
+            context,
+            userId: 9,
+            pluggyClient: new FakePluggyClient(clientUserId: "user:42"));
+
+        var result = await controller.LinkItem(accountId, new FinancialAccountLinkItemRequest
+        {
+            ItemId = "item-de-outro-usuario"
+        }, CancellationToken.None);
+
+        Assert.IsType<BadRequestObjectResult>(result.Result);
+        var entity = await context.FinancialAccounts.SingleAsync();
+        Assert.Null(entity.ProviderItemId);
+        Assert.Equal("pending", entity.Status);
+    }
+
     private static AppDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -162,12 +220,16 @@ public class FinancialAccountsControllerTests
             HttpContext = httpContext
         };
 
+        var resolvedPluggyClient = pluggyClient ?? new FakePluggyClient();
         var controller = new FinancialAccountsController(
             context,
             new CurrentUserService(accessor),
             new AuditLogService(context, accessor),
-            new BankSyncService(context, new IBankSyncProvider[] { new PlaceholderBankSyncProvider() }),
-            pluggyClient ?? new FakePluggyClient());
+            new BankSyncService(context, new IBankSyncProvider[]
+            {
+                new PluggyBankSyncProvider(resolvedPluggyClient)
+            }),
+            resolvedPluggyClient);
 
         controller.ControllerContext = new ControllerContext
         {
@@ -179,6 +241,13 @@ public class FinancialAccountsControllerTests
 
     private class FakePluggyClient : IPluggyClient
     {
+        private readonly string _clientUserId;
+
+        public FakePluggyClient(string clientUserId = "user:9")
+        {
+            _clientUserId = clientUserId;
+        }
+
         public bool IsConfigured => true;
         public string? LastClientUserId { get; private set; }
 
@@ -194,6 +263,7 @@ public class FinancialAccountsControllerTests
             {
                 Id = itemId,
                 Status = "UPDATED",
+                ClientUserId = _clientUserId,
                 Connector = new PluggyConnectorResponse
                 {
                     Name = "Nubank"

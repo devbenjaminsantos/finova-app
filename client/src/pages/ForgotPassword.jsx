@@ -21,7 +21,7 @@ export default function ForgotPassword() {
 
     try {
       const response = await forgotPasswordRequest(email);
-      setSuccess(response.message || t("auth.forgotSuccess"));
+      setSuccess(t("auth.forgotSuccess"));
       setResetUrl(response.resetUrl || "");
     } catch (err) {
       setError(err.message || t("auth.forgotError"));
@@ -57,8 +57,11 @@ export default function ForgotPassword() {
 
           <form onSubmit={handleSubmit} className="d-grid gap-3">
             <div>
-              <label className="form-label text-dark fw-medium">{t("common.email")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="forgot-password-email">
+                {t("common.email")}
+              </label>
               <input
+                id="forgot-password-email"
                 type="email"
                 className="form-control finova-input"
                 value={email}

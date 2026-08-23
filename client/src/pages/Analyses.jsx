@@ -185,8 +185,11 @@ export default function Analyses() {
         <div className="finova-page-header-side">
           <div className="d-grid gap-2">
             <div>
-              <label className="form-label text-dark fw-medium">{t("pages.analysesPeriod")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="analyses-period">
+                {t("pages.analysesPeriod")}
+              </label>
               <select
+                id="analyses-period"
                 className="form-select finova-select"
                 value={period}
                 onChange={(event) => setPeriod(event.target.value)}
@@ -200,8 +203,11 @@ export default function Analyses() {
             </div>
 
             <div>
-              <label className="form-label text-dark fw-medium">{t("pages.analysesRange")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="analyses-range">
+                {t("pages.analysesRange")}
+              </label>
               <select
+                id="analyses-range"
                 className="form-select finova-select"
                 value={comparisonRange}
                 onChange={(event) => setComparisonRange(Number(event.target.value))}
@@ -215,8 +221,11 @@ export default function Analyses() {
             </div>
 
             <div>
-              <label className="form-label text-dark fw-medium">{t("pages.displayedAccountLabel")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="analyses-account">
+                {t("pages.displayedAccountLabel")}
+              </label>
               <select
+                id="analyses-account"
                 className="form-select finova-select"
                 value={accountFilter}
                 onChange={(event) => setAccountFilter(event.target.value)}

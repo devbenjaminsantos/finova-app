@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Dashboard from "./Dashboard";
@@ -39,7 +39,7 @@ describe("Graficos page", () => {
     ]);
   });
 
-  it("shows a financial summary and charts when there are transactions", () => {
+  it("shows a financial summary and charts when there are transactions", async () => {
     useTransactions.mockReturnValue({
       isLoading: false,
       transactions: [
@@ -68,8 +68,10 @@ describe("Graficos page", () => {
 
     renderDashboard();
 
-    expect(screen.getByText("Graficos")).toBeInTheDocument();
-    expect(screen.getByText("Graficos do periodo")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Período"), { target: { value: "all" } });
+
+    expect(screen.getByText("Gráficos")).toBeInTheDocument();
+    expect(await screen.findByText("Gráficos do período")).toBeInTheDocument();
     expect(screen.getByText("Graficos mockados")).toBeInTheDocument();
     expect(screen.getByText("Saldo global em todas as contas")).toBeInTheDocument();
   });
@@ -82,6 +84,6 @@ describe("Graficos page", () => {
 
     renderDashboard();
 
-    expect(screen.getByText("Nenhum dado para o periodo selecionado")).toBeInTheDocument();
+    expect(screen.getByText("Nenhum dado para o período selecionado")).toBeInTheDocument();
   });
 });

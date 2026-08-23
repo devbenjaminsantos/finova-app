@@ -115,20 +115,15 @@ namespace FinanceDashboard.Api.Controllers
             InstallmentPlan? installmentPlan = null;
             RecurringRule? recurringRule = null;
 
-            if (dto.FinancialAccountId.HasValue)
+            if (!await FinancialAccountsBelongToUserAsync(
+                    new[] { dto.FinancialAccountId },
+                    userId))
             {
-                var accountExists = await _context.FinancialAccounts.AnyAsync(account =>
-                    account.Id == dto.FinancialAccountId.Value &&
-                    account.UserId == userId);
-
-                if (!accountExists)
+                return BadRequest(new ProblemDetails
                 {
-                    return BadRequest(new ProblemDetails
-                    {
-                        Title = "Conta financeira inválida para este usuário.",
-                        Status = StatusCodes.Status400BadRequest
-                    });
-                }
+                    Title = "Conta financeira inválida para este usuário.",
+                    Status = StatusCodes.Status400BadRequest
+                });
             }
 
             if (creationPlan[0].InstallmentGroupId is not null)
@@ -228,6 +223,17 @@ namespace FinanceDashboard.Api.Controllers
                 _ => "import_csv"
             };
 
+            if (!await FinancialAccountsBelongToUserAsync(
+                    dto.Transactions.Select(item => item.FinancialAccountId),
+                    userId))
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "Conta financeira inválida para este usuário.",
+                    Status = StatusCodes.Status400BadRequest
+                });
+            }
+
             var importedAtUtc = DateTime.UtcNow;
             var transactions = new List<Transaction>();
 
@@ -290,6 +296,17 @@ namespace FinanceDashboard.Api.Controllers
                 return NotFound();
             }
 
+            if (!await FinancialAccountsBelongToUserAsync(
+                    new[] { dto.FinancialAccountId },
+                    userId))
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Title = "Conta financeira inválida para este usuário.",
+                    Status = StatusCodes.Status400BadRequest
+                });
+            }
+
             transaction.Description = dto.Description.Trim();
             transaction.Category = dto.Category.Trim();
             transaction.AmountCents = dto.AmountCents;
@@ -307,6 +324,27 @@ namespace FinanceDashboard.Api.Controllers
                 summary: $"Transação atualizada: {transaction.Description} ({transaction.Type}).");
 
             return Ok(ToResponse(transaction));
+        }
+
+        private async Task<bool> FinancialAccountsBelongToUserAsync(
+            IEnumerable<int?> financialAccountIds,
+            int userId)
+        {
+            var requestedIds = financialAccountIds
+                .Where(id => id.HasValue)
+                .Select(id => id!.Value)
+                .Distinct()
+                .ToList();
+
+            if (requestedIds.Count == 0)
+            {
+                return true;
+            }
+
+            var ownedCount = await _context.FinancialAccounts.CountAsync(account =>
+                account.UserId == userId && requestedIds.Contains(account.Id));
+
+            return ownedCount == requestedIds.Count;
         }
 
         [HttpDelete("{id:int}")]
@@ -509,7 +547,7 @@ namespace FinanceDashboard.Api.Controllers
 
             if (endDate < minimumEndDate)
             {
-                validationError = "A recorrência mensal precisa alcancar pelo menos o proximo mes.";
+                validationError = "A recorrência mensal precisa alcançar pelo menos o próximo mês.";
                 return false;
             }
 

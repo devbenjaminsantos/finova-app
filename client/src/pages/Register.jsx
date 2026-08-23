@@ -33,8 +33,12 @@ export default function Register() {
     setIsSubmitting(true);
 
     try {
-      await registerRequest(name, email, password);
-      setSuccess(t("auth.registerSuccess"));
+      const response = await registerRequest(name, email, password);
+      setSuccess(
+        response.verificationEmailSent
+          ? t("auth.registerSuccess")
+          : t("auth.registerEmailPending")
+      );
       setName("");
       setEmail("");
       setPassword("");
@@ -61,8 +65,11 @@ export default function Register() {
 
           <form onSubmit={handleSubmit} className="d-grid gap-3">
             <div>
-              <label className="form-label text-dark fw-medium">{t("common.name")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="register-name">
+                {t("common.name")}
+              </label>
               <input
+                id="register-name"
                 type="text"
                 className="form-control finova-input"
                 value={name}
@@ -75,8 +82,11 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="form-label text-dark fw-medium">{t("common.email")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="register-email">
+                {t("common.email")}
+              </label>
               <input
+                id="register-email"
                 type="email"
                 className="form-control finova-input"
                 value={email}
@@ -88,9 +98,12 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="form-label text-dark fw-medium">{t("common.password")}</label>
+              <label className="form-label text-dark fw-medium" htmlFor="register-password">
+                {t("common.password")}
+              </label>
               <div className="input-group">
                 <input
+                  id="register-password"
                   type={isPasswordVisible ? "text" : "password"}
                   className="form-control finova-input"
                   value={password}

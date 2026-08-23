@@ -36,8 +36,11 @@ namespace FinanceDashboard.Api.Services.BankSync.Pluggy
 
             var payload = new Dictionary<string, object?>
             {
-                ["clientUserId"] = clientUserId,
-                ["avoidDuplicates"] = true
+                ["options"] = new
+                {
+                    clientUserId,
+                    avoidDuplicates = true
+                }
             };
 
             if (!string.IsNullOrWhiteSpace(itemId))

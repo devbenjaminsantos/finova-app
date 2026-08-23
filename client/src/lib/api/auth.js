@@ -192,12 +192,12 @@ export function consumeStoredLogoutReason() {
   return reason;
 }
 
-export function getLogoutMessage(reason) {
+export function getLogoutMessageKey(reason) {
   switch (reason) {
     case "expired":
-      return "Sua sessão expirou. Faça login novamente.";
+      return "common.sessionExpired";
     case "idle":
-      return "Sua sessão foi encerrada por inatividade. Faça login novamente.";
+      return "common.sessionIdle";
     default:
       return "";
   }
