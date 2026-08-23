@@ -5,6 +5,8 @@ using FinanceDashboard.Api.Services.Audit;
 using FinanceDashboard.Api.Services.Auth;
 using FinanceDashboard.Api.Services.Email;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,7 @@ namespace FinanceDashboard.Api.Controllers
         private readonly PasswordHasher _passwordHasher;
         private readonly PasswordPolicyService _passwordPolicyService;
         private readonly JwTokenService _tokenService;
+        private readonly AuthCookieService _authCookieService;
         private readonly PasswordResetTokenService _tokenUtility;
         private readonly IEmailSender _emailSender;
         private readonly IConfiguration _configuration;
@@ -36,6 +39,7 @@ namespace FinanceDashboard.Api.Controllers
             PasswordHasher passwordHasher,
             PasswordPolicyService passwordPolicyService,
             JwTokenService tokenService,
+            AuthCookieService authCookieService,
             PasswordResetTokenService tokenUtility,
             IEmailSender emailSender,
             IConfiguration configuration,
@@ -47,11 +51,20 @@ namespace FinanceDashboard.Api.Controllers
             _passwordHasher = passwordHasher;
             _passwordPolicyService = passwordPolicyService;
             _tokenService = tokenService;
+            _authCookieService = authCookieService;
             _tokenUtility = tokenUtility;
             _emailSender = emailSender;
             _configuration = configuration;
             _environment = environment;
             _logger = logger;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("csrf-token")]
+        public IActionResult GetCsrfToken([FromServices] IAntiforgery antiforgery)
+        {
+            var tokens = antiforgery.GetAndStoreTokens(HttpContext);
+            return Ok(new { token = tokens.RequestToken });
         }
 
         [HttpPost("register")]
@@ -219,7 +232,7 @@ namespace FinanceDashboard.Api.Controllers
                 userId: user.Id,
                 summary: "Login realizado com sucesso.");
 
-            return Ok(ToAuthResponse(user));
+            return Ok(CreateSession(user));
         }
 
         [HttpPost("demo-login")]
@@ -273,7 +286,14 @@ namespace FinanceDashboard.Api.Controllers
                 userId: user.Id,
                 summary: "Acesso via conta demonstração.");
 
-            return Ok(ToAuthResponse(user));
+            return Ok(CreateSession(user));
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            _authCookieService.Delete(Response);
+            return NoContent();
         }
 
         [HttpPost("resend-email-verification")]
@@ -482,11 +502,12 @@ namespace FinanceDashboard.Api.Controllers
             return Ok(new { message = "Senha redefinida com sucesso." });
         }
 
-        private AuthResponse ToAuthResponse(User user)
+        private AuthResponse CreateSession(User user)
         {
+            _authCookieService.Write(Response, _tokenService.GenerateToken(user));
+
             return new AuthResponse
             {
-                Token = _tokenService.GenerateToken(user),
                 User = ToAuthUserResponse(user)
             };
         }

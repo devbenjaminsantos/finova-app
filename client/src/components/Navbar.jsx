@@ -30,9 +30,12 @@ export default function Navbar() {
     };
   }, []);
 
-  function handleLogout() {
-    logout();
-    navigate("/login");
+  async function handleLogout() {
+    try {
+      await logout();
+    } finally {
+      navigate("/login");
+    }
   }
 
   return (

@@ -198,7 +198,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Login_ReturnsToken_WhenCredentialsAreValid_AndEmailIsConfirmed()
+    public async Task Login_SetsHttpOnlyCookie_WithoutReturningToken_WhenCredentialsAreValid()
     {
         using var context = CreateContext();
         var controller = CreateController(context);
@@ -223,9 +223,42 @@ public class AuthControllerTests
         var ok = Assert.IsType<OkObjectResult>(result.Result);
         var payload = Assert.IsType<AuthResponse>(ok.Value);
 
-        Assert.False(string.IsNullOrWhiteSpace(payload.Token));
         Assert.Equal(user.Email, payload.User.Email);
+        var setCookie = controller.Response.Headers.SetCookie.ToString();
+        Assert.Contains($"{AuthCookieService.CookieName}=", setCookie);
+        Assert.Contains("httponly", setCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("samesite=lax", setCookie, StringComparison.OrdinalIgnoreCase);
         Assert.Contains(context.AuditLogs, log => log.Action == "auth.login-succeeded" && log.UserId == user.Id);
+    }
+
+    [Fact]
+    public void AuthCookie_UsesSecureSameSiteNone_InProduction()
+    {
+        var httpContext = new DefaultHttpContext();
+        var environment = new FakeWebHostEnvironment { EnvironmentName = "Production" };
+        var cookieService = new AuthCookieService(environment);
+
+        cookieService.Write(httpContext.Response, "signed-jwt");
+
+        var setCookie = httpContext.Response.Headers.SetCookie.ToString();
+        Assert.Contains($"{AuthCookieService.CookieName}=", setCookie);
+        Assert.Contains("httponly", setCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("secure", setCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("samesite=none", setCookie, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Logout_DeletesAuthenticationCookie()
+    {
+        using var context = CreateContext();
+        var controller = CreateController(context);
+
+        var result = controller.Logout();
+
+        Assert.IsType<NoContentResult>(result);
+        var setCookie = controller.Response.Headers.SetCookie.ToString();
+        Assert.Contains($"{AuthCookieService.CookieName}=", setCookie);
+        Assert.Contains("expires=", setCookie, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -570,16 +603,18 @@ public class AuthControllerTests
             .AddInMemoryCollection(configData)
             .Build();
 
+        var environment = new FakeWebHostEnvironment { EnvironmentName = environmentName };
         var controller = new AuthController(
             context,
             new AuditLogService(context, new HttpContextAccessor()),
             CreatePasswordHasher(),
             new PasswordPolicyService(),
             new JwTokenService(configuration),
+            new AuthCookieService(environment),
             new PasswordResetTokenService(),
             emailSender ?? new FakeEmailSender(),
             configuration,
-            new FakeWebHostEnvironment { EnvironmentName = environmentName },
+            environment,
             NullLogger<AuthController>.Instance);
 
         controller.ControllerContext = new ControllerContext

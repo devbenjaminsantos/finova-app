@@ -8,4 +8,4 @@ Esta pasta reúne os documentos de apoio do Finova. O README principal apresenta
 - [Roadmap](roadmap.md): direção técnica e de produto para as próximas evoluções.
 - [Changelog](changelog.md): histórico de entregas organizado por marcos do projeto.
 - [Decisões de arquitetura](architecture-decisions.md): registro das escolhas técnicas, seus motivos e impactos.
-
+- [Checklist de segurança e confiabilidade](security-hardening-checklist.md): achados da revisão, ordem de correção e critérios de conclusão.

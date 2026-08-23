@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("./http", () => ({
   apiRequest: vi.fn(),
+  resetCsrfToken: vi.fn(),
 }));
 
 import { apiRequest } from "./http";
@@ -10,26 +11,16 @@ import {
   consumePostLoginRedirect,
   consumeStoredLogoutReason,
   getLogoutMessageKey,
-  getStoredToken,
   getStoredUser,
   hasValidSession,
   isSessionIdle,
-  isTokenExpired,
+  loginRequest,
   persistSession,
   rememberPostLoginRedirect,
   setStoredUser,
   touchSessionActivity,
   updateOnboardingPreferenceRequest,
 } from "./auth";
-
-function buildToken(payload) {
-  const encodedPayload = btoa(JSON.stringify(payload))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
-
-  return `header.${encodedPayload}.signature`;
-}
 
 describe("auth storage helpers", () => {
   beforeEach(() => {
@@ -38,21 +29,19 @@ describe("auth storage helpers", () => {
     vi.useRealTimers();
   });
 
-  it("persists token and user together", () => {
-    persistSession("token-123", { id: 1, name: "Finova" });
+  it("persists only non-sensitive user state", () => {
+    localStorage.setItem("token", "legacy-token");
+    persistSession({ id: 1, name: "Finova" });
 
-    expect(getStoredToken()).toBe("token-123");
+    expect(localStorage.getItem("token")).toBeNull();
     expect(getStoredUser()).toEqual({ id: 1, name: "Finova" });
   });
 
-  it("keeps the session when the login response has no user payload", () => {
-    const token = buildToken({ exp: Math.floor(Date.now() / 1000) + 3600 });
+  it("does not create a client session without a user payload", () => {
+    persistSession(null);
 
-    persistSession(token, null);
-
-    expect(getStoredToken()).toBe(token);
     expect(getStoredUser()).toBeNull();
-    expect(hasValidSession()).toBe(true);
+    expect(hasValidSession()).toBe(false);
   });
 
   it("clears corrupted stored user", () => {
@@ -62,19 +51,11 @@ describe("auth storage helpers", () => {
     expect(localStorage.getItem("user")).toBeNull();
   });
 
-  it("detects expired token from JWT payload", () => {
-    const expiredToken = buildToken({ exp: Math.floor(Date.now() / 1000) - 60 });
-    const validToken = buildToken({ exp: Math.floor(Date.now() / 1000) + 3600 });
-
-    expect(isTokenExpired(expiredToken)).toBe(true);
-    expect(isTokenExpired(validToken)).toBe(false);
-  });
-
   it("expires idle sessions and stores a logout reason", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-04-14T12:00:00.000Z"));
 
-    persistSession(buildToken({ exp: Math.floor(Date.now() / 1000) + 3600 }), {
+    persistSession({
       id: 1,
       name: "Finova",
     });
@@ -91,7 +72,7 @@ describe("auth storage helpers", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-04-14T12:00:00.000Z"));
 
-    persistSession(buildToken({ exp: Math.floor(Date.now() / 1000) + 3600 }), {
+    persistSession({
       id: 1,
       name: "Finova",
     });
@@ -104,10 +85,18 @@ describe("auth storage helpers", () => {
   });
 
   it("returns false for invalid sessions and clears stale user-only storage", () => {
-    localStorage.setItem("user", JSON.stringify({ id: 1 }));
+    localStorage.setItem("user", "null");
 
     expect(hasValidSession()).toBe(false);
-    expect(localStorage.getItem("user")).toBeNull();
+  });
+
+  it("creates a session from the login user without storing the JWT", async () => {
+    apiRequest.mockResolvedValue({ user: { id: 7, name: "Finova User" } });
+
+    await loginRequest("user@finova.app", "SenhaSegura123!");
+
+    expect(localStorage.getItem("token")).toBeNull();
+    expect(getStoredUser()).toEqual({ id: 7, name: "Finova User" });
   });
 
   it("remembers and consumes a protected route redirect", () => {
@@ -142,6 +131,6 @@ describe("auth storage helpers", () => {
 
     clearStoredSession();
     expect(getStoredUser()).toBeNull();
-    expect(getStoredToken()).toBeNull();
+    expect(localStorage.getItem("token")).toBeNull();
   });
 });

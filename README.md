@@ -18,7 +18,7 @@ Portuguese version: [README-pt-BR.md](README-pt-BR.md)
 
 Finova helps users:
 
-- create an account and sign in with JWT authentication
+- create an account and sign in with JWT authentication protected by an `HttpOnly` cookie
 - confirm email addresses during registration
 - recover and reset passwords by email
 - explore the product through a demo account
@@ -50,7 +50,7 @@ Finova helps users:
 - ASP.NET Core 10
 - Entity Framework Core 10
 - SQL Server
-- JWT Bearer Authentication
+- JWT in an `HttpOnly` cookie, with Bearer support for external clients
 - Scalar.AspNetCore
 - SMTP email delivery behind an `IEmailSender` abstraction
 - Pluggy backend foundation for future Open Finance flows
@@ -221,6 +221,7 @@ npm run test:e2e
 - [Roadmap](docs/roadmap.md)
 - [Changelog](docs/changelog.md)
 - [Architecture decisions](docs/architecture-decisions.md)
+- [Security and reliability checklist](docs/security-hardening-checklist.md)
 
 ## Security Notes
 

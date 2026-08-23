@@ -1,6 +1,6 @@
-import { apiRequest } from "./http";
+import { apiRequest, resetCsrfToken } from "./http";
 
-const TOKEN_KEY = "token";
+const LEGACY_TOKEN_KEY = "token";
 const USER_KEY = "user";
 const LAST_ACTIVITY_KEY = "finova:last-activity-at";
 const LOGOUT_REASON_KEY = "finova:logout-reason";
@@ -13,7 +13,8 @@ export async function loginRequest(email, password) {
     body: JSON.stringify({ email, password }),
   });
 
-  persistSession(data.token, data.user ?? null);
+  resetCsrfToken();
+  persistSession(data.user ?? null);
   return data;
 }
 
@@ -22,7 +23,8 @@ export async function demoLoginRequest() {
     method: "POST",
   });
 
-  persistSession(data.token, data.user ?? null);
+  resetCsrfToken();
+  persistSession(data.user ?? null);
   return data;
 }
 
@@ -62,11 +64,11 @@ export function resetPasswordRequest(token, newPassword) {
 }
 
 export function clearStoredSession(reason = "") {
-  const hadToken = localStorage.getItem(TOKEN_KEY) !== null;
+  const hadLegacyToken = localStorage.getItem(LEGACY_TOKEN_KEY) !== null;
   const hadUser = localStorage.getItem(USER_KEY) !== null;
   const hadActivity = localStorage.getItem(LAST_ACTIVITY_KEY) !== null;
 
-  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(LEGACY_TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem(LAST_ACTIVITY_KEY);
 
@@ -74,17 +76,24 @@ export function clearStoredSession(reason = "") {
     localStorage.setItem(LOGOUT_REASON_KEY, reason);
   }
 
-  if (hadToken || hadUser || hadActivity || reason) {
+  if (hadLegacyToken || hadUser || hadActivity || reason) {
     dispatchSessionChange();
   }
 }
 
-export function logout() {
-  clearStoredSession("manual");
+export async function logout() {
+  try {
+    await apiRequest("/auth/logout", { method: "POST" });
+  } catch {
+    // O estado local deve ser encerrado mesmo se a API estiver indisponível.
+  } finally {
+    resetCsrfToken();
+    clearStoredSession("manual");
+  }
 }
 
-export function persistSession(token, user) {
-  localStorage.setItem(TOKEN_KEY, token);
+export function persistSession(user) {
+  localStorage.removeItem(LEGACY_TOKEN_KEY);
   localStorage.setItem(USER_KEY, JSON.stringify(user ?? null));
   touchSessionActivity();
   clearStoredLogoutReason();
@@ -122,28 +131,6 @@ export function getStoredUser() {
   }
 }
 
-export function getStoredToken() {
-  const token = localStorage.getItem(TOKEN_KEY);
-  return typeof token === "string" && token.trim() ? token : null;
-}
-
-export function isTokenExpired(token) {
-  try {
-    const payloadBase64 = token.split(".")[1];
-
-    if (!payloadBase64) {
-      return true;
-    }
-
-    const normalized = payloadBase64.replace(/-/g, "+").replace(/_/g, "/");
-    const payload = JSON.parse(atob(normalized));
-
-    return !payload?.exp || payload.exp * 1000 < Date.now();
-  } catch {
-    return true;
-  }
-}
-
 export function isSessionIdle() {
   const raw = localStorage.getItem(LAST_ACTIVITY_KEY);
 
@@ -161,7 +148,7 @@ export function isSessionIdle() {
 }
 
 export function touchSessionActivity() {
-  if (!getStoredToken()) {
+  if (!getStoredUser()) {
     return;
   }
 
@@ -204,20 +191,7 @@ export function getLogoutMessageKey(reason) {
 }
 
 export function hasValidSession() {
-  const token = getStoredToken();
-
-  if (!token) {
-    const user = localStorage.getItem(USER_KEY);
-
-    if (user !== null) {
-      clearStoredSession();
-    }
-
-    return false;
-  }
-
-  if (isTokenExpired(token)) {
-    clearStoredSession("expired");
+  if (!getStoredUser()) {
     return false;
   }
 
@@ -259,7 +233,7 @@ export async function updateOnboardingPreferenceRequest(onboardingOptIn) {
 
 export function syncSessionFromStorageEvent(event) {
   if (
-    event.key === TOKEN_KEY ||
+    event.key === LEGACY_TOKEN_KEY ||
     event.key === USER_KEY ||
     event.key === LAST_ACTIVITY_KEY ||
     event.key === LOGOUT_REASON_KEY

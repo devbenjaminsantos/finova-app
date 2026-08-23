@@ -58,6 +58,8 @@ builder.Services.AddHttpClient<IPluggyClient, PluggyClient>((serviceProvider, cl
 builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<PasswordPolicyService>();
 builder.Services.AddScoped<JwTokenService>();
+builder.Services.AddScoped<AuthCookieService>();
+builder.Services.AddScoped<CookieAntiforgeryFilter>();
 builder.Services.AddScoped<PasswordResetTokenService>();
 builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<BankSyncService>();
@@ -95,6 +97,16 @@ builder.Services.AddAuthentication(options =>
 
     options.Events = new JwtBearerEvents
     {
+        OnMessageReceived = context =>
+        {
+            if (string.IsNullOrWhiteSpace(context.Token) &&
+                context.Request.Cookies.TryGetValue(AuthCookieService.CookieName, out var cookieToken))
+            {
+                context.Token = cookieToken;
+            }
+
+            return Task.CompletedTask;
+        },
         OnChallenge = async context =>
         {
             context.HandleResponse();
@@ -128,8 +140,21 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
+});
+
+builder.Services.AddAntiforgery(options =>
+{
+    var isDevelopment = builder.Environment.IsDevelopment();
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.Name = "finova_csrf";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None;
+    options.Cookie.SecurePolicy = isDevelopment
+        ? CookieSecurePolicy.None
+        : CookieSecurePolicy.Always;
 });
 
 builder.Services.AddRateLimiter(options =>
@@ -157,7 +182,10 @@ builder.Services.AddRateLimiter(options =>
             }));
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.AddService<CookieAntiforgeryFilter>();
+});
 builder.Services.AddAuthorization();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();

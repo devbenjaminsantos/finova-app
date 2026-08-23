@@ -18,7 +18,7 @@ English version: [README.md](README.md)
 
 O Finova permite:
 
-- criar conta e fazer login com JWT
+- criar conta e fazer login com JWT protegido em cookie `HttpOnly`
 - confirmar e-mail no cadastro
 - recuperar e redefinir senha por e-mail
 - explorar o produto com uma conta demo
@@ -50,7 +50,7 @@ O Finova permite:
 - ASP.NET Core 10
 - Entity Framework Core 10
 - SQL Server
-- JWT Bearer Authentication
+- JWT em cookie `HttpOnly`, com suporte Bearer para clientes externos
 - Scalar.AspNetCore
 - envio de e-mail por SMTP atrás da abstração `IEmailSender`
 - base de backend Pluggy para futuros fluxos de Open Finance
@@ -221,6 +221,7 @@ npm run test:e2e
 - [Roadmap](docs/roadmap.md)
 - [Changelog](docs/changelog.md)
 - [Decisões de arquitetura](docs/architecture-decisions.md)
+- [Checklist de segurança e confiabilidade](docs/security-hardening-checklist.md)
 
 ## Segurança
 

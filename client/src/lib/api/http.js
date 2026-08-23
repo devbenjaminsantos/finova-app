@@ -6,6 +6,8 @@ import {
 import i18n from "../../i18n/i18n";
 
 const API_URL = resolveApiUrl();
+const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+let csrfToken = null;
 
 const ERROR_CODE_TRANSLATIONS = {
   EMAIL_ALREADY_REGISTERED: "auth:emailAlreadyRegisteredError",
@@ -36,13 +38,17 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest(path, options = {}) {
-  const token = localStorage.getItem("token");
+  const method = (options.method || "GET").toUpperCase();
+  const hadSession = localStorage.getItem("user") !== null;
   const hasBody = options.body != null;
+  const requestCsrfToken = SAFE_METHODS.has(method)
+    ? null
+    : await getCsrfToken();
 
   const headers = {
-    ...(token && { Authorization: `Bearer ${token}` }),
     ...(hasBody && { "Content-Type": "application/json" }),
     ...options.headers,
+    ...(requestCsrfToken && { "X-CSRF-TOKEN": requestCsrfToken }),
   };
 
   let response;
@@ -51,12 +57,13 @@ export async function apiRequest(path, options = {}) {
     response = await fetch(`${API_URL}${path}`, {
       ...options,
       headers,
+      credentials: "include",
     });
   } catch {
     throw new ApiError(i18n.t("common:networkError"), 0);
   }
 
-  if (response.status === 401 && token) {
+  if (response.status === 401 && hadSession) {
     rememberPostLoginRedirect(window.location.pathname);
     clearStoredSession("expired");
     window.location.href = "/login";
@@ -96,6 +103,39 @@ export async function apiRequest(path, options = {}) {
   const data = await response.json();
   touchSessionActivity();
   return data;
+}
+
+export function resetCsrfToken() {
+  csrfToken = null;
+}
+
+async function getCsrfToken() {
+  if (csrfToken) {
+    return csrfToken;
+  }
+
+  let response;
+
+  try {
+    response = await fetch(`${API_URL}/auth/csrf-token`, {
+      credentials: "include",
+    });
+  } catch {
+    throw new ApiError(i18n.t("common:networkError"), 0);
+  }
+
+  if (!response.ok) {
+    throw new ApiError(i18n.t("common:requestFailed"), response.status);
+  }
+
+  const data = await response.json();
+
+  if (typeof data?.token !== "string" || !data.token) {
+    throw new ApiError(i18n.t("common:requestFailed"), response.status);
+  }
+
+  csrfToken = data.token;
+  return csrfToken;
 }
 
 function resolveApiUrl() {

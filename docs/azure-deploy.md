@@ -132,6 +132,16 @@ Demo__Email=demo@finova.app
 
 `Client__BaseUrl` é obrigatório e deve ser uma URL absoluta confiável. Ele é usado nos links de confirmação, redefinição de senha e painel público.
 
+A autenticação do navegador usa cookie `HttpOnly`. Em produção, o cookie é enviado com `Secure` e `SameSite=None`, enquanto o frontend envia as requisições com credenciais e antiforgery. Por isso:
+
+- publique a API e o frontend na mesma janela ao alterar esse contrato de autenticação; versões antigas e novas misturadas podem interromper temporariamente o login;
+- `Cors__AllowedOrigins__0` deve conter exatamente a origem ativa do frontend;
+- não use `*` em CORS quando credenciais estiverem habilitadas;
+- valide login, logout e requisições `POST`, `PUT` e `DELETE` no domínio final;
+- prefira domínios customizados de frontend e API sob o mesmo site registrável, reduzindo dependência de cookies tratados pelo navegador como terceiros.
+
+Se o App Service usar mais de uma instância, persista o key ring do ASP.NET Core Data Protection antes de considerar o antiforgery estável entre instâncias.
+
 O backend usa somente SMTP por meio de `IEmailSender`. Não há dependência de runtime do Azure Communication Services.
 
 ## Banco de dados
@@ -188,9 +198,10 @@ Confirme, nesta ordem:
 3. Cadastro envia o e-mail de confirmação.
 4. Confirmação permite login.
 5. Recuperação envia um link utilizável uma única vez.
-6. Rotas autenticadas rejeitam chamadas sem JWT.
-7. Conta demo, CRUD de transações, importação e exportação funcionam.
-8. Os workflows do GitHub terminam sem pular lint ou testes.
+6. Rotas autenticadas rejeitam chamadas sem o cookie de sessão ou um Bearer token válido.
+7. O navegador não possui JWT no `localStorage`, o logout remove o cookie e mutações sem antiforgery são rejeitadas.
+8. Conta demo, CRUD de transações, importação e exportação funcionam.
+9. Os workflows do GitHub terminam sem pular lint ou testes.
 
 ## Rede
 
