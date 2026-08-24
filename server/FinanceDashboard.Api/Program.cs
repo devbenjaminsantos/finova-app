@@ -29,19 +29,7 @@ builder.Configuration.AddJsonFile(
     optional: true,
     reloadOnChange: true);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        GetRequiredConnectionString(builder.Configuration),
-        sqlOptions =>
-        {
-            // Azure SQL serverless pode falhar na primeira tentativa
-            // enquanto o banco sai do estado pausado. O retry cobre
-            // essas falhas transitórias sem exigir nova tentativa manual.
-            sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 5,
-                maxRetryDelay: TimeSpan.FromSeconds(10),
-                errorNumbersToAdd: null);
-        }));
+builder.Services.AddFinovaDatabase(builder.Configuration);
 
 builder.Services.Configure<PluggyOptions>(
     builder.Configuration.GetSection(PluggyOptions.SectionName));
@@ -320,19 +308,6 @@ static void ValidateSmtpConfiguration(WebApplication app)
 
         logger.LogWarning(message);
     }
-}
-
-static string GetRequiredConnectionString(IConfiguration configuration)
-{
-    var connectionString = configuration.GetConnectionString("Default");
-
-    if (string.IsNullOrWhiteSpace(connectionString))
-    {
-        throw new InvalidOperationException(
-            "ConnectionStrings:Default não configurada. Defina a string de conexão em appsettings.Development.local.json ou na variável ConnectionStrings__Default.");
-    }
-
-    return connectionString;
 }
 
 static string GetRequiredJwtKey(IConfiguration configuration)
