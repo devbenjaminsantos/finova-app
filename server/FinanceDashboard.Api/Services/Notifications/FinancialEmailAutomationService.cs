@@ -82,7 +82,10 @@ namespace FinanceDashboard.Api.Services.Notifications
                     var spentCents = string.IsNullOrWhiteSpace(goal.Category)
                         ? expenses.Sum(transaction => transaction.AmountCents)
                         : expenses
-                            .Where(transaction => transaction.Category == goal.Category)
+                            .Where(transaction => string.Equals(
+                                transaction.Category,
+                                goal.Category,
+                                StringComparison.OrdinalIgnoreCase))
                             .Sum(transaction => transaction.AmountCents);
 
                     var thresholdAmount = goal.AmountCents * user.GoalAlertThresholdPercent / 100m;
@@ -185,7 +188,11 @@ namespace FinanceDashboard.Api.Services.Notifications
                     .Sum(transaction => transaction.AmountCents);
                 var topExpenseCategory = transactions
                     .Where(transaction => transaction.Type == "expense")
-                    .GroupBy(transaction => string.IsNullOrWhiteSpace(transaction.Category) ? "Sem categoria" : transaction.Category)
+                    .GroupBy(
+                        transaction => string.IsNullOrWhiteSpace(transaction.Category)
+                            ? "Sem categoria"
+                            : transaction.Category,
+                        StringComparer.OrdinalIgnoreCase)
                     .Select(group => new
                     {
                         Category = group.Key,
@@ -202,7 +209,10 @@ namespace FinanceDashboard.Api.Services.Notifications
                             : transactions
                                 .Where(transaction =>
                                     transaction.Type == "expense" &&
-                                    transaction.Category == goal.Category)
+                                    string.Equals(
+                                        transaction.Category,
+                                        goal.Category,
+                                        StringComparison.OrdinalIgnoreCase))
                                 .Sum(transaction => transaction.AmountCents);
 
                         return new MonthlyGoalSummary(

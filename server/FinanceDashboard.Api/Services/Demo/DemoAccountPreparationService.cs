@@ -1,11 +1,15 @@
+using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Data;
+using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Text;
 using FinanceDashboard.Api.Data;
 using FinanceDashboard.Api.Models;
 using FinanceDashboard.Api.Services.Auth;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FinanceDashboard.Api.Services.Demo
 {
@@ -41,10 +45,10 @@ namespace FinanceDashboard.Api.Services.Demo
             string sessionEmail,
             CancellationToken cancellationToken)
         {
-            if (!_context.Database.IsSqlServer())
+            if (!_context.Database.IsSqlServer() && !_context.Database.IsNpgsql())
             {
                 throw new NotSupportedException(
-                    "A coordenação distribuída da conta demo requer SQL Server.");
+                    "A coordenação distribuída da conta demo requer SQL Server ou PostgreSQL.");
             }
 
             var executionStrategy = _context.Database.CreateExecutionStrategy();
@@ -57,7 +61,7 @@ namespace FinanceDashboard.Api.Services.Demo
                     IsolationLevel.Serializable,
                     cancellationToken);
 
-                await AcquireSqlServerLockAsync(options, cancellationToken);
+                await AcquireRelationalLockAsync(options, cancellationToken);
                 var user = await CreateIsolatedDemoAccountAsync(
                     options,
                     sessionEmail,
@@ -74,8 +78,8 @@ namespace FinanceDashboard.Api.Services.Demo
             string sessionEmail,
             CancellationToken cancellationToken)
         {
-            // EF InMemory is used only by focused tests. Production uses the SQL Server
-            // application lock above, which coordinates cleanup across API instances.
+            // EF InMemory is used only by focused tests. Production uses a database
+            // transaction lock, which coordinates cleanup across API instances.
             var coordinationLock = NonRelationalLocks.GetOrAdd(
                 options.Email,
                 static _ => new SemaphoreSlim(1, 1));
@@ -97,6 +101,15 @@ namespace FinanceDashboard.Api.Services.Demo
             {
                 coordinationLock.Release();
             }
+        }
+
+        private Task AcquireRelationalLockAsync(
+            DemoAccountOptions options,
+            CancellationToken cancellationToken)
+        {
+            return _context.Database.IsNpgsql()
+                ? AcquirePostgreSqlLockAsync(options, cancellationToken)
+                : AcquireSqlServerLockAsync(options, cancellationToken);
         }
 
         private async Task AcquireSqlServerLockAsync(
@@ -127,6 +140,65 @@ namespace FinanceDashboard.Api.Services.Demo
             {
                 throw new DemoAccountPreparationUnavailableException();
             }
+        }
+
+        private async Task AcquirePostgreSqlLockAsync(
+            DemoAccountOptions options,
+            CancellationToken cancellationToken)
+        {
+            var resource = $"Finova:DemoAccount:{options.Email}";
+            var lockKey = CreatePostgreSqlLockKey(resource);
+            var elapsed = Stopwatch.StartNew();
+
+            while (elapsed.Elapsed < options.LockTimeout)
+            {
+                if (await TryAcquirePostgreSqlLockAsync(lockKey, cancellationToken))
+                {
+                    return;
+                }
+
+                var remaining = options.LockTimeout - elapsed.Elapsed;
+                if (remaining <= TimeSpan.Zero)
+                {
+                    break;
+                }
+
+                await Task.Delay(
+                    remaining < TimeSpan.FromMilliseconds(100)
+                        ? remaining
+                        : TimeSpan.FromMilliseconds(100),
+                    cancellationToken);
+            }
+
+            throw new DemoAccountPreparationUnavailableException();
+        }
+
+        private async Task<bool> TryAcquirePostgreSqlLockAsync(
+            long lockKey,
+            CancellationToken cancellationToken)
+        {
+            var connection = _context.Database.GetDbConnection();
+            var transaction = _context.Database.CurrentTransaction?.GetDbTransaction()
+                ?? throw new InvalidOperationException(
+                    "A transação da conta demo não foi iniciada.");
+
+            await using var command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = "SELECT pg_try_advisory_xact_lock(@lock_key);";
+
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = "@lock_key";
+            parameter.DbType = DbType.Int64;
+            parameter.Value = lockKey;
+            command.Parameters.Add(parameter);
+
+            return await command.ExecuteScalarAsync(cancellationToken) is true;
+        }
+
+        private static long CreatePostgreSqlLockKey(string resource)
+        {
+            var hash = SHA256.HashData(Encoding.UTF8.GetBytes(resource));
+            return BinaryPrimitives.ReadInt64BigEndian(hash);
         }
 
         private async Task<User> CreateIsolatedDemoAccountAsync(

@@ -25,6 +25,17 @@ namespace FinanceDashboard.Api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var usesPostgreSql = Database.IsNpgsql();
+
+            if (usesPostgreSql)
+            {
+                modelBuilder.HasPostgresExtension("citext");
+            }
+
+            string Column(string name) => Database.IsNpgsql()
+                ? $"\"{name}\""
+                : $"[{name}]";
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(user => user.Name)
@@ -46,9 +57,20 @@ namespace FinanceDashboard.Api.Data
                 entity.HasIndex(user => user.Email)
                     .IsUnique();
 
-                entity.HasIndex(user => user.PublicDashboardTokenHash)
-                    .IsUnique()
-                    .HasFilter("[PublicDashboardTokenHash] IS NOT NULL");
+                var publicDashboardTokenIndex = entity
+                    .HasIndex(user => user.PublicDashboardTokenHash)
+                    .IsUnique();
+
+                if (Database.IsSqlServer())
+                {
+                    publicDashboardTokenIndex
+                        .HasFilter("[PublicDashboardTokenHash] IS NOT NULL");
+                }
+                else if (Database.IsNpgsql())
+                {
+                    publicDashboardTokenIndex
+                        .HasFilter("\"PublicDashboardTokenHash\" IS NOT NULL");
+                }
 
                 entity.HasIndex(user => new { user.IsDemoAccount, user.DemoExpiresAtUtc });
 
@@ -56,7 +78,8 @@ namespace FinanceDashboard.Api.Data
                 {
                     table.HasCheckConstraint(
                         "CK_Users_MonthlyReportDay",
-                        "[MonthlyReportDay] >= 1 AND [MonthlyReportDay] <= 28");
+                        $"{Column("MonthlyReportDay")} >= 1 AND " +
+                        $"{Column("MonthlyReportDay")} <= 28");
                 });
             });
 
@@ -65,8 +88,13 @@ namespace FinanceDashboard.Api.Data
                 entity.Property(transaction => transaction.Description)
                     .HasMaxLength(120);
 
-                entity.Property(transaction => transaction.Category)
+                var transactionCategory = entity.Property(transaction => transaction.Category)
                     .HasMaxLength(60);
+
+                if (usesPostgreSql)
+                {
+                    transactionCategory.HasColumnType("citext");
+                }
 
                 entity.Property(transaction => transaction.Type)
                     .HasMaxLength(20);
@@ -80,8 +108,11 @@ namespace FinanceDashboard.Api.Data
                 entity.Property(transaction => transaction.RecurrenceGroupId)
                     .HasMaxLength(40);
 
-                entity.Property(transaction => transaction.RecurringRuleId)
-                    .HasColumnType("int");
+                entity.Property(transaction => transaction.Date)
+                    .HasColumnType("date");
+
+                entity.Property(transaction => transaction.RecurrenceEndDate)
+                    .HasColumnType("date");
 
                 entity.Property(transaction => transaction.InstallmentGroupId)
                     .HasMaxLength(40);
@@ -90,11 +121,12 @@ namespace FinanceDashboard.Api.Data
                 {
                     table.HasCheckConstraint(
                         "CK_Transactions_Source",
-                        "[Source] IN ('manual', 'import_csv', 'import_ofx', 'bank_sync')");
+                        $"{Column("Source")} IN " +
+                        "('manual', 'import_csv', 'import_ofx', 'bank_sync')");
 
                     table.HasCheckConstraint(
                         "CK_Transactions_Type",
-                        "[Type] IN ('income', 'expense')");
+                        $"{Column("Type")} IN ('income', 'expense')");
                 });
 
                 entity.HasIndex(transaction => new { transaction.UserId, transaction.RecurrenceGroupId });
@@ -130,8 +162,16 @@ namespace FinanceDashboard.Api.Data
                 entity.Property(plan => plan.Description)
                     .HasMaxLength(120);
 
-                entity.Property(plan => plan.Category)
+                var installmentCategory = entity.Property(plan => plan.Category)
                     .HasMaxLength(60);
+
+                if (usesPostgreSql)
+                {
+                    installmentCategory.HasColumnType("citext");
+                }
+
+                entity.Property(plan => plan.StartDate)
+                    .HasColumnType("date");
 
                 entity.HasIndex(plan => new { plan.UserId, plan.PublicId })
                     .IsUnique();
@@ -150,8 +190,13 @@ namespace FinanceDashboard.Api.Data
                 entity.Property(rule => rule.Description)
                     .HasMaxLength(120);
 
-                entity.Property(rule => rule.Category)
+                var recurringCategory = entity.Property(rule => rule.Category)
                     .HasMaxLength(60);
+
+                if (usesPostgreSql)
+                {
+                    recurringCategory.HasColumnType("citext");
+                }
 
                 entity.Property(rule => rule.Type)
                     .HasMaxLength(20);
@@ -159,11 +204,23 @@ namespace FinanceDashboard.Api.Data
                 entity.Property(rule => rule.TagsCsv)
                     .HasMaxLength(500);
 
+                entity.Property(rule => rule.StartDate)
+                    .HasColumnType("date");
+
+                entity.Property(rule => rule.EndDate)
+                    .HasColumnType("date");
+
+                entity.Property(rule => rule.LastGeneratedDate)
+                    .HasColumnType("date");
+
+                entity.Property(rule => rule.NextOccurrenceDate)
+                    .HasColumnType("date");
+
                 entity.ToTable(table =>
                 {
                     table.HasCheckConstraint(
                         "CK_RecurringRules_Type",
-                        "[Type] IN ('income', 'expense')");
+                        $"{Column("Type")} IN ('income', 'expense')");
                 });
 
                 entity.HasIndex(rule => new { rule.UserId, rule.PublicId })
@@ -179,8 +236,13 @@ namespace FinanceDashboard.Api.Data
 
             modelBuilder.Entity<TransactionTag>(entity =>
             {
-                entity.Property(tag => tag.Name)
+                var tagName = entity.Property(tag => tag.Name)
                     .HasMaxLength(40);
+
+                if (usesPostgreSql)
+                {
+                    tagName.HasColumnType("citext");
+                }
 
                 entity.HasIndex(tag => new { tag.UserId, tag.Name })
                     .IsUnique();
@@ -239,11 +301,13 @@ namespace FinanceDashboard.Api.Data
                 {
                     table.HasCheckConstraint(
                         "CK_FinancialAccounts_Status",
-                        "[Status] IN ('disconnected', 'pending', 'connected', 'error')");
+                        $"{Column("Status")} IN " +
+                        "('disconnected', 'pending', 'connected', 'error')");
 
                     table.HasCheckConstraint(
                         "CK_FinancialAccounts_AccountType",
-                        "[AccountType] IN ('bank_account', 'wallet', 'cash', 'credit_card')");
+                        $"{Column("AccountType")} IN " +
+                        "('bank_account', 'wallet', 'cash', 'credit_card')");
                 });
 
                 entity.HasIndex(account => new { account.UserId, account.ExternalAccountId });
@@ -261,8 +325,13 @@ namespace FinanceDashboard.Api.Data
                 entity.Property(goal => goal.Month)
                     .HasMaxLength(7);
 
-                entity.Property(goal => goal.Category)
+                var goalCategory = entity.Property(goal => goal.Category)
                     .HasMaxLength(60);
+
+                if (usesPostgreSql)
+                {
+                    goalCategory.HasColumnType("citext");
+                }
 
                 entity.HasIndex(goal => new { goal.UserId, goal.Month, goal.Category })
                     .IsUnique();

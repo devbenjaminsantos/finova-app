@@ -53,11 +53,12 @@ namespace FinanceDashboard.Api.Controllers
             var userId = _currentUserService.GetRequiredUserId();
             var month = NormalizeMonthOrThrow(dto.Month);
             var category = NormalizeCategory(dto.Category);
+            var categoryKey = category.ToLowerInvariant();
 
             var alreadyExists = await _context.BudgetGoals.AnyAsync(goal =>
                 goal.UserId == userId &&
                 goal.Month == month &&
-                goal.Category == category);
+                goal.Category.ToLower() == categoryKey);
 
             if (alreadyExists)
             {
@@ -94,6 +95,7 @@ namespace FinanceDashboard.Api.Controllers
             var userId = _currentUserService.GetRequiredUserId();
             var month = NormalizeMonthOrThrow(dto.Month);
             var category = NormalizeCategory(dto.Category);
+            var categoryKey = category.ToLowerInvariant();
 
             var goal = await _context.BudgetGoals
                 .FirstOrDefaultAsync(existing => existing.Id == id && existing.UserId == userId);
@@ -107,7 +109,7 @@ namespace FinanceDashboard.Api.Controllers
                 existing.Id != id &&
                 existing.UserId == userId &&
                 existing.Month == month &&
-                existing.Category == category);
+                existing.Category.ToLower() == categoryKey);
 
             if (alreadyExists)
             {

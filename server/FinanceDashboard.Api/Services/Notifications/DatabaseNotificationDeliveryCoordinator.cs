@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using System.Data;
 using System.Globalization;
 using System.Security.Cryptography;
@@ -31,10 +32,10 @@ namespace FinanceDashboard.Api.Services.Notifications
                     cancellationToken);
             }
 
-            if (!_context.Database.IsSqlServer())
+            if (!_context.Database.IsSqlServer() && !_context.Database.IsNpgsql())
             {
                 throw new NotSupportedException(
-                    "A entrega idempotente de notificacoes requer SQL Server.");
+                    "A entrega idempotente de notificações requer SQL Server ou PostgreSQL.");
             }
 
             var executionStrategy = _context.Database.CreateExecutionStrategy();
@@ -53,9 +54,11 @@ namespace FinanceDashboard.Api.Services.Notifications
 
             try
             {
-                var lockResult = await AcquireTransactionLockAsync(delivery, cancellationToken);
+                var lockAcquired = await AcquireTransactionLockAsync(
+                    delivery,
+                    cancellationToken);
 
-                if (lockResult < 0)
+                if (!lockAcquired)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     await transaction.RollbackAsync(CancellationToken.None);
@@ -123,20 +126,29 @@ namespace FinanceDashboard.Api.Services.Notifications
                     cancellationToken);
         }
 
-        private async Task<int> AcquireTransactionLockAsync(
+        private Task<bool> AcquireTransactionLockAsync(
+            NotificationDelivery delivery,
+            CancellationToken cancellationToken)
+        {
+            return _context.Database.IsNpgsql()
+                ? AcquirePostgreSqlTransactionLockAsync(delivery, cancellationToken)
+                : AcquireSqlServerTransactionLockAsync(delivery, cancellationToken);
+        }
+
+        private async Task<bool> AcquireSqlServerTransactionLockAsync(
             NotificationDelivery delivery,
             CancellationToken cancellationToken)
         {
             var connection = _context.Database.GetDbConnection();
             var transaction = _context.Database.CurrentTransaction?.GetDbTransaction()
-                ?? throw new InvalidOperationException("A transacao de notificacao nao foi iniciada.");
+                ?? throw new InvalidOperationException("A transação de notificação não foi iniciada.");
 
             await using var command = connection.CreateCommand();
             command.Transaction = transaction;
             command.CommandText = "sys.sp_getapplock";
             command.CommandType = CommandType.StoredProcedure;
 
-            AddParameter(command, "@Resource", BuildLockResource(delivery), DbType.String, 255);
+            AddParameter(command, "@Resource", BuildSqlServerLockResource(delivery), DbType.String, 255);
             AddParameter(command, "@LockMode", "Exclusive", DbType.String, 32);
             AddParameter(command, "@LockOwner", "Transaction", DbType.String, 32);
             AddParameter(command, "@LockTimeout", 0, DbType.Int32);
@@ -149,7 +161,28 @@ namespace FinanceDashboard.Api.Services.Notifications
 
             await command.ExecuteNonQueryAsync(cancellationToken);
 
-            return Convert.ToInt32(returnValue.Value, CultureInfo.InvariantCulture);
+            return Convert.ToInt32(returnValue.Value, CultureInfo.InvariantCulture) >= 0;
+        }
+
+        private async Task<bool> AcquirePostgreSqlTransactionLockAsync(
+            NotificationDelivery delivery,
+            CancellationToken cancellationToken)
+        {
+            var connection = _context.Database.GetDbConnection();
+            var transaction = _context.Database.CurrentTransaction?.GetDbTransaction()
+                ?? throw new InvalidOperationException("A transação de notificação não foi iniciada.");
+
+            await using var command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandText = "SELECT pg_try_advisory_xact_lock(@lock_key);";
+
+            AddParameter(
+                command,
+                "@lock_key",
+                BuildPostgreSqlLockKey(delivery),
+                DbType.Int64);
+
+            return await command.ExecuteScalarAsync(cancellationToken) is true;
         }
 
         private static void AddParameter(
@@ -172,15 +205,24 @@ namespace FinanceDashboard.Api.Services.Notifications
             command.Parameters.Add(parameter);
         }
 
-        private static string BuildLockResource(NotificationDelivery delivery)
+        private static string BuildSqlServerLockResource(NotificationDelivery delivery)
+        {
+            return $"Finova.NotificationDelivery.{Convert.ToHexString(BuildLockHash(delivery))}";
+        }
+
+        private static long BuildPostgreSqlLockKey(NotificationDelivery delivery)
+        {
+            return BinaryPrimitives.ReadInt64BigEndian(BuildLockHash(delivery));
+        }
+
+        private static byte[] BuildLockHash(NotificationDelivery delivery)
         {
             var deliveryKey = string.Join(
                 '|',
                 delivery.UserId.ToString(CultureInfo.InvariantCulture),
                 delivery.NotificationType,
                 delivery.ReferenceKey);
-            var hash = SHA256.HashData(Encoding.UTF8.GetBytes(deliveryKey));
-            return $"Finova.NotificationDelivery.{Convert.ToHexString(hash)}";
+            return SHA256.HashData(Encoding.UTF8.GetBytes(deliveryKey));
         }
     }
 }

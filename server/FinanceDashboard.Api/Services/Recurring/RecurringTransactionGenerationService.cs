@@ -95,8 +95,13 @@ namespace FinanceDashboard.Api.Services.Recurring
                 return;
             }
 
+            var normalizedTagKeys = tagNames
+                .Select(name => name.ToLowerInvariant())
+                .ToList();
             var existingTags = await _context.TransactionTags
-                .Where(tag => tag.UserId == userId && tagNames.Contains(tag.Name))
+                .Where(tag =>
+                    tag.UserId == userId &&
+                    normalizedTagKeys.Contains(tag.Name.ToLower()))
                 .ToListAsync();
 
             var existingNames = existingTags

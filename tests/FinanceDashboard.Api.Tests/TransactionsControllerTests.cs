@@ -68,6 +68,39 @@ public class TransactionsControllerTests
     }
 
     [Fact]
+    public async Task Create_ReusesTagIgnoringLetterCase()
+    {
+        using var context = CreateContext();
+        var controller = CreateController(context, userId: 7);
+
+        await controller.Create(new TransactionCreateRequest
+        {
+            Description = "Compra semanal",
+            Category = "Alimentação",
+            AmountCents = 12000,
+            Date = new DateTime(2026, 4, 10),
+            Type = "expense",
+            TagNames = new List<string> { "Mercado" }
+        });
+        await controller.Create(new TransactionCreateRequest
+        {
+            Description = "Compra mensal",
+            Category = "ALIMENTAÇÃO",
+            AmountCents = 45000,
+            Date = new DateTime(2026, 4, 11),
+            Type = "expense",
+            TagNames = new List<string> { "MERCADO", "mercado" }
+        });
+
+        var tag = Assert.Single(context.TransactionTags);
+        Assert.Equal("Mercado", tag.Name);
+        Assert.Equal(2, context.TransactionTagLinks.Count());
+        Assert.All(
+            context.TransactionTagLinks,
+            link => Assert.Equal(tag.Id, link.TransactionTagId));
+    }
+
+    [Fact]
     public async Task Create_CreatesRecurringRuleAndFirstOccurrence_WhenRequested()
     {
         using var context = CreateContext();

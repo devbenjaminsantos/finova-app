@@ -1,12 +1,19 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import BrandMark from "../components/BrandMark";
 import { useI18n } from "../i18n/LanguageProvider";
 import { forgotPasswordRequest } from "../lib/api/auth";
 
 export default function ForgotPassword() {
   const { t } = useI18n();
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const redirectedFromRegistration =
+    location.state?.reason === "email-already-registered";
+  const [email, setEmail] = useState(
+    redirectedFromRegistration && typeof location.state?.email === "string"
+      ? location.state.email
+      : ""
+  );
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [resetUrl, setResetUrl] = useState("");
@@ -56,6 +63,12 @@ export default function ForgotPassword() {
           </div>
 
           <form onSubmit={handleSubmit} className="d-grid gap-3">
+            {redirectedFromRegistration && !error && !success ? (
+              <div className="alert alert-warning py-2 mb-0" role="status">
+                {t("auth.emailAlreadyRegisteredError")}
+              </div>
+            ) : null}
+
             <div>
               <label className="form-label text-dark fw-medium" htmlFor="forgot-password-email">
                 {t("common.email")}

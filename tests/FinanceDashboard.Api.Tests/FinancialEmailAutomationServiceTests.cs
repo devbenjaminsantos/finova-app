@@ -12,6 +12,47 @@ namespace FinanceDashboard.Api.Tests;
 public class FinancialEmailAutomationServiceTests
 {
     [Fact]
+    public async Task ProcessAsync_MatchesGoalCategoryIgnoringLetterCase()
+    {
+        using var context = CreateContext();
+        var emailSender = new FakeEmailSender();
+        var user = new User
+        {
+            Id = 6,
+            Name = "Keller",
+            Email = "keller@finova.app",
+            EmailConfirmed = true,
+            EmailGoalAlertsEnabled = true,
+            GoalAlertThresholdPercent = 80
+        };
+
+        context.Users.Add(user);
+        context.BudgetGoals.Add(new BudgetGoal
+        {
+            UserId = user.Id,
+            Month = "2026-04",
+            Category = "Mercado",
+            AmountCents = 100_00
+        });
+        context.Transactions.Add(new Transaction
+        {
+            UserId = user.Id,
+            Description = "Compra",
+            Category = "MERCADO",
+            AmountCents = 85_00,
+            Date = new DateTime(2026, 4, 10),
+            Type = "expense"
+        });
+        await context.SaveChangesAsync();
+
+        var service = CreateService(context, emailSender);
+
+        await service.ProcessAsync(new DateTime(2026, 4, 15));
+
+        Assert.Single(emailSender.GoalAlerts);
+    }
+
+    [Fact]
     public async Task ProcessAsync_SendsGoalAlertOnce_WhenThresholdIsReached()
     {
         using var context = CreateContext();

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import BrandMark from "../components/BrandMark";
 import PasswordToggleButton from "../components/PasswordToggleButton";
 import { useI18n } from "../i18n/LanguageProvider";
@@ -8,6 +8,7 @@ import { isPasswordStrong } from "../lib/auth/passwordPolicy";
 
 export default function Register() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,6 +44,17 @@ export default function Register() {
       setEmail("");
       setPassword("");
     } catch (requestError) {
+      if (requestError.code === "EMAIL_ALREADY_REGISTERED") {
+        navigate("/forgot-password", {
+          replace: true,
+          state: {
+            email: email.trim(),
+            reason: "email-already-registered",
+          },
+        });
+        return;
+      }
+
       setError(requestError.message || t("auth.registerError"));
     } finally {
       setIsSubmitting(false);

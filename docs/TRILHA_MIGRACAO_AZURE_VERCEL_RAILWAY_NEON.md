@@ -310,10 +310,13 @@ Executar esta fase em incrementos isolados e manter a compatibilidade com SQL Se
 - [x] Adicionar seleção explícita de provedor e configurar `UseNpgsql` para o Neon por meio de `Database__Provider=PostgreSql`.
 - [x] Definir retry para falhas transitórias de conexão e cold start nos dois provedores.
 - [ ] Remover ou isolar dependências diretas de `Database.IsSqlServer()`.
-- [ ] Substituir `sys.sp_getapplock` por coordenação compatível com PostgreSQL, como advisory locks transacionais.
-- [ ] Adaptar o filtro de índice de `PublicDashboardTokenHash` para sintaxe PostgreSQL.
-- [ ] Revisar constraints, valores default, identity/sequence e tipos de data/hora.
-- [ ] Revisar comparação de strings, case sensitivity, tamanhos, precisão decimal e UTC.
+- [x] Adaptar o lock da conta demo para `pg_try_advisory_xact_lock`, preservando timeout, commit e rollback.
+- [x] Adaptar o lock de notificações para `pg_try_advisory_xact_lock`, preservando a idempotência sem espera.
+- [x] Adaptar o filtro de índice de `PublicDashboardTokenHash` para SQL Server e PostgreSQL, com testes da metadata EF.
+- [x] Revisar constraints, defaults, identity/sequence e tipos: constraints usam delimitadores por provedor, datas civis usam `date`, instantes UTC usam `timestamp with time zone` no PostgreSQL e valores financeiros permanecem em centavos inteiros.
+- [x] Tratar tags e categorias sem diferença entre maiúsculas e minúsculas: PostgreSQL usa `citext`, preserva a grafia exibida e reforça a unicidade por índice.
+- [x] Adaptar a detecção de e-mail duplicado para `PostgresException` com unique violation, além de `SqlException`.
+- [ ] Revisar as demais comparações de strings e tamanhos no PostgreSQL real.
 - [ ] Criar uma migration inicial limpa para PostgreSQL em vez de aplicar o histórico SQL Server no Neon.
 - [ ] Definir se migrations antigas ficarão arquivadas ou em assembly separado durante a transição.
 - [ ] Executar testes unitários e de integração contra PostgreSQL real.
@@ -322,6 +325,7 @@ Executar esta fase em incrementos isolados e manter a compatibilidade com SQL Se
 
 - [ ] `DatabaseNotificationDeliveryCoordinator` funciona com concorrência no PostgreSQL.
 - [ ] `DemoAccountPreparationService` preserva isolamento e idempotência no PostgreSQL.
+- [ ] O timeout concorrente da conta demo foi verificado contra PostgreSQL real.
 - [ ] O índice único de `PublicDashboardTokenHash` aceita múltiplos valores nulos e rejeita tokens repetidos.
 - [ ] Todas as migrations Npgsql sobem do zero e podem ser revertidas em ambiente descartável.
 - [ ] Login, revogação de sessão e conta demo continuam funcionando.

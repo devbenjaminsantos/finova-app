@@ -612,8 +612,13 @@ namespace FinanceDashboard.Api.Controllers
                 return;
             }
 
+            var normalizedTagKeys = normalizedTagNames
+                .Select(name => name.ToLowerInvariant())
+                .ToList();
             var existingTags = await _context.TransactionTags
-                .Where(tag => tag.UserId == userId && normalizedTagNames.Contains(tag.Name))
+                .Where(tag =>
+                    tag.UserId == userId &&
+                    normalizedTagKeys.Contains(tag.Name.ToLower()))
                 .ToListAsync();
 
             var existingNames = existingTags

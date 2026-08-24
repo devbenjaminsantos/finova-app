@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceDashboard.Api.Controllers
@@ -114,7 +113,8 @@ namespace FinanceDashboard.Api.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException exception) when (IsDuplicateEmailViolation(exception))
+            catch (DbUpdateException exception) when (
+                DatabaseErrorClassifier.IsUniqueConstraintViolation(exception))
             {
                 return Conflict(new ProblemDetails
                 {
@@ -528,11 +528,6 @@ namespace FinanceDashboard.Api.Controllers
         private bool IsDemoUser(User user)
         {
             return user.IsDemoAccount;
-        }
-
-        private static bool IsDuplicateEmailViolation(DbUpdateException exception)
-        {
-            return exception.InnerException is SqlException { Number: 2601 or 2627 };
         }
 
         private static bool IsUserLockedOut(User user, DateTime now)
