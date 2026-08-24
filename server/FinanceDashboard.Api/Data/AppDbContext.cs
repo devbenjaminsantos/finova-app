@@ -119,6 +119,13 @@ namespace FinanceDashboard.Api.Data
 
                 entity.ToTable(table =>
                 {
+                    if (usesPostgreSql)
+                    {
+                        table.HasCheckConstraint(
+                            "CK_Transactions_Category_Length",
+                            "char_length(\"Category\") <= 60");
+                    }
+
                     table.HasCheckConstraint(
                         "CK_Transactions_Source",
                         $"{Column("Source")} IN " +
@@ -168,6 +175,10 @@ namespace FinanceDashboard.Api.Data
                 if (usesPostgreSql)
                 {
                     installmentCategory.HasColumnType("citext");
+
+                    entity.ToTable(table => table.HasCheckConstraint(
+                        "CK_InstallmentPlans_Category_Length",
+                        "char_length(\"Category\") <= 60"));
                 }
 
                 entity.Property(plan => plan.StartDate)
@@ -218,6 +229,13 @@ namespace FinanceDashboard.Api.Data
 
                 entity.ToTable(table =>
                 {
+                    if (usesPostgreSql)
+                    {
+                        table.HasCheckConstraint(
+                            "CK_RecurringRules_Category_Length",
+                            "char_length(\"Category\") <= 60");
+                    }
+
                     table.HasCheckConstraint(
                         "CK_RecurringRules_Type",
                         $"{Column("Type")} IN ('income', 'expense')");
@@ -242,6 +260,10 @@ namespace FinanceDashboard.Api.Data
                 if (usesPostgreSql)
                 {
                     tagName.HasColumnType("citext");
+
+                    entity.ToTable(table => table.HasCheckConstraint(
+                        "CK_TransactionTags_Name_Length",
+                        "char_length(\"Name\") <= 40"));
                 }
 
                 entity.HasIndex(tag => new { tag.UserId, tag.Name })
@@ -331,6 +353,10 @@ namespace FinanceDashboard.Api.Data
                 if (usesPostgreSql)
                 {
                     goalCategory.HasColumnType("citext");
+
+                    entity.ToTable(table => table.HasCheckConstraint(
+                        "CK_BudgetGoals_Category_Length",
+                        "char_length(\"Category\") <= 60"));
                 }
 
                 entity.HasIndex(goal => new { goal.UserId, goal.Month, goal.Category })

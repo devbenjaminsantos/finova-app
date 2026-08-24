@@ -317,8 +317,8 @@ Executar esta fase em incrementos isolados e manter a compatibilidade com SQL Se
 - [x] Tratar tags e categorias sem diferença entre maiúsculas e minúsculas: PostgreSQL usa `citext`, preserva a grafia exibida e reforça a unicidade por índice.
 - [x] Adaptar a detecção de e-mail duplicado para `PostgresException` com unique violation, além de `SqlException`.
 - [ ] Revisar as demais comparações de strings e tamanhos no PostgreSQL real.
-- [ ] Criar uma migration inicial limpa para PostgreSQL em vez de aplicar o histórico SQL Server no Neon.
-- [ ] Definir se migrations antigas ficarão arquivadas ou em assembly separado durante a transição.
+- [x] Criar uma migration inicial limpa para PostgreSQL em vez de aplicar o histórico SQL Server no Neon.
+- [x] Arquivar as migrations SQL Server em `docs/archive/sqlserver-migrations`, fora do assembly da API.
 - [ ] Executar testes unitários e de integração contra PostgreSQL real.
 
 ### Bloqueios específicos do Finova
@@ -326,9 +326,21 @@ Executar esta fase em incrementos isolados e manter a compatibilidade com SQL Se
 - [ ] `DatabaseNotificationDeliveryCoordinator` funciona com concorrência no PostgreSQL.
 - [ ] `DemoAccountPreparationService` preserva isolamento e idempotência no PostgreSQL.
 - [ ] O timeout concorrente da conta demo foi verificado contra PostgreSQL real.
-- [ ] O índice único de `PublicDashboardTokenHash` aceita múltiplos valores nulos e rejeita tokens repetidos.
-- [ ] Todas as migrations Npgsql sobem do zero e podem ser revertidas em ambiente descartável.
+- [x] O índice único de `PublicDashboardTokenHash` aceita múltiplos valores nulos e rejeita tokens repetidos.
+- [x] Todas as migrations Npgsql sobem do zero e podem ser revertidas em ambiente descartável.
 - [ ] Login, revogação de sessão e conta demo continuam funcionando.
+
+### Evidências locais da migration PostgreSQL
+
+Validação executada em 24 de agosto de 2026 com PostgreSQL 17.11 descartável:
+
+- migration `20260824162004_InitialPostgreSql` aplicada em banco vazio, revertida para `0` e reaplicada;
+- extensão `citext`, 12 tabelas da aplicação e histórico do EF criados sem artefatos SQL Server;
+- `Mercado` e `MERCADO` foram tratados como a mesma categoria pelo índice único;
+- duas linhas com `PublicDashboardTokenHash` nulo foram aceitas e um token não nulo repetido foi rejeitado;
+- limites das colunas `citext` foram preservados por constraints de `char_length` e validados no banco;
+- `dotnet ef migrations has-pending-model-changes` não encontrou divergência entre o modelo e o snapshot;
+- suíte da API aprovada: 89 testes, 0 falhas, 0 avisos.
 
 **Saída da fase:** API compatível com PostgreSQL e migrations Npgsql verificadas em banco descartável.
 
