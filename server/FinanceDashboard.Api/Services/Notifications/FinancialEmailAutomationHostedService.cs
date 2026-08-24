@@ -38,12 +38,23 @@ namespace FinanceDashboard.Api.Services.Notifications
 
                     await service.ProcessAsync(DateTime.UtcNow, stoppingToken);
                 }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    return;
+                }
                 catch (Exception exception)
                 {
                     _logger.LogError(exception, "Falha ao processar alertas e relatórios financeiros.");
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(intervalMinutes), stoppingToken);
+                try
+                {
+                    await Task.Delay(TimeSpan.FromMinutes(intervalMinutes), stoppingToken);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    return;
+                }
             }
         }
     }

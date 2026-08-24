@@ -425,13 +425,27 @@ Checklist de dados novos:
 
 Preferir um `Dockerfile` multi-stage reproduzível para a API .NET 10.
 
-- [ ] Criar e testar o `Dockerfile` da API.
-- [ ] Executar como usuario sem privilégios quando a imagem permitir.
-- [ ] Fazer a aplicação escutar em `0.0.0.0` e na variável `PORT` fornecida pelo Railway.
-- [ ] Confirmar que `/health` responde sem consultar Neon.
-- [ ] Confirmar que o container encerra corretamente com `SIGTERM`.
-- [ ] Confirmar que logs saem em `stdout`/`stderr`.
-- [ ] Definir migrations como etapa controlada de release, não como efeito colateral concorrente de cada réplica.
+- [x] Criar e testar o `Dockerfile` da API.
+- [x] Executar como usuário sem privilégios quando a imagem permitir.
+- [x] Fazer a aplicação escutar em `0.0.0.0` e na variável `PORT` fornecida pelo Railway.
+- [x] Confirmar que `/health` responde sem consultar Neon.
+- [x] Confirmar que o container encerra corretamente com `SIGTERM`.
+- [x] Confirmar que logs saem em `stdout`/`stderr`.
+- [x] Definir migrations como etapa controlada de release, não como efeito colateral concorrente de cada réplica.
+
+Evidências locais da imagem `finova-api:railway`:
+
+- build multi-stage concluído com SDK e runtime .NET 10;
+- imagem final com aproximadamente 126 MB e processo executado pelo UID `1654`;
+- aplicação escutando em `http://0.0.0.0:18765` quando iniciada com `PORT=18765`;
+- `/health` retornando `200` e `{"status":"ok"}` sem acessar o banco;
+- automação financeira desabilitada por padrão na imagem web;
+- encerramento por `SIGTERM` com `exit=0`, sem OOM e sem erro de cancelamento;
+- 89 testes da API aprovados após as alterações.
+
+O processo da aplicação não executa `Database.Migrate()` na inicialização. As
+migrations devem continuar sendo aplicadas explicitamente com a credencial de
+owner antes de cada release; a API em execução usa a role restrita da aplicação.
 
 ### Hosted service e modo Serverless
 
@@ -439,17 +453,25 @@ O `FinancialEmailAutomationHostedService` executa periodicamente. Se estiver hab
 
 Antes de habilitar Serverless:
 
-- [ ] decidir se a automação fica desabilitada no serviço web;
+- [x] decidir se a automação fica desabilitada no serviço web;
 - [ ] ou mover o processamento para cron/worker separado;
 - [ ] impedir execução duplicada durante deploys e escalonamento;
 - [ ] preservar idempotência das notificações;
 - [ ] validar que pooling, telemetria e keep-alive não mantêm a API acordada.
+
+A imagem web define `Notifications__Enabled=false`. A configuração pode ser
+sobrescrita em um futuro worker dedicado, sem reativar o loop periódico na API.
 
 ### Data Protection
 
 - [ ] Persistir o key ring do ASP.NET Core em armazenamento durável ou aceitar e documentar a invalidação de tokens CSRF em redeploys.
 - [ ] Testar redeploy com sessão ativa.
 - [ ] Revalidar a estratégia antes de usar mais de uma réplica.
+
+O smoke local confirmou que o key ring atual fica no filesystem efêmero do
+container. Não considerar a API pronta para múltiplas réplicas antes de definir
+armazenamento compartilhado para essas chaves. Também validar o esquema HTTPS
+recebido por proxy antes do corte público, pois o TLS será encerrado pela Railway.
 
 **Saída da fase:** imagem local sobe, responde em `PORT` dinâmica e encerra sem erros.
 

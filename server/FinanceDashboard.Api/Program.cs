@@ -24,6 +24,8 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+ConfigureRailwayPort(builder);
+
 builder.Configuration.AddJsonFile(
     "appsettings.Development.local.json",
     optional: true,
@@ -288,6 +290,23 @@ app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapControllers();
 
 app.Run();
+
+static void ConfigureRailwayPort(WebApplicationBuilder builder)
+{
+    var configuredPort = Environment.GetEnvironmentVariable("PORT");
+
+    if (string.IsNullOrWhiteSpace(configuredPort))
+    {
+        return;
+    }
+
+    if (!int.TryParse(configuredPort, out var port) || port is < 1 or > 65535)
+    {
+        throw new InvalidOperationException("PORT deve ser um número entre 1 e 65535.");
+    }
+
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
 
 static void ValidateSmtpConfiguration(WebApplication app)
 {
