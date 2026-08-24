@@ -346,16 +346,55 @@ Validação executada em 24 de agosto de 2026 com PostgreSQL 17.11 descartável:
 
 ## Fase 3 - Criar e preparar o Neon
 
-- [ ] Criar projeto Neon na região mais próxima do Railway escolhido.
-- [ ] Criar banco, role de aplicação e branch de validação.
+### Decisão de região e conexões
+
+O Railway não oferece uma região no Brasil neste momento. Para manter API e
+banco próximos, a implantação inicial usará Railway US East (Virginia) e Neon
+AWS US East (N. Virginia). O frontend permanece distribuído pela Vercel.
+
+A API usará a connection string pooled em operação normal. Migrations,
+administração e exportações usarão a connection string direta, sempre com SSL.
+
+### Inventário Neon
+
+| Recurso | Valor |
+|---|---|
+| Projeto | `Finova` (`quiet-band-28264410`) |
+| Região | AWS US East (N. Virginia), `aws-us-east-1` |
+| PostgreSQL | 17.11 |
+| Banco | `finova` |
+| Branch principal | `main` (`br-small-math-au8o0504`) |
+| Branch de validação | `validation` (`br-bitter-firefly-auz7q4vf`) |
+| Role de migrations | `finova_owner` |
+| Role da API | `finova_app` |
+| Compute atual | 0,25 CU por endpoint |
+
+- [x] Criar projeto Neon na região mais próxima do Railway escolhido.
+- [x] Criar banco, role de aplicação e branch de validação.
 - [ ] Guardar as connection strings em cofre; nunca no repositório.
-- [ ] Exigir SSL na conexão.
-- [ ] Escolher conscientemente entre endpoint direto e pooled.
-- [ ] Usar endpoint direto para migrations e operações administrativas.
-- [ ] Validar o endpoint usado pela API com transações, locks e migrations.
+- [x] Exigir SSL na conexão; validações administrativas usaram `verify-full`.
+- [x] Escolher conscientemente entre endpoint direto e pooled.
+- [x] Usar endpoint direto para migrations e operações administrativas.
+- [x] Validar o endpoint pooled da API com transação, advisory lock, escrita e rollback.
 - [ ] Confirmar scale-to-zero e limites de autoscaling.
 - [ ] Testar reconexão depois de o compute suspender.
 - [ ] Definir política de backup/exportação externa além da retenção do plano.
+
+### Evidências no Neon
+
+Em 24 de agosto de 2026, a migration `20260824162004_InitialPostgreSql` foi
+aplicada primeiro em `validation` e depois em `main` pelo endpoint direto. Nas
+duas branches foram confirmados:
+
+- PostgreSQL 17.11 e extensão `citext`;
+- 12 tabelas da aplicação e a tabela de histórico do EF;
+- cinco constraints de comprimento para categorias e etiquetas em `citext`;
+- acesso da role `finova_app` pelo endpoint pooled;
+- funcionamento de `pg_try_advisory_xact_lock` dentro de transação;
+- escrita seguida de rollback, com zero registros residuais.
+
+As credenciais proprietárias foram rotacionadas durante a configuração. Nenhuma
+connection string foi gravada no repositório.
 
 ### Criação do esquema e dos dados iniciais
 
@@ -369,7 +408,7 @@ Como os dados do Azure SQL foram classificados como descartáveis, a estratégia
 
 Checklist de dados novos:
 
-- [ ] Nenhum usuário, hash de senha, token ou sessão do Azure SQL foi importado.
+- [x] Nenhum usuário, hash de senha, token ou sessão do Azure SQL foi importado.
 - [ ] Conta demo criada e renovada corretamente pela aplicação.
 - [ ] Cadastro, confirmação de e-mail, login e redefinição de senha validados.
 - [ ] Contas, transações, categorias, metas e recorrências persistidas.
