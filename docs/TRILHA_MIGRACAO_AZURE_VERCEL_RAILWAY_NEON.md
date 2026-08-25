@@ -478,13 +478,13 @@ recebido por proxy antes do corte público, pois o TLS será encerrado pela Rail
 ## Fase 5 - Publicar a API no Railway
 
 - [x] Criar projeto e serviço vazio na Railway.
-- [ ] Conectar o serviço ao repositório GitHub.
-- [ ] Configurar o diretório raiz ou caminho do `Dockerfile` para a API.
+- [x] Conectar o serviço ao repositório GitHub.
+- [x] Configurar o diretório raiz ou caminho do `Dockerfile` para a API.
 - [x] Selecionar a mesma região lógica do Neon, quando disponível.
-- [ ] Adicionar variáveis e secrets pelo painel do Railway.
+- [x] Adicionar variáveis e secrets pelo painel do Railway.
 - [ ] Configurar `/health` como health check.
-- [ ] Gerar domínio temporário do Railway.
-- [ ] Executar migrations Npgsql de forma controlada.
+- [x] Gerar domínio temporário do Railway.
+- [x] Executar migrations Npgsql de forma controlada.
 - [ ] Definir limite de uso e alerta de custo.
 - [ ] Confirmar RAM e CPU dentro do plano escolhido.
 
@@ -493,23 +493,34 @@ Configuração remota criada:
 - projeto `Finova`, ambiente `production` e serviço `finova-api`;
 - uma réplica em US East Metal, Virgínia (`us-east4-eqdc4a`), próxima ao
   projeto Neon em `aws-us-east-1`;
-- connection string pooled da role `finova_app` transferida diretamente para a
-  Railway, sem impressão ou persistência local;
+- connection string pooled da role `finova_app` configurada diretamente na
+  Railway, sem persistência local;
 - JWT exclusivo gerado diretamente para o ambiente Railway;
 - provedor PostgreSQL, issuer, audience, demo e automação web configurados;
 - CORS e `Client__BaseUrl` apontando temporariamente para o antigo domínio SWA,
   até a publicação do frontend na Vercel;
-- SMTP público preparado para Resend; `Smtp__Password` ainda depende de uma API
-  key criada pelo proprietário da conta.
+- SMTP preparado para Resend e `Smtp__Password` cadastrado diretamente pelo
+  proprietário, sem passar pelo repositório ou pela conversa;
+- domínio temporário `https://finova-api-production.up.railway.app`.
 
-Não conectar a fonte GitHub nem iniciar o primeiro deploy antes de cadastrar o
-segredo SMTP e configurar `/health` no painel. Isso evita promover uma release
-em que cadastro, confirmação de e-mail e recuperação de senha já nascem
-indisponíveis.
+O primeiro deploy foi bloqueado antes do build porque o plano Trial recebeu uma
+réplica padrão em `sfo` e outra em US East. A réplica legada foi removida e o
+serviço permaneceu somente em `us-east4-eqdc4a`.
+
+A URI fornecida originalmente pelo Neon não era aceita diretamente pelo Npgsql e
+apareceu no stack trace da primeira tentativa de conexão. A senha da role
+`finova_app` foi rotacionada imediatamente e a variável passou a usar o formato
+nativo do driver, com `SSL Mode=Require` e `GSS Encryption Mode=Disable`. Este
+último evita a tentativa opcional de Kerberos do Npgsql 10; o tráfego permanece
+protegido por TLS.
+
+O proxy TLS da Railway também exigiu o processamento de `X-Forwarded-Proto`
+antes do antiforgery. A API agora limita o processamento a um salto e confia no
+range privado do proxy da plataforma.
 
 Validação da API temporária:
 
-- [ ] `/health` retorna `200`.
+- [x] `/health` retorna `200`.
 - [ ] Login válido e inválido funcionam.
 - [ ] Cookie JWT e token CSRF possuem atributos esperados.
 - [ ] Revogação de sessão funciona.
@@ -518,7 +529,18 @@ Validação da API temporária:
 - [ ] Dashboard público funciona.
 - [ ] E-mail funciona sem registrar credenciais.
 - [ ] Integração Pluggy funciona, se habilitada no ambiente.
-- [ ] Logs não apresentam erros recorrentes.
+- [x] Logs não apresentam erros recorrentes.
+
+Evidências da primeira release homologada:
+
+- build remoto reconheceu o `Dockerfile` e publicou a aplicação .NET 10;
+- release Railway em estado `SUCCESS`;
+- `/health` retornou `200` pela borda pública;
+- emissão do token CSRF retornou `200`;
+- cookie CSRF apresentou `HttpOnly`, `Secure` e `SameSite=None`;
+- login com credenciais inexistentes retornou `401` e
+  `INVALID_CREDENTIALS`, confirmando acesso ao Neon sem criar registros;
+- 89 testes da API aprovados antes do deploy.
 
 **Saída da fase:** API homologada no Railway usando Neon, sem alterar a produção.
 
