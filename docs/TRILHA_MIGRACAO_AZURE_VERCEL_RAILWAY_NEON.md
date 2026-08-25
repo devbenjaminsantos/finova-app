@@ -482,7 +482,7 @@ recebido por proxy antes do corte público, pois o TLS será encerrado pela Rail
 - [x] Configurar o diretório raiz ou caminho do `Dockerfile` para a API.
 - [x] Selecionar a mesma região lógica do Neon, quando disponível.
 - [x] Adicionar variáveis e secrets pelo painel do Railway.
-- [ ] Configurar `/health` como health check.
+- [x] Configurar `/health` como health check.
 - [x] Gerar domínio temporário do Railway.
 - [x] Executar migrations Npgsql de forma controlada.
 - [ ] Definir limite de uso e alerta de custo.
@@ -535,6 +535,8 @@ Evidências da primeira release homologada:
 
 - build remoto reconheceu o `Dockerfile` e publicou a aplicação .NET 10;
 - release Railway em estado `SUCCESS`;
+- healthcheck nativo da Railway configurado em `/health`, com instância em
+  estado `RUNNING`;
 - `/health` retornou `200` pela borda pública;
 - emissão do token CSRF retornou `200`;
 - cookie CSRF apresentou `HttpOnly`, `Secure` e `SameSite=None`;
@@ -567,8 +569,8 @@ O Finova atual usa JWT em cookie `HttpOnly`, proteção CSRF e validação de ve
 - [ ] Chave de assinatura existe somente no Railway.
 - [ ] Cookie de autenticação permanece `HttpOnly` e `Secure` em produção.
 - [ ] CSRF continua obrigatório nas operações mutáveis.
-- [ ] `Client__BaseUrl` usa o domínio final da Vercel.
-- [ ] CORS aceita somente origens explicitas.
+- [x] `Client__BaseUrl` usa o domínio final da Vercel.
+- [x] CORS aceita somente origens explicitas.
 - [ ] Fluxo de expiração e revogação apresenta mensagem amigável.
 - [ ] Nenhum token volta para `localStorage` ou `sessionStorage`.
 - [ ] Preview deployments não recebem acesso irrestrito a produção.
@@ -593,12 +595,12 @@ Uma demo estática pode existir como fallback visual, mas deve ser identificada 
 
 Criar um projeto Vercel conectado ao mesmo repositório:
 
-- [ ] Definir **Root Directory** como `client`.
-- [ ] Confirmar framework **Vite**.
+- [x] Definir **Root Directory** como `client`.
+- [x] Confirmar framework **Vite**.
 - [ ] Usar `npm ci` como instalação.
-- [ ] Usar `npm run build` como build command.
-- [ ] Confirmar `dist` como output directory.
-- [ ] Configurar `VITE_API_URL` separadamente em Preview e Production.
+- [x] Usar `npm run build` como build command.
+- [x] Confirmar `dist` como output directory.
+- [x] Configurar `VITE_API_URL` separadamente em Preview e Production.
 - [ ] Fazer primeiro deploy de Preview.
 - [ ] Validar o bundle sem secrets ou connection strings.
 
@@ -620,11 +622,11 @@ Como o frontend usa rotas internas, adicionar `client/vercel.json` antes do depl
 
 Validar na URL de Preview:
 
-- [ ] Home e assets.
+- [x] Home e assets.
 - [ ] Responsividade e temas.
 - [ ] Login, logout e conta demo.
 - [ ] Rotas autenticadas.
-- [ ] Refresh direto em rota interna sem `404`.
+- [x] Refresh direto em rota interna sem `404`.
 - [ ] Dashboard público.
 - [ ] Páginas de erro e estados vazios.
 
@@ -643,13 +645,13 @@ Durante a transição, a API pode aceitar temporariamente:
 
 Checklist:
 
-- [ ] Adicionar o domínio do frontend ao projeto Vercel.
-- [ ] Adicionar o domínio da API ao Railway.
+- [x] Adicionar o domínio do frontend ao projeto Vercel.
+- [x] Adicionar o domínio da API ao Railway.
 - [ ] Configurar os registros DNS indicados por cada provedor.
 - [ ] Reduzir o TTL antes da janela de cutover.
-- [ ] Validar HTTPS e certificados.
-- [ ] Atualizar `VITE_API_URL` de Production e gerar novo deploy.
-- [ ] Atualizar `Client__BaseUrl` e `Cors__AllowedOrigins` no Railway.
+- [x] Validar HTTPS e certificados.
+- [x] Atualizar `VITE_API_URL` de Production e gerar novo deploy.
+- [x] Atualizar `Client__BaseUrl` e `Cors__AllowedOrigins` no Railway.
 - [ ] Atualizar callbacks, links de e-mail e webhooks.
 - [ ] Testar cookies nos navegadores principais.
 - [ ] Remover origens antigas depois da janela de rollback.

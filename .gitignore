@@ -42,3 +42,4 @@ Thumbs.db
 # JSON
 appsettings.Development.local.json
 
+.vercel
