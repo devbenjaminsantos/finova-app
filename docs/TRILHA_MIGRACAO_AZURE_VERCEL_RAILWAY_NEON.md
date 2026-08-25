@@ -477,15 +477,35 @@ recebido por proxy antes do corte público, pois o TLS será encerrado pela Rail
 
 ## Fase 5 - Publicar a API no Railway
 
-- [ ] Criar projeto e serviço conectado ao GitHub.
+- [x] Criar projeto e serviço vazio na Railway.
+- [ ] Conectar o serviço ao repositório GitHub.
 - [ ] Configurar o diretório raiz ou caminho do `Dockerfile` para a API.
-- [ ] Selecionar a mesma região lógica do Neon, quando disponível.
+- [x] Selecionar a mesma região lógica do Neon, quando disponível.
 - [ ] Adicionar variáveis e secrets pelo painel do Railway.
 - [ ] Configurar `/health` como health check.
 - [ ] Gerar domínio temporário do Railway.
 - [ ] Executar migrations Npgsql de forma controlada.
 - [ ] Definir limite de uso e alerta de custo.
 - [ ] Confirmar RAM e CPU dentro do plano escolhido.
+
+Configuração remota criada:
+
+- projeto `Finova`, ambiente `production` e serviço `finova-api`;
+- uma réplica em US East Metal, Virgínia (`us-east4-eqdc4a`), próxima ao
+  projeto Neon em `aws-us-east-1`;
+- connection string pooled da role `finova_app` transferida diretamente para a
+  Railway, sem impressão ou persistência local;
+- JWT exclusivo gerado diretamente para o ambiente Railway;
+- provedor PostgreSQL, issuer, audience, demo e automação web configurados;
+- CORS e `Client__BaseUrl` apontando temporariamente para o antigo domínio SWA,
+  até a publicação do frontend na Vercel;
+- SMTP público preparado para Resend; `Smtp__Password` ainda depende de uma API
+  key criada pelo proprietário da conta.
+
+Não conectar a fonte GitHub nem iniciar o primeiro deploy antes de cadastrar o
+segredo SMTP e configurar `/health` no painel. Isso evita promover uma release
+em que cadastro, confirmação de e-mail e recuperação de senha já nascem
+indisponíveis.
 
 Validação da API temporária:
 
