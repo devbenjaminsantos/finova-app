@@ -10,13 +10,13 @@ execução e critérios de aceite.
 - [x] Revisar as 13 páginas do spec.
 - [x] Mapear rotas, componentes, estilos, i18n e contratos preservados.
 - [ ] Criar a identidade gráfica de Héstia.
-- [ ] Iniciar a migração visual do frontend.
+- [x] Iniciar a migração visual do frontend pela fundação da Etapa 1.
 
 O ambiente publicado continua apresentando a marca Finova. O checkout local já
 contém um protótipo parcial de rebranding para Héstia, mas ele ainda não
-representa uma etapa concluída: símbolo, favicon, fonte, tokens e testes não
-estão alinhados entre si. Essas alterações devem permanecer tratadas como
-exploração até o gate da Etapa 0 ser aprovado.
+representa uma etapa concluída: símbolo, favicon e parte dos testes ainda não
+estão alinhados. Essas alterações devem permanecer tratadas como exploração até
+o gate da Etapa 0 ser aprovado.
 
 ## Contratos preservados
 
@@ -110,20 +110,35 @@ antes da troca global de Finova para Héstia.
 
 ## Etapa 1 - fundação visual
 
-- [ ] Adotar Manrope com fallback local seguro.
-- [ ] Corrigir a divergência atual em que o HTML carrega Manrope, mas o CSS ainda
+- [x] Adotar Manrope com fallback local seguro.
+- [x] Corrigir a divergência atual em que o HTML carrega Manrope, mas o CSS ainda
   declara Inter.
-- [ ] Criar tokens light com warm white, ink, sage e cores semânticas.
-- [ ] Criar tokens dark naturais e equivalentes.
-- [ ] Remover gradientes, glows e sombras decorativas da fundação.
-- [ ] Definir spacing, bordas, raios de até 8 px e elevação discreta.
+- [x] Criar tokens light com warm white, ink, sage e cores semânticas.
+- [x] Criar tokens dark naturais e equivalentes.
+- [x] Remover gradientes, glows e sombras decorativas da fundação.
+- [x] Definir spacing, bordas, raios de até 8 px e elevação discreta.
 - [ ] Definir foco visível e contraste acessível para todos os controles.
-- [ ] Respeitar `prefers-reduced-motion`.
-- [ ] Manter letter spacing em `0`.
-- [ ] Garantir que a aparência validada seja reproduzível apenas a partir dos
+- [x] Respeitar `prefers-reduced-motion`.
+- [x] Manter letter spacing em `0`.
+- [x] Garantir que a aparência validada seja reproduzível apenas a partir dos
   arquivos-fonte; screenshots ou bundles antigos não contam como evidência.
-- [ ] Regerar screenshots light/dark depois de um build limpo e manter apenas os
+- [x] Regerar screenshots light/dark depois de um build limpo e manter apenas os
   artefatos exigidos para revisão.
+
+**Evidência do primeiro incremento (2026-08-26):**
+
+- `npm run lint`, `npm run build` e os seis smokes Playwright passaram;
+- screenshots foram regenerados para login desktop light/dark, cadastro mobile
+  light e Home autenticada mobile dark, sem versionar artefatos temporários;
+- as quatro renderizações não apresentaram overlay, erro de console ou overflow
+  horizontal;
+- os contrastes principais medidos ficaram entre `5.38:1` e `15.24:1`, e os
+  botões primários ficaram acima de `6.4:1` nos dois temas;
+- a suíte unitária permaneceu fora do gate: 93 de 100 testes passaram, com seis
+  timeouts funcionais e uma expectativa antiga `finova-transacoes` divergindo do
+  nome atual `hestia-transacoes`;
+- a auditoria de foco e contraste em todos os tipos de controle e em todas as
+  rotas permanece pendente antes de encerrar a etapa.
 
 **Gate:** login, cadastro e uma página autenticada devem permanecer legíveis e
 operantes nos dois temas, em desktop e mobile.

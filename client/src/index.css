@@ -1,72 +1,97 @@
 :root {
-  --brand: #1f5eff;
-  --brand-strong: #1448d8;
-  --brand-soft: #e9f0ff;
-  --brand-deep: #101a2d;
-  --brand-deep-soft: #182745;
+  color-scheme: light;
 
-  --bg: #f5f8ff;
-  --surface: #ffffff;
-  --surface-soft: #eef3ff;
-  --surface-elevated: #f9fbff;
-  --border: #d8e2f3;
-  --nav-surface: linear-gradient(135deg, #101a2d 0%, #152744 52%, #1f5eff 130%);
-  --nav-border: rgba(255, 255, 255, 0.1);
-  --divider: rgba(120, 143, 184, 0.24);
-  --overlay: rgba(10, 17, 31, 0.5);
+  --brand: #52634a;
+  --brand-strong: #3f4e39;
+  --brand-soft: #e5eae0;
+  --brand-deep: #22291f;
+  --brand-deep-soft: #30392b;
 
-  --text: #101a2d;
-  --text-muted: #4f6285;
+  --bg: #f7f5f0;
+  --surface: #fffefa;
+  --surface-soft: #efeee7;
+  --surface-elevated: #fbfaf6;
+  --border: #d8d6cc;
+  --nav-surface: #273026;
+  --nav-border: #424d3e;
+  --divider: #d4d2c8;
+  --overlay: rgba(24, 27, 23, 0.56);
+
+  --text: #20241f;
+  --text-muted: #5f675c;
   --primary: var(--brand);
   --primary-hover: var(--brand-strong);
-  --success: #22c55e;
-  --success-dark: #16a34a;
+  --primary-contrast: #ffffff;
+  --focus: #64785b;
+  --focus-ring: rgba(82, 99, 74, 0.24);
+  --success: #3e704b;
+  --success-dark: #2d5a39;
   --info: var(--brand);
-  --info-bg: rgba(31, 94, 255, 0.1);
-  --success-bg: rgba(34, 197, 94, 0.1);
-  --danger-bg: rgba(239, 68, 68, 0.08);
-  --danger: #ef4444;
-  --shadow-sm: 0 10px 24px rgba(16, 26, 45, 0.06);
-  --shadow-md: 0 18px 40px rgba(16, 26, 45, 0.08);
-  --radius-sm: 10px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --info-bg: #e5eae0;
+  --success-bg: #e7f0e8;
+  --warning: #765510;
+  --warning-bg: #f6edd8;
+  --danger-bg: #f8e9e5;
+  --danger: #9d3934;
+  --shadow-sm: 0 1px 2px rgba(32, 36, 31, 0.08);
+  --shadow-md: 0 2px 8px rgba(32, 36, 31, 0.1);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --motion-fast: 140ms;
+  --motion-normal: 180ms;
 }
 
 :root[data-theme="dark"] {
-  --brand: #4d87ff;
-  --brand-strong: #78a3ff;
-  --brand-soft: rgba(77, 135, 255, 0.12);
-  --brand-deep: #08101e;
-  --brand-deep-soft: #12203a;
+  color-scheme: dark;
 
-  --bg: #07101d;
-  --surface: #0e182b;
-  --surface-soft: #13213a;
-  --surface-elevated: #101d34;
-  --border: #223453;
-  --nav-surface: linear-gradient(135deg, #08101e 0%, #10203a 54%, #275fe6 130%);
-  --nav-border: rgba(148, 163, 184, 0.18);
-  --divider: rgba(148, 163, 184, 0.2);
-  --overlay: rgba(2, 6, 23, 0.62);
+  --brand: #8fa286;
+  --brand-strong: #a9ba9f;
+  --brand-soft: #303a2d;
+  --brand-deep: #edf1e9;
+  --brand-deep-soft: #d9e2d4;
 
-  --text: #e5edf8;
-  --text-muted: #a8b9d4;
+  --bg: #171a16;
+  --surface: #20251f;
+  --surface-soft: #292f27;
+  --surface-elevated: #242a23;
+  --border: #444d41;
+  --nav-surface: #1d231c;
+  --nav-border: #3c4639;
+  --divider: #3c4339;
+  --overlay: rgba(8, 10, 8, 0.7);
+
+  --text: #f0efe9;
+  --text-muted: #b9bdb3;
   --primary: var(--brand);
   --primary-hover: var(--brand-strong);
-  --success: #22c55e;
-  --success-dark: #4ade80;
+  --primary-contrast: #141813;
+  --focus: #a9ba9f;
+  --focus-ring: rgba(169, 186, 159, 0.3);
+  --success: #85b38e;
+  --success-dark: #9bc3a2;
   --info: var(--brand-strong);
-  --info-bg: rgba(77, 135, 255, 0.18);
-  --success-bg: rgba(74, 222, 128, 0.12);
-  --danger-bg: rgba(248, 113, 113, 0.12);
-  --danger: #f87171;
-  --shadow-sm: 0 12px 28px rgba(2, 6, 23, 0.32);
-  --shadow-md: 0 20px 44px rgba(2, 6, 23, 0.4);
+  --info-bg: #303a2d;
+  --success-bg: #263b2a;
+  --warning: #e7c87b;
+  --warning-bg: #3b3422;
+  --danger-bg: #442725;
+  --danger: #f0aaa5;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.28);
 }
 
 * {
   box-sizing: border-box;
+  letter-spacing: 0;
 }
 
 html,
@@ -77,13 +102,12 @@ body,
 
 body {
   margin: 0;
-  font-family: "Inter", sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(31, 94, 255, 0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(16, 26, 45, 0.08), transparent 34%),
-    linear-gradient(180deg, var(--surface-elevated) 0%, var(--bg) 28%, var(--bg) 100%);
+  font-family: "Manrope", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
   color: var(--text);
-  transition: background 180ms ease, color 180ms ease;
+  transition:
+    background-color var(--motion-normal) ease,
+    color var(--motion-normal) ease;
   overflow-x: hidden;
 }
 
@@ -93,13 +117,11 @@ a {
 
 .finova-page {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(31, 94, 255, 0.08), transparent 24%),
-    radial-gradient(circle at 100% 12%, rgba(16, 26, 45, 0.06), transparent 26%);
+  background: var(--bg);
 }
 
 .finova-card {
-  background: linear-gradient(180deg, var(--surface-elevated) 0%, var(--surface) 100%);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
@@ -111,7 +133,7 @@ a {
 }
 
 .finova-card-soft {
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
@@ -125,7 +147,7 @@ a {
 .finova-title {
   color: var(--text);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .finova-subtitle {
@@ -161,8 +183,8 @@ a {
 
 .finova-input:focus,
 .finova-select:focus {
-  border-color: rgba(31, 94, 255, 0.42);
-  box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.12);
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px var(--focus-ring);
   color: var(--text) !important;
   background-color: var(--surface-elevated);
   -webkit-text-fill-color: var(--text);
@@ -234,20 +256,20 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  border: 1px solid rgba(20, 72, 216, 0.5);
-  color: #fff;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  color: var(--primary-contrast);
   border-radius: var(--radius-sm);
   min-height: 46px;
   font-weight: 600;
-  box-shadow: 0 14px 28px rgba(31, 94, 255, 0.18);
+  box-shadow: none;
 }
 
 .finova-btn-primary:hover,
 .finova-btn-primary:focus {
-  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--brand) 100%);
-  border-color: rgba(20, 72, 216, 0.62);
-  color: #fff;
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: var(--primary-contrast);
 }
 
 .finova-btn-light {
@@ -255,7 +277,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  background: linear-gradient(180deg, var(--surface-elevated) 0%, var(--surface) 100%);
+  background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
   border-radius: var(--radius-sm);
@@ -265,7 +287,7 @@ a {
 
 .finova-btn-light:hover {
   background: var(--brand-soft);
-  border-color: rgba(31, 94, 255, 0.22);
+  border-color: var(--brand);
 }
 
 .finova-btn-primary:disabled,
@@ -281,7 +303,12 @@ a {
 .finova-btn-primary:focus,
 .btn-outline-danger:focus,
 .btn-link:focus {
-  box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.14);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 .finova-theme-toggle {
@@ -305,7 +332,7 @@ a {
 .finova-theme-toggle:hover,
 .finova-theme-toggle:focus {
   color: #fff;
-  background: rgba(31, 94, 255, 0.22);
+  background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.32);
 }
 
@@ -356,7 +383,7 @@ a {
 .navbar .nav-link[aria-current="page"] {
   background: rgba(255, 255, 255, 0.18);
   color: #fff !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: none;
 }
 
 .finova-language-select {
@@ -373,7 +400,7 @@ a {
 }
 
 .finova-language-select:focus {
-  background: rgba(31, 94, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.28);
   color: #fff;
 }
@@ -384,7 +411,7 @@ a {
 }
 
 .navbar .nav-link {
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   transition:
     background 160ms ease,
     color 160ms ease,
@@ -398,8 +425,8 @@ a {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.16);
   color: #fff !important;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.16);
+  transform: none;
+  box-shadow: none;
 }
 
 .finova-navbar-link::after {
@@ -409,8 +436,8 @@ a {
   right: 0.9rem;
   bottom: 0.32rem;
   height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.92), rgba(191, 219, 254, 0.72));
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.88);
   opacity: 0;
   transform: scaleX(0.72);
   transform-origin: center;
@@ -442,10 +469,9 @@ a {
     margin-top: 0.5rem;
     padding: 0.75rem;
     border-radius: var(--radius-lg);
-    background: rgba(7, 16, 29, 0.3);
+    background: var(--nav-surface);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 18px 36px rgba(2, 6, 23, 0.22);
-    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-md);
     max-height: calc(100vh - 5.25rem);
     overflow-y: auto;
   }
@@ -492,9 +518,9 @@ a {
 }
 
 .finova-badge-income {
-  background: rgba(34, 197, 94, 0.12);
+  background: var(--success-bg);
   color: var(--success-dark);
-  border: 1px solid rgba(34, 197, 94, 0.16);
+  border: 1px solid color-mix(in srgb, var(--success) 34%, var(--border) 66%);
   border-radius: 999px;
   padding: 0.4rem 0.7rem;
   font-weight: 600;
@@ -502,9 +528,9 @@ a {
 }
 
 .finova-badge-expense {
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
-  border: 1px solid rgba(239, 68, 68, 0.14);
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
   border-radius: 999px;
   padding: 0.4rem 0.7rem;
   font-weight: 600;
@@ -526,7 +552,7 @@ a {
 .finova-badge-primary {
   background: var(--info-bg);
   color: var(--brand-strong);
-  border: 1px solid rgba(31, 94, 255, 0.24);
+  border: 1px solid color-mix(in srgb, var(--brand) 34%, var(--border) 66%);
 }
 
 .finova-badge-neutral {
@@ -536,15 +562,15 @@ a {
 }
 
 .finova-badge-warning {
-  color: #9a6700;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.22);
+  color: var(--warning);
+  background: var(--warning-bg);
+  border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--border) 66%);
 }
 
 .finova-badge-danger {
   background: var(--danger-bg);
   color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.18);
+  border: 1px solid color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
 }
 
 .finova-section-space {
@@ -697,7 +723,7 @@ a {
 
   .finova-card,
   .finova-card-soft {
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
   }
 }
 
@@ -722,13 +748,7 @@ a {
 }
 
 .finova-auth-layout::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(31, 94, 255, 0.1), transparent 24%),
-    radial-gradient(circle at 0% 100%, rgba(16, 26, 45, 0.08), transparent 30%);
+  content: none;
 }
 
 .finova-auth-hero {
@@ -743,11 +763,7 @@ a {
 }
 
 .finova-auth-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(31, 94, 255, 0.25), transparent);
+  content: none;
 }
 
 .finova-auth-card-header {
@@ -759,9 +775,7 @@ a {
 }
 
 .finova-auth-hero .finova-brand-logo {
-  filter:
-    drop-shadow(0 18px 28px rgba(31, 94, 255, 0.26))
-    drop-shadow(0 2px 8px rgba(2, 6, 23, 0.08));
+  filter: none;
 }
 
 .finova-auth-hero .finova-brand-wordmark {
@@ -769,16 +783,10 @@ a {
 }
 
 .finova-demo-panel {
-  background: linear-gradient(
-    135deg,
-    rgba(31, 94, 255, 0.1),
-    rgba(16, 26, 45, 0.07)
-  );
-  border: 1px solid rgba(31, 94, 255, 0.14);
+  background: var(--brand-soft);
+  border: 1px solid color-mix(in srgb, var(--brand) 28%, var(--border) 72%);
   border-radius: var(--radius-lg);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    0 12px 30px rgba(31, 94, 255, 0.08);
+  box-shadow: none;
 }
 
 .finova-auth-highlight-list {
@@ -799,16 +807,12 @@ a {
   height: 0.4rem;
   border-radius: 999px;
   background: var(--brand);
-  box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.1);
+  box-shadow: none;
 }
 
 :root[data-theme="dark"] .finova-demo-panel {
-  background: linear-gradient(
-    135deg,
-    rgba(77, 135, 255, 0.16),
-    rgba(16, 26, 45, 0.16)
-  );
-  border-color: rgba(77, 135, 255, 0.2);
+  background: var(--brand-soft);
+  border-color: var(--border);
 }
 
 .finova-auth-link {
@@ -841,7 +845,7 @@ a {
 }
 
 .finova-brand {
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   font-weight: 800;
 }
 
@@ -871,7 +875,7 @@ a {
   object-fit: contain;
   flex-shrink: 0;
   background: transparent;
-  filter: drop-shadow(0 12px 20px rgba(31, 94, 255, 0.18));
+  filter: none;
 }
 
 .finova-brand-copy {
@@ -882,7 +886,7 @@ a {
 
 .finova-brand-wordmark {
   color: var(--brand-deep);
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   font-weight: 800;
   font-size: 1.1rem;
   line-height: 1.05;
@@ -966,12 +970,7 @@ a {
 
 .finova-toolbar-surface::before,
 .finova-table-shell::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(31, 94, 255, 0.2), transparent);
-  pointer-events: none;
+  content: none;
 }
 
 .finova-table thead th {
@@ -1003,7 +1002,7 @@ a {
 }
 
 .finova-table-shell-responsive {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  box-shadow: none;
 }
 
 .finova-transaction-meta-line {
@@ -1014,10 +1013,10 @@ a {
   min-width: 220px;
   padding: 0.85rem 1rem;
   border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--surface-soft) 0%, var(--surface) 100%);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
   text-align: right;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  box-shadow: none;
 }
 
 .finova-suggestion-list {
@@ -1038,16 +1037,16 @@ a {
   background: var(--surface);
   color: var(--text);
   font-weight: 600;
-  box-shadow: 0 6px 16px rgba(16, 26, 45, 0.04);
+  box-shadow: none;
 }
 
 .finova-goal-suggestion:hover,
 .finova-goal-suggestion:focus {
   background: var(--brand-soft);
   color: var(--text);
-  border-color: rgba(31, 94, 255, 0.25);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(31, 94, 255, 0.1);
+  border-color: var(--brand);
+  transform: none;
+  box-shadow: none;
 }
 
 .finova-goal-pill {
@@ -1062,20 +1061,20 @@ a {
 
 .finova-goal-pill-safe {
   color: var(--success-dark);
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.18);
+  background: var(--success-bg);
+  border: 1px solid color-mix(in srgb, var(--success) 34%, var(--border) 66%);
 }
 
 .finova-goal-pill-warning {
-  color: #9a6700;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.22);
+  color: var(--warning);
+  background: var(--warning-bg);
+  border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--border) 66%);
 }
 
 .finova-goal-pill-danger {
-  color: #dc2626;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.18);
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1px solid color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
 }
 
 .finova-goal-progress {
@@ -1093,15 +1092,15 @@ a {
 }
 
 .finova-goal-progress-bar-safe {
-  background: linear-gradient(90deg, var(--brand), var(--brand-strong));
+  background: var(--brand);
 }
 
 .finova-goal-progress-bar-warning {
-  background: linear-gradient(90deg, #f59e0b, #d97706);
+  background: var(--warning);
 }
 
 .finova-goal-progress-bar-danger {
-  background: linear-gradient(90deg, #ef4444, #dc2626);
+  background: var(--danger);
 }
 
 .finova-chart-shell {
@@ -1128,10 +1127,10 @@ a {
 .finova-page-note {
   padding: 0.85rem 1rem;
   border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--surface-soft) 0%, var(--surface) 100%);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
   color: color-mix(in srgb, var(--text-muted) 82%, var(--text) 18%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  box-shadow: none;
   line-height: 1.55;
 }
 
@@ -1159,20 +1158,17 @@ a {
   overflow: hidden;
   border: 1px dashed color-mix(in srgb, var(--border) 78%, var(--brand) 22%);
   border-radius: var(--radius-md);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-elevated) 82%, var(--brand-soft) 18%) 0%, var(--surface) 100%);
+  background: var(--surface-soft);
 }
 
 .finova-empty-state::before {
   content: "";
   width: 42px;
   height: 42px;
-  border-radius: 14px;
-  background:
-    linear-gradient(135deg, rgba(31, 94, 255, 0.18), rgba(31, 94, 255, 0.06)),
-    linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
+  border-radius: var(--radius-md);
+  background: var(--brand-soft);
   border: 1px solid color-mix(in srgb, var(--brand) 24%, var(--border) 76%);
-  box-shadow: 0 12px 26px rgba(31, 94, 255, 0.1);
+  box-shadow: none;
 }
 
 .finova-status-banner {
@@ -1186,7 +1182,7 @@ a {
   border-radius: 999px;
   background: color-mix(in srgb, var(--surface-soft) 78%, var(--border) 22%);
   overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(16, 26, 45, 0.08);
+  box-shadow: none;
 }
 
 .finova-progress-bar {
@@ -1198,10 +1194,10 @@ a {
   min-width: 220px;
   padding: 0.9rem 1rem;
   border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
   text-align: right;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow: none;
 }
 
 .finova-page-stack .finova-card,
@@ -1222,7 +1218,7 @@ a {
 }
 
 .finova-profile-subsection {
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
+  background: var(--surface-soft);
   border: 1px solid var(--border);
   box-shadow: none;
 }
@@ -1239,6 +1235,14 @@ a {
 
 .text-muted {
   color: var(--text-muted) !important;
+}
+
+.text-primary {
+  color: var(--info) !important;
+}
+
+.text-danger {
+  color: var(--danger) !important;
 }
 
 .modal-content,
@@ -1258,24 +1262,17 @@ a {
   border-radius: var(--radius-lg) !important;
   overflow: hidden;
   border: 1px solid var(--border) !important;
-  background: linear-gradient(180deg, var(--surface-elevated) 0%, var(--surface) 100%);
-  box-shadow: 0 24px 60px rgba(16, 26, 45, 0.18);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
 }
 
 .finova-modal-header {
   position: relative;
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--surface-elevated) 86%, var(--brand-soft) 14%) 0%, transparent 100%);
+  background: var(--surface-soft);
 }
 
 .finova-modal-header::after {
-  content: "";
-  position: absolute;
-  left: 1.5rem;
-  right: 1.5rem;
-  bottom: -0.35rem;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(31, 94, 255, 0.16), transparent);
+  content: none;
 }
 
 .finova-modal-actions {
@@ -1295,7 +1292,7 @@ a {
 .table-responsive {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--surface-elevated) 0%, var(--surface) 100%);
+  background: var(--surface);
 }
 
 .finova-table .finova-actions-row {
@@ -1312,19 +1309,19 @@ a {
 
 .alert-danger {
   background: var(--danger-bg);
-  border-color: rgba(239, 68, 68, 0.18);
+  border-color: color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
   color: var(--danger);
 }
 
 .alert-success {
   background: var(--success-bg);
-  border-color: rgba(34, 197, 94, 0.18);
+  border-color: color-mix(in srgb, var(--success) 34%, var(--border) 66%);
   color: var(--success-dark);
 }
 
 .alert-info {
   background: var(--info-bg);
-  border-color: rgba(31, 94, 255, 0.22);
+  border-color: color-mix(in srgb, var(--brand) 34%, var(--border) 66%);
   color: var(--info);
 }
 
@@ -1334,15 +1331,15 @@ a {
   justify-content: center;
   gap: 0.45rem;
   color: var(--danger);
-  border-color: rgba(239, 68, 68, 0.28);
+  border-color: color-mix(in srgb, var(--danger) 48%, var(--border) 52%);
   border-radius: var(--radius-sm);
   font-weight: 600;
 }
 
 .btn-outline-danger:hover,
 .btn-outline-danger:focus {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.35);
+  background: var(--danger-bg);
+  border-color: var(--danger);
   color: var(--danger);
 }
 
@@ -1362,7 +1359,7 @@ a {
 .finova-modal-close {
   border-radius: 999px;
   border: 1px solid transparent;
-  background-color: rgba(148, 163, 184, 0.08);
+  background-color: var(--surface-soft);
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
@@ -1372,10 +1369,10 @@ a {
 
 .finova-modal-close:hover,
 .finova-modal-close:focus {
-  background-color: rgba(31, 94, 255, 0.1);
-  border-color: rgba(31, 94, 255, 0.18);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(31, 94, 255, 0.12);
+  background-color: var(--brand-soft);
+  border-color: var(--brand);
+  transform: none;
+  box-shadow: none;
 }
 
 :root[data-theme="dark"] .btn-close {
@@ -1403,7 +1400,7 @@ hr {
   padding: 0.85rem 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
+  background: var(--surface-soft);
 }
 
 .finova-check .form-check-input {
@@ -1449,8 +1446,8 @@ hr {
 
 .finova-check-input:focus,
 .form-check-input:focus {
-  border-color: rgba(31, 94, 255, 0.42);
-  box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.12);
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .spinner-border.text-primary {
@@ -1465,7 +1462,7 @@ hr {
   padding: 0.9rem 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
+  background: var(--surface-soft);
   color: var(--text);
   cursor: pointer;
   transition:
@@ -1477,9 +1474,9 @@ hr {
 
 .finova-widget-toggle:hover,
 .finova-widget-toggle:focus-within {
-  border-color: rgba(31, 94, 255, 0.28);
-  box-shadow: 0 12px 24px rgba(31, 94, 255, 0.08);
-  transform: translateY(-1px);
+  border-color: var(--brand);
+  box-shadow: none;
+  transform: none;
 }
 
 .finova-widget-toggle input {
@@ -1496,8 +1493,8 @@ hr {
 
 .finova-home-shortcut:hover .finova-card-soft,
 .finova-home-shortcut:focus-visible .finova-card-soft {
-  border-color: rgba(31, 94, 255, 0.34);
-  transform: translateY(-1px);
+  border-color: var(--brand);
+  transform: none;
 }
 
 .finova-financial-account-meta {
@@ -1519,11 +1516,11 @@ hr {
 }
 
 .finova-segmented-actions .finova-btn-primary {
-  box-shadow: 0 10px 22px rgba(31, 94, 255, 0.16);
+  box-shadow: none;
 }
 
 .finova-row-highlight {
-  background: rgba(245, 158, 11, 0.08);
+  background: var(--warning-bg);
 }
 
 :root[data-theme="dark"] .finova-card,
@@ -1533,15 +1530,11 @@ hr {
 :root[data-theme="dark"] .finova-goal-summary,
 :root[data-theme="dark"] .finova-widget-toggle,
 :root[data-theme="dark"] .finova-empty-state {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.03),
-    0 14px 32px rgba(2, 6, 23, 0.28);
+  box-shadow: var(--shadow-sm);
 }
 
 :root[data-theme="dark"] .finova-modal-surface {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.03),
-    0 28px 64px rgba(2, 6, 23, 0.42);
+  box-shadow: var(--shadow-md);
 }
 
 :root[data-theme="dark"] .navbar .nav-link.active,
@@ -1551,55 +1544,54 @@ hr {
 
 :root[data-theme="dark"] .navbar .nav-link:hover,
 :root[data-theme="dark"] .navbar .nav-link:focus {
-  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.28);
+  box-shadow: none;
 }
 
 :root[data-theme="dark"] .finova-table thead th {
-  background: rgba(255, 255, 255, 0.035);
-  color: #c5d3e8;
+  background: var(--surface-soft);
+  color: var(--text-muted);
 }
 
 :root[data-theme="dark"] .finova-table tbody tr:hover {
-  background: rgba(77, 135, 255, 0.09);
+  background: var(--brand-soft);
 }
 
 :root[data-theme="dark"] .table-responsive {
-  background: linear-gradient(180deg, rgba(16, 29, 52, 0.9) 0%, rgba(14, 24, 43, 0.94) 100%);
+  background: var(--surface);
 }
 
 :root[data-theme="dark"] .finova-empty-state {
-  background:
-    linear-gradient(180deg, rgba(77, 135, 255, 0.08) 0%, rgba(16, 29, 52, 0.72) 100%);
-  border-color: rgba(120, 163, 255, 0.22);
+  background: var(--surface-soft);
+  border-color: var(--border);
 }
 
 :root[data-theme="dark"] .finova-goal-suggestion {
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.18);
+  box-shadow: none;
 }
 
 :root[data-theme="dark"] .finova-goal-suggestion:hover,
 :root[data-theme="dark"] .finova-goal-suggestion:focus {
-  box-shadow: 0 14px 30px rgba(2, 6, 23, 0.24);
+  box-shadow: none;
 }
 
 :root[data-theme="dark"] .finova-badge-primary {
-  color: #d7e5ff;
-  border-color: rgba(120, 163, 255, 0.3);
+  color: var(--brand-strong);
+  border-color: var(--border);
 }
 
 :root[data-theme="dark"] .finova-badge-neutral {
-  color: #d3def1;
+  color: var(--text);
   background: rgba(255, 255, 255, 0.05);
 }
 
 :root[data-theme="dark"] .finova-badge-expense {
-  color: #ffb2b2;
-  border-color: rgba(248, 113, 113, 0.22);
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
 }
 
 :root[data-theme="dark"] .finova-badge-income {
-  color: #9df0b6;
-  border-color: rgba(74, 222, 128, 0.22);
+  color: var(--success-dark);
+  border-color: color-mix(in srgb, var(--success) 34%, var(--border) 66%);
 }
 
 :root[data-theme="dark"] .finova-input,
@@ -1625,7 +1617,7 @@ hr {
 
 :root[data-theme="dark"] .finova-input::placeholder,
 :root[data-theme="dark"] textarea::placeholder {
-  color: #9eb0cd !important;
+  color: var(--text-muted) !important;
 }
 
 :root[data-theme="dark"] .text-dark,
@@ -1635,7 +1627,7 @@ hr {
 }
 
 :root[data-theme="dark"] .finova-auth-link {
-  color: #cfe0ff;
+  color: var(--brand-strong);
 }
 
 :root[data-theme="dark"] .finova-auth-link:hover,
@@ -1645,4 +1637,19 @@ hr {
 
 .finova-row-highlight td {
   background: transparent !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
