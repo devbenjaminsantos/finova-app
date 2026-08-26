@@ -1,0 +1,381 @@
+# Héstia - roadmap de redesign e rebranding
+
+Este documento transforma o `Hestia_UI_UX_Spec_v1.pdf` em uma trilha de
+implementação incremental para o frontend atual. O spec continua sendo a fonte
+de verdade visual e conceitual; este roadmap registra impacto técnico, ordem de
+execução e critérios de aceite.
+
+## Estado atual
+
+- [x] Revisar as 13 páginas do spec.
+- [x] Mapear rotas, componentes, estilos, i18n e contratos preservados.
+- [ ] Criar a identidade gráfica de Héstia.
+- [ ] Iniciar a migração visual do frontend.
+
+O ambiente publicado continua apresentando a marca Finova. O checkout local já
+contém um protótipo parcial de rebranding para Héstia, mas ele ainda não
+representa uma etapa concluída: símbolo, favicon, fonte, tokens e testes não
+estão alinhados entre si. Essas alterações devem permanecer tratadas como
+exploração até o gate da Etapa 0 ser aprovado.
+
+## Contratos preservados
+
+O redesign não deve alterar, nesta etapa:
+
+- API, banco de dados e regras financeiras;
+- autenticação, cookies, sessão e antiforgery;
+- `TransactionsProvider` e clientes HTTP;
+- analytics, formatadores, importação e exportação;
+- Recharts e modelos de dados existentes;
+- i18n, dark mode e rotas públicas;
+- namespaces `FinanceDashboard.Api`, eventos e classes internas `finova-*` que
+  ainda forem úteis durante a migração.
+
+Toda alteração de texto visível deve manter paridade entre PT-BR e inglês.
+
+Também devem permanecer verdadeiros durante todo o redesign:
+
+- JWT apenas em cookie `HttpOnly`, com versão de sessão validada no banco;
+- antiforgery nas operações mutáveis e CORS restrito a origens explícitas;
+- consultas e mutações sempre limitadas ao usuário autenticado;
+- token do dashboard público aleatório, revogável e persistido somente como hash;
+- imagem da API executada sem privilégios de root;
+- coordenação idempotente de notificações mantida no banco.
+
+## Baseline técnico confirmado
+
+Arquitetura publicada observada antes do redesign:
+
+```text
+GitHub
+  |-- frontend React/Vite --> Vercel
+  |                            `-- /api/* --> Railway
+  `-- API ASP.NET Core ------> Railway --> Neon PostgreSQL
+```
+
+Evidências da baseline:
+
+- [x] frontend público respondeu `200` na Vercel;
+- [x] `/health` e emissão de token CSRF responderam `200` na Railway;
+- [x] uma consulta pública inválida e sem dados reais percorreu
+  Vercel -> Railway -> Neon e retornou `404` sem cache;
+- [x] CORS aceitou a origem da Vercel e não refletiu uma origem arbitrária;
+- [x] headers CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
+  `Referrer-Policy` e `Permissions-Policy` estão presentes no frontend;
+- [x] 89 testes da API passaram;
+- [x] lint, build e 6 smokes E2E públicos do frontend passaram;
+- [ ] restaurar a suíte unitária do frontend para verde: a baseline terminou com
+  87 de 100 testes aprovados, 11 timeouts e duas divergências determinísticas;
+- [x] auditorias npm e NuGet não encontraram vulnerabilidades conhecidas na
+  baseline analisada.
+
+## Mapa do frontend atual
+
+| Atual | Direção Héstia |
+| --- | --- |
+| `components/Navbar.jsx` | `layout/AppShell`, `Sidebar`, `Topbar` e navegação mobile |
+| `components/BrandMark.jsx` | símbolo, wordmark e variações Héstia |
+| `index.css` | tokens, globais e estilos de componentes separados gradualmente |
+| `pages/Home.jsx` | tela-piloto da nova linguagem visual |
+| `pages/Dashboard.jsx` e `/graficos` | visualizações incorporadas a `/analises` |
+| `BudgetGoalsSection` | base da nova área `/planejamento` |
+| `pages/Transactions.jsx` | lista densa e criação rápida com progressive disclosure |
+| `pages/FinancialAccounts.jsx` | área Contas dentro do novo shell |
+| `translations.js` | rebranding visível e nova arquitetura em PT-BR e inglês |
+
+Rotas antigas devem continuar funcionando por redirecionamento durante e após a
+migração. Nenhuma etapa pode quebrar links de confirmação, redefinição de senha
+ou dashboard público.
+
+## Etapa 0 - identidade gráfica
+
+- [ ] Explorar símbolos abstratos derivados de lar, centro e chama.
+- [ ] Escolher uma direção sem deusa, templo, mascote ou avatar.
+- [ ] Validar legibilidade do símbolo em 16 px.
+- [ ] Produzir símbolo, wordmark, versões horizontal e compacta.
+- [ ] Produzir variações para fundos light e dark.
+- [ ] Gerar favicon e ícones necessários ao frontend.
+- [ ] Atualizar `BrandMark`, metadados e textos visíveis PT-BR/inglês.
+- [ ] Substituir o losango textual provisório por um ativo aprovado.
+- [ ] Remover ou substituir os favicons e logos antigos da Finova.
+- [ ] Definir a grafia oficial da marca, incluindo uso de acento em português e
+  inglês, nomes de arquivo e metadados.
+- [ ] Interromper trocas globais adicionais de Finova para Héstia até a direção
+  visual ser escolhida.
+- [ ] Decidir quais identificadores técnicos `finova-*` permanecem internos para
+  evitar uma renomeação mecânica arriscada.
+
+**Gate:** a marca precisa funcionar no login, no futuro sidebar e como favicon
+antes da troca global de Finova para Héstia.
+
+## Etapa 1 - fundação visual
+
+- [ ] Adotar Manrope com fallback local seguro.
+- [ ] Corrigir a divergência atual em que o HTML carrega Manrope, mas o CSS ainda
+  declara Inter.
+- [ ] Criar tokens light com warm white, ink, sage e cores semânticas.
+- [ ] Criar tokens dark naturais e equivalentes.
+- [ ] Remover gradientes, glows e sombras decorativas da fundação.
+- [ ] Definir spacing, bordas, raios de até 8 px e elevação discreta.
+- [ ] Definir foco visível e contraste acessível para todos os controles.
+- [ ] Respeitar `prefers-reduced-motion`.
+- [ ] Manter letter spacing em `0`.
+- [ ] Garantir que a aparência validada seja reproduzível apenas a partir dos
+  arquivos-fonte; screenshots ou bundles antigos não contam como evidência.
+- [ ] Regerar screenshots light/dark depois de um build limpo e manter apenas os
+  artefatos exigidos para revisão.
+
+**Gate:** login, cadastro e uma página autenticada devem permanecer legíveis e
+operantes nos dois temas, em desktop e mobile.
+
+## Etapa 2 - app shell
+
+- [ ] Criar `AppShell`, `Sidebar`, `Topbar` e `PageHeader`.
+- [ ] Usar sidebar permanente no desktop, com aproximadamente 240 px.
+- [ ] Mover perfil e preferências para o rodapé da sidebar.
+- [ ] Criar navegação inferior mobile com ação central de nova transação.
+- [ ] Manter áreas públicas e de autenticação fora do shell autenticado.
+- [ ] Adotar ícones Lucide com tooltips quando o significado não for óbvio.
+- [ ] Remover a navbar horizontal sem alterar auth ou carregamento de rotas.
+
+**Gate:** navegação por teclado, rota ativa, logout, idioma, tema e responsividade
+devem funcionar sem sobreposição ou salto de layout.
+
+## Etapa 3 - Home como tela-piloto
+
+- [ ] Criar hero financeiro com saldo, entradas, saídas e resultado.
+- [ ] Destacar uma visualização principal de evolução financeira.
+- [ ] Criar assinatura contextual `Héstia percebeu` sem depender de IA.
+- [ ] Exibir categorias de maior gasto com hierarquia comparável.
+- [ ] Resumir planejamento e atividade recente no canvas da página.
+- [ ] Reduzir cards a agrupamentos ou ações que realmente precisam de moldura.
+- [ ] Preservar estados demo, vazio, carregamento, erro e onboarding.
+
+**Gate:** a página deve responder em poucos segundos "como estou?", "por que?"
+e "o que merece atenção?" sem remover funcionalidades existentes.
+
+## Etapa 4 - componentes reutilizáveis
+
+- [ ] Criar `Button`, `Input`, `Select`, `Modal`, `Toast` e `EmptyState`.
+- [ ] Criar `Metric`, `MoneyDelta`, `TransactionRow` e `CategoryRow`.
+- [ ] Criar `BudgetProgress`, `InsightCard` e `ChartContainer`.
+- [ ] Substituir alertas grandes por feedback discreto quando apropriado.
+- [ ] Evitar cards aninhados e componentes puramente decorativos.
+
+**Gate:** componentes devem ter estados normal, hover, focus, disabled, loading e
+erro quando aplicáveis, sem duplicar regras em cada página.
+
+## Etapa 5 - fluxos principais
+
+- [ ] Migrar Transações para lista densa e criação rápida.
+- [ ] Manter tags, recorrência e campos raros em `Mais opções`.
+- [ ] Consolidar gráficos e comparações em Análises.
+- [ ] Criar `/planejamento` para metas, orçamentos e compromissos.
+- [ ] Redirecionar `/graficos` e `/metas` sem quebrar favoritos antigos.
+- [ ] Migrar Contas para o novo shell e tom visual.
+- [ ] Preservar Perfil, Histórico e dashboard público como áreas secundárias.
+- [ ] Alinhar nomes de exportação CSV/PDF e suas asserções de teste com a marca
+  aprovada.
+- [ ] Limitar a quantidade de itens aceita por importação na API e manter o
+  limite de tamanho do arquivo no frontend.
+
+**Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
+conta devem manter o comportamento coberto pelos testes atuais.
+
+## Etapa 6 - experiência mobile
+
+- [ ] Tratar a lista de transações como experiência principal.
+- [ ] Abrir filtros avançados em sheet.
+- [ ] Implementar criação rápida sem formulário pesado.
+- [ ] Validar alvos de toque, safe áreas e teclado virtual.
+- [ ] Verificar ausência de overflow e sobreposições em larguras estreitas.
+
+**Gate:** os fluxos principais devem ser concluídos sem depender de controles
+ocultos ou de um layout desktop comprimido.
+
+## Etapa 7 - camada Héstia e agentes
+
+- [ ] Adicionar uma entrada unificada apenas após a UX financeira amadurecer.
+- [ ] Rotear especialidades internamente, sem seletor obrigatório de agente.
+- [ ] Identificar análises com Métis, Eunômia, Sofrósina, Kairos ou Plutus.
+- [ ] Evitar chat flutuante, avatares, gamificação e cinco paletas concorrentes.
+- [ ] Manter o produto plenamente funcional sem IA.
+
+Esta etapa não autoriza ainda integrar modelo, armazenar conversas ou permitir
+que um agente bloqueie decisões financeiras.
+
+## Trilha paralela A - arquitetura, deploy e operação
+
+Estes itens não fazem parte da alteração visual, mas são gates para considerar
+o redesign pronto para produção.
+
+### P0 - alinhar a arquitetura real
+
+- [ ] Escolher um único contrato oficial para o frontend localizar a API:
+  `VITE_API_URL` absoluto ou `/api` pelo rewrite da Vercel.
+- [ ] Eliminar a possibilidade de um build alternar silenciosamente entre os
+  dois contratos.
+- [ ] Atualizar README, documentação de arquitetura e guia local para explicar
+  Vercel -> Railway -> Neon e a compatibilidade local opcional com SQL Server.
+- [ ] Corrigir a documentação da Vercel para refletir a localização real do
+  `vercel.json`, o diretório raiz efetivo e os comandos de build atuais.
+- [ ] Registrar como migrations PostgreSQL são aplicadas antes de cada release,
+  sem executar `Database.Migrate()` concorrentemente no startup.
+- [ ] Confirmar que a role de runtime do Neon continua com privilégios mínimos e
+  que a credencial de owner é usada apenas em migrations administradas.
+
+### P0 - eliminar pipelines conflitantes
+
+- [ ] Decidir e documentar o fim da janela de rollback da Azure.
+- [ ] Desabilitar ou arquivar os workflows antigos de Azure Static Web Apps e
+  Azure App Service quando a janela terminar.
+- [ ] Até lá, impedir que um push comum faça deploy simultâneo e não intencional
+  em Azure, Vercel e Railway.
+- [ ] Exigir lint, testes, build e auditorias antes das integrações automáticas de
+  Vercel e Railway promoverem `main`.
+- [ ] Registrar o commit e os IDs dos deploys aprovados para relacionar repo,
+  frontend e API em cada release.
+
+### P1 - saúde e cold start
+
+- [ ] Separar liveness e readiness, mantendo um endpoint simples para processo e
+  outro que confirme acesso ao Neon e schema esperado.
+- [ ] Não tratar `/health=200` como prova isolada de que banco e migrations estão
+  operacionais.
+- [ ] Medir frontend, API e Neon nos estados quente, API adormecida e API+banco
+  adormecidos.
+- [ ] Implementar loading e retry limitado sem duplicar operações mutáveis.
+- [ ] Persistir ou substituir a estratégia de Data Protection antes de usar mais
+  de uma réplica; validar antiforgery durante redeploys.
+- [ ] Manter a automação periódica desabilitada no serviço web para permitir
+  sleep e planejar worker/cron dedicado antes de reativá-la.
+
+## Trilha paralela B - segurança, privacidade e resiliência
+
+### P0/P1 - autenticação e proxy
+
+- [ ] Validar o range real dos proxies Railway e substituir a confiança ampla em
+  `100.0.0.0/8` pelo menor conjunto documentado ou configurável.
+- [ ] Confirmar que IP de auditoria e partições do rate limiter não podem ser
+  alterados por `X-Forwarded-For` vindo de um cliente não confiável.
+- [ ] Revisar o cadastro para não revelar desnecessariamente se um e-mail já
+  existe, preservando um fluxo útil de recuperação de conta.
+- [ ] Redesenhar o bloqueio após cinco senhas inválidas para reduzir negação de
+  serviço direcionada sem enfraquecer proteção contra força bruta.
+- [ ] Revalidar cookie JWT, CSRF, logout, expiração e revogação nos navegadores
+  principais depois do novo domínio.
+- [ ] Manter preview deployments fora do banco e das credenciais de produção.
+
+### P1 - dados públicos e entradas grandes
+
+- [ ] Definir o período e o conjunto mínimo de dados exibidos no dashboard
+  público.
+- [ ] Adicionar paginação ou limite de transações ao dashboard público.
+- [ ] Avaliar expiração opcional do compartilhamento além de rotação e revogação.
+- [ ] Evitar vazamento do token do dashboard por histórico, referer, analytics ou
+  logs; avaliar `Referrer-Policy: no-referrer` na rota compartilhada.
+- [ ] Definir limite de itens e tamanho total para importações CSV/OFX também na
+  API, independentemente da validação do navegador.
+- [ ] Adicionar testes de payload excessivo e resposta `413`/`400` controlada.
+
+### P2 - headers, segredos e retenção
+
+- [ ] Restringir `connect-src` da CSP ao conjunto mínimo; com proxy same-origin,
+  verificar se apenas `'self'` é suficiente.
+- [ ] Reduzir `style-src 'unsafe-inline'` quando a migração de componentes
+  permitir, sem quebrar Bootstrap ou estilos necessários.
+- [ ] Adotar secret scanning dedicado no CI e continuar sem versionar `.env`,
+  connection strings, chaves JWT ou credenciais de provedores.
+- [ ] Definir retenção e limpeza de tokens expirados, auditoria e registros de
+  entrega considerando privacidade e crescimento do banco.
+
+## Trilha paralela C - domínio e e-mail Brevo
+
+O Brevo está deliberadamente bloqueado neste momento. A identidade e o novo
+domínio precisam ser decididos antes de configurar remetente, autenticação DNS,
+links transacionais ou credenciais de produção. Nenhum item da seção
+"depois do novo domínio" deve ser antecipado.
+
+### Antes do novo domínio - somente preparação de código
+
+- [ ] Introduzir uma configuração explícita para e-mail habilitado/desabilitado,
+  sem exigir credenciais Brevo durante a pausa.
+- [ ] Remover o acoplamento que derruba toda a API em produção quando SMTP está
+  intencionalmente desabilitado.
+- [ ] Definir respostas honestas para cadastro, reenvio e recuperação quando o
+  e-mail estiver indisponível, sem afirmar que houve entrega.
+- [ ] Decidir se cadastro público fica temporariamente indisponível enquanto a
+  confirmação de e-mail não puder ser enviada.
+- [ ] Adicionar timeout e cancelamento ao envio SMTP para não prender requisições
+  HTTP indefinidamente.
+- [ ] Manter apenas placeholders nos arquivos de exemplo; não criar nem inserir
+  chave SMTP agora.
+- [ ] Manter `Notifications__Enabled=false` no serviço web.
+
+### Depois da aprovação da marca e do novo domínio
+
+- [ ] Registrar o domínio definitivo e os subdomínios de app e API.
+- [ ] Configurar o domínio no projeto Vercel e o domínio da API na Railway.
+- [ ] Atualizar `Client__BaseUrl`, CORS, links de confirmação/redefinição,
+  callbacks, webhooks e CSP.
+- [ ] Validar HTTPS, certificados, redirects e cookies no domínio definitivo.
+- [ ] Criar ou validar o remetente Héstia no Brevo.
+- [ ] Autenticar o domínio no Brevo com SPF, DKIM e, quando aplicável, DMARC.
+- [ ] Criar uma chave SMTP exclusiva para `production` e armazená-la somente nas
+  variáveis privadas da Railway.
+- [ ] Configurar `Smtp__Host`, porta, usuário, chave, remetente, nome e TLS.
+- [ ] Fazer deploy e confirmar o diagnóstico de startup sem imprimir valores.
+- [ ] Testar cadastro, confirmação, reenvio e recuperação com contas controladas.
+- [ ] Confirmar `Delivered` no log transacional do Brevo; resposta `200`/`201` da
+  API não é prova de entrega.
+- [ ] Testar reputação, spam, bounce e tratamento de remetente inválido.
+- [ ] Só então avaliar reativar alertas de metas e resumos mensais em worker ou
+  cron dedicado, preservando idempotência no PostgreSQL.
+
+**Gate:** o rebranding só pode ser publicado como Héstia quando domínio,
+`Client__BaseUrl`, CORS, cookies e links transacionais apontarem para o mesmo
+ambiente aprovado. O funcionamento do Brevo é um gate posterior à troca do
+domínio, não um bloqueio para explorar e implementar o frontend localmente.
+
+## Validação por incremento
+
+Cada etapa deve terminar com:
+
+- lint, testes unitários e build do frontend;
+- verificação visual em light/dark;
+- screenshots desktop e mobile das rotas afetadas;
+- verificação de foco, contraste, overflow e sobreposições;
+- smoke de cadastro, login, demo, logout e rotas protegidas quando o shell mudar;
+- suíte unitária do frontend totalmente verde, sem aceitar timeouts como
+  aprovação;
+- 89 testes atuais da API ou mais, sem regressão de isolamento entre usuários;
+- smoke público e autenticado pelo domínio definitivo quando ele existir;
+- verificação separada de frontend -> proxy -> API e API -> PostgreSQL;
+- `npm audit` e auditoria NuGet sem vulnerabilidades altas conhecidas;
+- `git diff --check` e revisão de arquivos não rastreados antes do commit;
+- atualização deste checklist somente após evidência funcional.
+
+Screenshots precisam ser gerados novamente a partir do mesmo commit validado.
+Artefatos antigos, ignorados pelo Git ou produzidos por uma versão temporária de
+CSS não comprovam o estado atual.
+
+## Ordem global de execução
+
+1. [ ] Restaurar a baseline de testes do frontend e congelar novas trocas globais
+   de nome.
+2. [ ] Concluir a Etapa 0 e escolher a identidade Héstia.
+3. [ ] Implementar a fundação visual e validar o primeiro gate light/dark.
+4. [ ] Evoluir shell, Home, componentes e fluxos em incrementos isolados.
+5. [ ] Executar em paralelo os hardenings P0/P1 que não dependem do domínio.
+6. [ ] Escolher e configurar o novo domínio somente quando a marca estiver pronta.
+7. [ ] Atualizar URLs, CORS, cookies e callbacks e executar smoke completo.
+8. [ ] Configurar e validar o Brevo somente depois da troca do domínio.
+9. [ ] Encerrar a janela de rollback e remover pipelines Azure conflitantes.
+10. [ ] Publicar o rebranding apenas com todas as evidências do gate final.
+
+## Próximo incremento
+
+Criar três direções de identidade para o símbolo de Héstia, comparar presença em
+16 px, sidebar, login e light/dark, e escolher uma antes de consolidar novas
+alterações no frontend. O Brevo permanece fora deste incremento e só deve ser
+configurado depois da definição e troca para o novo domínio.

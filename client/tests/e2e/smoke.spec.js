@@ -4,7 +4,7 @@ test.describe("public routes", () => {
   test("login page loads with demo block", async ({ page }) => {
     await page.goto("/login");
 
-    await expect(page.getByRole("img", { name: "Logo da Finova" }).first()).toBeVisible();
+    await expect(page.getByLabel("Marca Héstia").first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "Entrar" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Explore a conta demo" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Entrar como demonstração/i })).toBeVisible();

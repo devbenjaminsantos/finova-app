@@ -17,11 +17,11 @@ namespace FinanceDashboard.Api.Services.Email
         {
             return SendAsync(
                 toEmail,
-                "Redefinição de senha - Finova",
+                "Redefinição de senha - Héstia",
                 $"""
                 Olá, {name}.
 
-                Recebemos uma solicitação para redefinir sua senha no Finova.
+                Recebemos uma solicitação para redefinir sua senha na Héstia.
 
                 Acesse o link abaixo para criar uma nova senha:
                 {resetUrl}
@@ -34,11 +34,11 @@ namespace FinanceDashboard.Api.Services.Email
         {
             return SendAsync(
                 toEmail,
-                "Confirmação de e-mail - Finova",
+                "Confirmação de e-mail - Héstia",
                 $"""
                 Olá, {name}.
 
-                Confirme seu e-mail para ativar sua conta no Finova.
+                Confirme seu e-mail para ativar sua conta na Héstia.
 
                 Acesse o link abaixo para concluir a confirmação:
                 {verificationUrl}
@@ -67,7 +67,7 @@ namespace FinanceDashboard.Api.Services.Email
                 Valor gasto até agora: {spentAmount:C}
                 Limite planejado: {targetAmount:C}
 
-                Acesse o Finova para revisar suas movimentações e ajustar o plano do mês, se necessário.
+                Acesse a Héstia para revisar suas movimentações e ajustar o plano do mês, se necessário.
                 """);
         }
 
@@ -110,7 +110,7 @@ namespace FinanceDashboard.Api.Services.Email
                 Metas do período:
                 {goalLines}
 
-                Acesse o Finova para revisar os detalhes e planejar o próximo mês.
+                Acesse a Héstia para revisar os detalhes e planejar o próximo mês.
                 """);
         }
 
@@ -127,7 +127,7 @@ namespace FinanceDashboard.Api.Services.Email
             var port = _configuration.GetValue("Smtp:Port", 587);
             var username = _configuration["Smtp:Username"];
             var password = _configuration["Smtp:Password"];
-            var fromName = _configuration["Smtp:FromName"] ?? "Finova";
+            var fromName = _configuration["Smtp:FromName"] ?? "Héstia";
             var enableSsl = _configuration.GetValue("Smtp:EnableSsl", true);
 
             using var message = new MailMessage

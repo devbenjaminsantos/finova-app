@@ -8,9 +8,9 @@ export const LANGUAGE_OPTIONS = [
 export const translations = {
   "pt-BR": {
     common: {
-      brandName: "Finova",
-      brandLogoAlt: "Logo da Finova",
-      brandSubtitle: "Seu painel financeiro pessoal, com clareza e controle.",
+      brandName: "Héstia",
+      brandLogoAlt: "Marca Héstia",
+      brandSubtitle: "Sua casa financeira, com clareza para planejar e decidir.",
       email: "E-mail",
       emailPlaceholder: "seuemail@exemplo.com",
       password: "Senha",
@@ -274,7 +274,7 @@ export const translations = {
       demoTitle: "Conta de demonstração",
       demoDescription:
         "Você está explorando um ambiente com dados fictícios. Use esta página inicial como vitrine dos blocos que mais importam para você e aprofunde a análise nas páginas dedicadas.",
-      onboardingPromptTitle: "Quer ajuda para configurar seu Finova?",
+      onboardingPromptTitle: "Quer ajuda para organizar sua Héstia?",
       onboardingPromptDescription:
         "Posso te orientar pelos primeiros passos para deixar sua página inicial útil desde os primeiros acessos.",
       onboardingPromptAccept: "Quero ajuda",
@@ -376,7 +376,7 @@ export const translations = {
         "Sinais automáticos e recomendações objetivas para o recorte selecionado.",
       insightsEmptyTitle: "Ainda não há dados suficientes",
       insightsEmptyDescription:
-        "Adicione transações para que o Finova consiga interpretar padrões e sugerir ações.",
+        "Adicione transações para que a Héstia consiga interpretar padrões e sugerir ações.",
       comparisonsEyebrow: "Mudança de ritmo",
       comparisonsTitle: "Comparativos",
       comparisonsDescription:
@@ -866,7 +866,7 @@ export const translations = {
       importCurrentDestination: "Destino atual",
       importFileTitle: "Arquivo CSV ou OFX",
       importFileSubtitle:
-        "O Finova reconhece cabeçalhos bancários, sugere possíveis duplicatas e também permite filtrar e editar em lote antes da confirmação.",
+        "A Héstia reconhece cabeçalhos bancários, sugere possíveis duplicatas e também permite filtrar e editar em lote antes da confirmação.",
       importReadSuccess: "{{count}} transação(ões) lida(s) e pronta(s) para revisão.",
       importReadError: "Não foi possível ler o arquivo de importação.",
       importFileTooLarge: "O arquivo deve ter no máximo 2 MB.",
@@ -941,9 +941,9 @@ export const translations = {
   },
   "en-US": {
     common: {
-      brandName: "Finova",
-      brandLogoAlt: "Finova logo",
-      brandSubtitle: "Your personal finance dashboard with clarity and control.",
+      brandName: "Héstia",
+      brandLogoAlt: "Héstia brand",
+      brandSubtitle: "Your financial home, with clarity to plan and make better decisions.",
       email: "Email",
       emailPlaceholder: "you@example.com",
       password: "Password",
@@ -1206,7 +1206,7 @@ export const translations = {
       demoTitle: "Demo account",
       demoDescription:
         "You are exploring an environment with fictional data. Use this Home as a showcase for the blocks that matter most to you and go deeper in the dedicated pages.",
-      onboardingPromptTitle: "Want help setting up your Finova?",
+      onboardingPromptTitle: "Want help organizing your Héstia?",
       onboardingPromptDescription:
         "I can guide you through the first steps so your Home becomes useful from the very first visits.",
       onboardingPromptAccept: "I want help",
@@ -1308,7 +1308,7 @@ export const translations = {
         "Automatic signals and objective recommendations for the selected range.",
       insightsEmptyTitle: "There is still not enough data",
       insightsEmptyDescription:
-        "Add transactions so Finova can interpret patterns and suggest actions.",
+        "Add transactions so Héstia can interpret patterns and suggest actions.",
       comparisonsEyebrow: "Rhythm change",
       comparisonsTitle: "Comparisons",
       comparisonsDescription:
@@ -1797,7 +1797,7 @@ export const translations = {
       importCurrentDestination: "Current destination",
       importFileTitle: "CSV or OFX file",
       importFileSubtitle:
-        "Finova recognizes bank headers, suggests possible duplicates, and also lets you filter and bulk edit before confirming.",
+        "Héstia recognizes bank headers, suggests possible duplicates, and also lets you filter and bulk edit before confirming.",
       importReadSuccess: "{{count}} transaction(s) read and ready for review.",
       importReadError: "Unable to read the import file.",
       importFileTooLarge: "The file must be no larger than 2 MB.",

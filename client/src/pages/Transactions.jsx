@@ -512,14 +512,14 @@ export default function Transactions() {
     ];
 
     const monthLabel = month || t("transactions.exportAllPeriodsFilename");
-    downloadCsv(`finova-transacoes-${monthLabel}.csv`, rows);
+    downloadCsv(`hestia-transacoes-${monthLabel}.csv`, rows);
   }
 
   function exportFilteredTransactionsPdf() {
     const monthLabel = month || t("transactions.exportAllPeriodsFilename");
 
     exportTransactionsToPdf({
-      filename: `finova-transacoes-${monthLabel}.pdf`,
+      filename: `hestia-transacoes-${monthLabel}.pdf`,
       title: t("pages.transactionsTitle"),
       subtitle: month
         ? t("transactions.exportSubtitleFiltered", {

@@ -10,3 +10,4 @@ Esta pasta reúne os documentos de apoio do Finova. O README principal apresenta
 - [Decisões de arquitetura](architecture-decisions.md): registro das escolhas técnicas, seus motivos e impactos.
 - [Checklist de segurança e confiabilidade](security-hardening-checklist.md): achados da revisão, ordem de correção e critérios de conclusão.
 - [Trilha de migração Azure -> Vercel + Railway + Neon](TRILHA_MIGRACAO_AZURE_VERCEL_RAILWAY_NEON.md): plano operacional, validações, cutover e rollback da nova infraestrutura.
+- [Roadmap de redesign Héstia](HESTIA_REDESIGN_ROADMAP.md): tradução técnica do spec de UI/UX, ordem incremental e critérios de aceite.

@@ -1,4 +1,3 @@
-import logo from "../assets/icone/logo-transparent.svg";
 import { useI18n } from "../i18n/LanguageProvider";
 
 export default function BrandMark({
@@ -19,8 +18,10 @@ export default function BrandMark({
     .join(" ");
 
   return (
-    <div className={classes}>
-      <img src={logo} alt={t("common.brandLogoAlt")} className="finova-brand-logo" />
+    <div className={classes} aria-label={t("common.brandLogoAlt")}>
+      <span className="finova-brand-symbol" aria-hidden="true">
+        {"\u25C7"}
+      </span>
 
       {showWordmark ? (
         <div className="finova-brand-copy">
