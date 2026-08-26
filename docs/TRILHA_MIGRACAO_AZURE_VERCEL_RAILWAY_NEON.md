@@ -499,9 +499,37 @@ Configuração remota criada:
 - provedor PostgreSQL, issuer, audience, demo e automação web configurados;
 - CORS e `Client__BaseUrl` apontando temporariamente para o antigo domínio SWA,
   até a publicação do frontend na Vercel;
-- SMTP preparado para Resend e `Smtp__Password` cadastrado diretamente pelo
-  proprietário, sem passar pelo repositório ou pela conversa;
+- SMTP genérico preparado para o Brevo, com credenciais mantidas somente nas
+  variáveis privadas do Railway;
 - domínio temporário `https://finova-api-production.up.railway.app`.
+
+Configuração Brevo esperada no Railway:
+
+```text
+Smtp__Host=smtp-relay.brevo.com
+Smtp__Port=587
+Smtp__Username=<login SMTP exibido pelo Brevo>
+Smtp__Password=<chave SMTP criada no Brevo>
+Smtp__FromEmail=<remetente verificado no Brevo>
+Smtp__FromName=Finova
+Smtp__EnableSsl=true
+```
+
+`Smtp__Password` deve receber uma chave SMTP, não a senha da conta nem uma API
+key. Antes do teste em produção, autenticar o domínio remetente no Brevo e
+confirmar os registros DNS solicitados pela plataforma. Nunca registrar valores
+reais no repositório, em logs ou em documentação.
+
+Validação da troca de provedor:
+
+- [ ] Criar ou validar o remetente no Brevo.
+- [ ] Autenticar o domínio remetente com os registros DNS indicados pelo Brevo.
+- [ ] Criar uma chave SMTP exclusiva para o ambiente `production`.
+- [ ] Atualizar as sete variáveis `Smtp__*` no Railway.
+- [ ] Confirmar no deploy o log `Provedor de e-mail configurado: SMTP.`.
+- [ ] Cadastrar uma conta controlada e confirmar o recebimento do link.
+- [ ] Testar o reenvio de confirmação e a recuperação de senha.
+- [ ] Conferir no log transacional do Brevo o evento `Delivered`.
 
 O primeiro deploy foi bloqueado antes do build porque o plano Trial recebeu uma
 réplica padrão em `sfo` e outra em US East. A réplica legada foi removida e o

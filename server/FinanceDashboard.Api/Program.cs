@@ -327,11 +327,17 @@ static void ValidateSmtpConfiguration(WebApplication app)
     logger.LogInformation("Provedor de e-mail configurado: SMTP.");
 
     var smtpHost = app.Configuration["Smtp:Host"];
+    var smtpUsername = app.Configuration["Smtp:Username"];
+    var smtpPassword = app.Configuration["Smtp:Password"];
     var smtpFromEmail = app.Configuration["Smtp:FromEmail"];
 
-    if (string.IsNullOrWhiteSpace(smtpHost) || string.IsNullOrWhiteSpace(smtpFromEmail))
+    if (string.IsNullOrWhiteSpace(smtpHost)
+        || string.IsNullOrWhiteSpace(smtpUsername)
+        || string.IsNullOrWhiteSpace(smtpPassword)
+        || string.IsNullOrWhiteSpace(smtpFromEmail))
     {
-        const string message = "SMTP incompleto. Verifique Smtp__Host e Smtp__FromEmail.";
+        const string message =
+            "SMTP incompleto. Verifique Smtp__Host, Smtp__Username, Smtp__Password e Smtp__FromEmail.";
 
         if (!app.Environment.IsDevelopment())
         {
