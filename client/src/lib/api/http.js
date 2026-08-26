@@ -38,6 +38,10 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest(path, options = {}) {
+  return sendApiRequest(path, options, true);
+}
+
+async function sendApiRequest(path, options, canRetryCsrf) {
   const method = (options.method || "GET").toUpperCase();
   const hadSession = localStorage.getItem("user") !== null;
   const hasBody = options.body != null;
@@ -88,6 +92,12 @@ export async function apiRequest(path, options = {}) {
     }
 
     const code = typeof errorPayload?.code === "string" ? errorPayload.code : null;
+
+    if (code === "INVALID_CSRF_TOKEN" && canRetryCsrf && !SAFE_METHODS.has(method)) {
+      resetCsrfToken();
+      return sendApiRequest(path, options, false);
+    }
+
     const translationKey = ERROR_CODE_TRANSLATIONS[code] ||
       STATUS_TRANSLATIONS[response.status] ||
       "common:requestFailed";

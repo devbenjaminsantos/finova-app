@@ -70,6 +70,41 @@ describe("apiRequest errors", () => {
     expect(fetchMock.mock.calls[1][1].headers.Authorization).toBeUndefined();
   });
 
+  it("refreshes antiforgery once when a token became invalid", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ token: "stale-csrf-token" }),
+      })
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        headers: { get: () => "application/problem+json" },
+        json: async () => ({ code: "INVALID_CSRF_TOKEN" }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ token: "fresh-csrf-token" }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        json: async () => ({ verificationEmailSent: true }),
+      });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(apiRequest("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({}),
+    })).resolves.toEqual({ verificationEmailSent: true });
+
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock.mock.calls[1][1].headers["X-CSRF-TOKEN"]).toBe("stale-csrf-token");
+    expect(fetchMock.mock.calls[3][1].headers["X-CSRF-TOKEN"]).toBe("fresh-csrf-token");
+  });
+
   it("does not expose an unknown server message", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
       ok: false,
