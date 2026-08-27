@@ -33,7 +33,11 @@ test.describe("public routes", () => {
   test("login page loads with demo block", async ({ page }) => {
     await page.goto("/login");
 
-    await expect(page.getByLabel("Marca Héstia").first()).toBeVisible();
+    const brand = page.getByLabel("Marca Héstia").first();
+    await expect(brand).toBeVisible();
+    const brandImage = brand.locator("img");
+    await expect(brandImage).toHaveAttribute("src", /hestia-mark-optimized\.webp/);
+    expect(await brandImage.evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
     await expect(page.getByRole("heading", { name: "Entrar" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Explore a conta demo" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Entrar como demonstração/i })).toBeVisible();

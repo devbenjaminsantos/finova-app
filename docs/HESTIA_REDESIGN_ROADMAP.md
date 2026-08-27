@@ -92,12 +92,12 @@ ou dashboard público.
 - [ ] Explorar símbolos abstratos derivados de lar, centro e chama.
 - [ ] Escolher uma direção sem deusa, templo, mascote ou avatar.
 - [ ] Validar legibilidade do símbolo em 16 px.
-- [ ] Produzir símbolo, wordmark, versões horizontal e compacta.
+- [x] Produzir símbolo, wordmark, versões horizontal e compacta.
 - [ ] Produzir variações para fundos light e dark.
-- [ ] Gerar favicon e ícones necessários ao frontend.
-- [ ] Atualizar `BrandMark`, metadados e textos visíveis PT-BR/inglês.
+- [x] Gerar favicon e ícones necessários ao frontend.
+- [x] Atualizar `BrandMark`, metadados e textos visíveis PT-BR/inglês.
 - [ ] Substituir o losango textual provisório por um ativo aprovado.
-- [ ] Remover ou substituir os favicons e logos antigos da Finova.
+- [x] Remover ou substituir os favicons e logos antigos da Finova.
 - [ ] Definir a grafia oficial da marca, incluindo uso de acento em português e
   inglês, nomes de arquivo e metadados.
 - [ ] Interromper trocas globais adicionais de Finova para Héstia até a direção
@@ -107,6 +107,23 @@ ou dashboard público.
 
 **Gate:** a marca precisa funcionar no login, no futuro sidebar e como favicon
 antes da troca global de Finova para Héstia.
+
+**Evidência do primeiro incremento (2026-08-27):**
+
+- o asset fornecido foi otimizado não destrutivamente em
+  `client/src/assets/icone/hestia-mark-optimized.webp` e passou a alimentar o
+  `BrandMark` no login, áreas públicas e shell autenticado; o PNG original foi
+  preservado como fonte;
+- a versão compacta do favicon simplifica casa, barras de crescimento e curva
+  ascendente do mesmo asset para 16 px, sem reutilizar o antigo favicon da
+  Finova;
+- o losango provisório foi removido do código, mas o item de aprovação visual
+  permanece aberto até a confirmação explícita da direção de marca;
+- a grafia continua `Héstia` em PT-BR e inglês. Nome técnico, nomes de arquivos
+  e metadados finais continuam pendentes de aprovação da identidade.
+- a versão otimizada tem 27 kB, transparência real e cantos transparentes
+  validados, substituindo o custo de cerca de 852 kB do PNG original. Lint, dois
+  testes de `BrandMark`, build e nove smokes Playwright passaram.
 
 ## Etapa 1 - fundação visual
 

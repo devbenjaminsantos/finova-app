@@ -1,3 +1,4 @@
+import logo from "../assets/icone/hestia-mark-optimized.webp";
 import { useI18n } from "../i18n/LanguageProvider";
 
 export default function BrandMark({
@@ -18,9 +19,9 @@ export default function BrandMark({
     .join(" ");
 
   return (
-    <div className={classes} aria-label={t("common.brandLogoAlt")}>
-      <span className="finova-brand-symbol" aria-hidden="true">
-        {"\u25C7"}
+    <div className={classes} role="img" aria-label={t("common.brandLogoAlt")}>
+      <span className="finova-brand-logo" aria-hidden="true">
+        <img src={logo} alt="" />
       </span>
 
       {showWordmark ? (

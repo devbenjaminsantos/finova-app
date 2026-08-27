@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Héstia">
+  <rect width="64" height="64" rx="14" fill="#fdf9f2"/>
+  <path d="M12 30 32 12l20 18v21H12Z" fill="#526a55"/>
+  <path d="M18 28 32 16l14 12v18H18Z" fill="#fdf9f2"/>
+  <path d="M22 39h5v7h-5Zm8-8h5v15h-5Zm8-5h5v20h-5Z" fill="#526a55"/>
+  <path d="m18 45 9-7 7 2 11-11" fill="none" stroke="#b5823c" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+</svg>
