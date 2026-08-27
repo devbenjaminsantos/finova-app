@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Transactions from "./Transactions";
 
@@ -61,6 +62,14 @@ vi.mock("../features/transactions/components/TransactionImportModal", () => ({
 
 import { useTransactions } from "../features/transactions/useTransactions";
 import { getFinancialAccounts } from "../lib/api/financialAccounts";
+
+function renderTransactions(initialEntry = "/transacoes") {
+  return render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Transactions />
+    </MemoryRouter>
+  );
+}
 
 const transactionsFixture = [
   {
@@ -193,8 +202,15 @@ describe("Transactions page", () => {
     });
   });
 
+  it("opens the create modal from the app shell shortcut", async () => {
+    renderTransactions("/transacoes?nova=1");
+
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Nova transação" })).toBeInTheDocument();
+  });
+
   it("filters transactions by search text", () => {
-    render(<Transactions />);
+    renderTransactions();
 
     fireEvent.change(screen.getByPlaceholderText(/buscar/i), {
       target: { value: "mercado" },
@@ -205,7 +221,7 @@ describe("Transactions page", () => {
   });
 
   it("filters transactions by tag", () => {
-    render(<Transactions />);
+    renderTransactions();
 
     fireEvent.change(screen.getByLabelText("Tags"), {
       target: { value: "trabalho" },
@@ -216,7 +232,7 @@ describe("Transactions page", () => {
   });
 
   it("filters transactions by selected account", async () => {
-    render(<Transactions />);
+    renderTransactions();
 
     fireEvent.change(await screen.findByLabelText("Conta"), {
       target: { value: "1" },
@@ -228,7 +244,7 @@ describe("Transactions page", () => {
   });
 
   it("exports the currently filtered rows to CSV", () => {
-    render(<Transactions />);
+    renderTransactions();
 
     fireEvent.change(screen.getByPlaceholderText(/buscar/i), {
       target: { value: "note" },
@@ -238,14 +254,14 @@ describe("Transactions page", () => {
     expect(mockDownloadCsv).toHaveBeenCalledTimes(1);
     const [filename, rows] = mockDownloadCsv.mock.calls[0];
 
-    expect(filename).toContain("finova-transacoes");
+    expect(filename).toContain("hestia-transacoes");
     expect(rows).toHaveLength(4);
     expect(rows[1][1]).toBe("Notebook");
     expect(rows[1][3]).toBe("trabalho");
   });
 
   it("exports monetary values and localized metadata to PDF", () => {
-    render(<Transactions />);
+    renderTransactions();
 
     fireEvent.change(screen.getByPlaceholderText(/buscar/i), {
       target: { value: "mercado" },
@@ -274,7 +290,7 @@ describe("Transactions page", () => {
   });
 
   it("shows the transaction origin badges, tags and installment progress", () => {
-    render(<Transactions />);
+    renderTransactions();
 
     expect(screen.getByText("Manual")).toBeInTheDocument();
     expect(screen.getAllByText("Importada via CSV").length).toBeGreaterThan(0);
@@ -300,7 +316,7 @@ describe("Transactions page", () => {
   });
 
   it("shows import feedback after confirming an import", async () => {
-    render(<Transactions />);
+    renderTransactions();
 
     fireEvent.click(screen.getByRole("button", { name: "Importar arquivo" }));
     fireEvent.click(screen.getByRole("button", { name: "Confirmar importação mock" }));
@@ -327,7 +343,7 @@ describe("Transactions page", () => {
       isLoading: false,
     });
 
-    render(<Transactions />);
+    renderTransactions();
 
     fireEvent.click(screen.getByRole("button", { name: "Remover compra" }));
 
@@ -351,7 +367,7 @@ describe("Transactions page", () => {
       isLoading: false,
     });
 
-    render(<Transactions />);
+    renderTransactions();
 
     fireEvent.click(screen.getByRole("button", { name: "Editar compra" }));
     fireEvent.change(screen.getByLabelText(/descri/i), {

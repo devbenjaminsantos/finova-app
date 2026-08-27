@@ -64,8 +64,8 @@ Evidências da baseline:
   `Referrer-Policy` e `Permissions-Policy` estão presentes no frontend;
 - [x] 89 testes da API passaram;
 - [x] lint, build e 6 smokes E2E públicos do frontend passaram;
-- [ ] restaurar a suíte unitária do frontend para verde: a baseline terminou com
-  87 de 100 testes aprovados, 11 timeouts e duas divergências determinísticas;
+- [x] restaurar a suíte unitária do frontend para verde: após a Etapa 2, os 101
+  testes passaram sem timeouts ou divergências determinísticas;
 - [x] auditorias npm e NuGet não encontraram vulnerabilidades conhecidas na
   baseline analisada.
 
@@ -145,13 +145,29 @@ operantes nos dois temas, em desktop e mobile.
 
 ## Etapa 2 - app shell
 
-- [ ] Criar `AppShell`, `Sidebar`, `Topbar` e `PageHeader`.
-- [ ] Usar sidebar permanente no desktop, com aproximadamente 240 px.
-- [ ] Mover perfil e preferências para o rodapé da sidebar.
-- [ ] Criar navegação inferior mobile com ação central de nova transação.
-- [ ] Manter áreas públicas e de autenticação fora do shell autenticado.
-- [ ] Adotar ícones Lucide com tooltips quando o significado não for óbvio.
-- [ ] Remover a navbar horizontal sem alterar auth ou carregamento de rotas.
+- [x] Criar `AppShell`, `Sidebar`, `Topbar` e `PageHeader`.
+- [x] Usar sidebar permanente no desktop, com aproximadamente 240 px.
+- [x] Mover perfil e preferências para o rodapé da sidebar.
+- [x] Criar navegação inferior mobile com ação central de nova transação.
+- [x] Manter áreas públicas e de autenticação fora do shell autenticado.
+- [x] Adotar ícones Lucide com tooltips quando o significado não for óbvio.
+- [x] Remover a navbar horizontal sem alterar auth ou carregamento de rotas.
+
+**Evidência de conclusão (2026-08-27):**
+
+- `AppShell` mantém sidebar e topbar montados durante o carregamento lazy das
+  páginas, evitando o salto de layout entre rotas;
+- o sidebar mediu 240 px no desktop e a navegação inferior mobile preservou
+  cinco alvos, com a ação central abrindo o modal existente de nova transação;
+- login, cadastro, recuperação de senha e dashboard compartilhado permanecem
+  no `PublicLayout`, fora do shell autenticado;
+- rota ativa, navegação por teclado, tema, idioma, logout, proteção de rotas e
+  responsividade passaram em nove smokes Playwright;
+- `npm run lint`, `npm run build` e os 101 testes unitários passaram;
+- cinco renderizações reais cobriram desktop/mobile, light/dark, menu expandido,
+  modal de transação e login público, sem erro de console ou overflow horizontal;
+- o frontend foi o único subsistema alterado: API, banco e Brevo permaneceram
+  deliberadamente fora deste incremento.
 
 **Gate:** navegação por teclado, rota ativa, logout, idioma, tema e responsividade
 devem funcionar sem sobreposição ou salto de layout.

@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import PageHeader from "../components/layout/PageHeader";
 import InstallmentGroupModal from "../features/transactions/components/InstallmentGroupModal";
 import TransactionImportModal from "../features/transactions/components/TransactionImportModal";
 import TransactionModal from "../features/transactions/components/TransactionModal";
@@ -73,6 +75,7 @@ function applyTransactionFilters(
 
 export default function Transactions() {
   const { t, formatCurrencyFromCents, formatDate, locale } = useI18n();
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     transactions,
     installmentPlans = [],
@@ -116,6 +119,20 @@ export default function Transactions() {
   const [importFeedback, setImportFeedback] = useState("");
   const [highlightImportedSince, setHighlightImportedSince] = useState("");
   const [accounts, setAccounts] = useState([]);
+
+  useEffect(() => {
+    if (searchParams.get("nova") !== "1") {
+      return;
+    }
+
+    setMode("create");
+    setSelected(null);
+    setIsOpen(true);
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("nova");
+    setSearchParams(nextParams, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     saveJSON(FILTERS_KEY, { q, accountFilter, tagFilter, typeFilter, categoryFilter, month, sortBy });
@@ -553,13 +570,11 @@ export default function Transactions() {
 
   return (
     <section className="finova-section-space">
-      <div className="finova-page-header">
-        <div className="finova-page-header-copy">
-          <h1 className="finova-title">{t("pages.transactionsTitle")}</h1>
-          <p className="finova-subtitle mb-0">{t("pages.transactionsSubtitle")}</p>
-        </div>
-
-        <div className="finova-page-header-actions">
+      <PageHeader
+        title={t("pages.transactionsTitle")}
+        subtitle={t("pages.transactionsSubtitle")}
+        actions={
+          <>
           <button className="btn finova-btn-light px-4" onClick={openImport} disabled={isMutating}>
             {t("pages.importFile")}
           </button>
@@ -571,8 +586,9 @@ export default function Transactions() {
           >
             {t("pages.newTransaction")}
           </button>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       <div className="finova-page-note mb-4">{t("pages.transactionsPageNote")}</div>
 

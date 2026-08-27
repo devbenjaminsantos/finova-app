@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PageHeader from "../components/layout/PageHeader";
 import {
   formatActionLabel,
   formatAuditDate,
@@ -56,13 +57,11 @@ export default function AuditLogs() {
 
   return (
     <section className="finova-section-space">
-      <div className="finova-page-header">
-        <div className="finova-page-header-copy">
-          <h1 className="finova-title">{t("pages.historyTitle")}</h1>
-          <p className="finova-subtitle mb-0">{t("pages.historySubtitle")}</p>
-        </div>
-
-        <div className="finova-page-header-side">
+      <PageHeader
+        title={t("pages.historyTitle")}
+        subtitle={t("pages.historySubtitle")}
+        aside={
+          <>
           <label className="form-label text-dark fw-medium" htmlFor="history-limit">
             {t("pages.historyLimit")}
           </label>
@@ -76,8 +75,9 @@ export default function AuditLogs() {
             <option value={50}>{t("history.limit50")}</option>
             <option value={100}>{t("history.limit100")}</option>
           </select>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       <div className="finova-page-note mb-4">{t("pages.historyPageNote")}</div>
 

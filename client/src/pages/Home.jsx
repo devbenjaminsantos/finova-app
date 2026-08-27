@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import HomeCustomizationCard from "../components/HomeCustomizationCard";
+import PageHeader from "../components/layout/PageHeader";
 import {
   CategoryInsightCard,
   ComparisonCard,
@@ -553,14 +554,11 @@ export default function Home() {
 
   return (
     <section className="finova-section-space">
-      <div className="finova-page-header">
-        <div className="finova-page-header-copy">
-          <h1 className="finova-title">{t("pages.homeTitle")}</h1>
-          <p className="finova-subtitle mb-0">{t("pages.homeSubtitle")}</p>
-          <p className="finova-subtitle small mt-2 mb-0">{selectedAccountLabel}</p>
-        </div>
-
-        <div className="finova-page-header-side">
+      <PageHeader
+        title={t("pages.homeTitle")}
+        subtitle={t("pages.homeSubtitle")}
+        meta={selectedAccountLabel}
+        aside={
           <div className="d-grid gap-2">
             <div>
               <label className="form-label text-dark fw-medium" htmlFor="home-period">
@@ -600,8 +598,8 @@ export default function Home() {
               </select>
             </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       <div className="d-grid gap-4">
         <div className="finova-page-note">

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import PageHeader from "../components/layout/PageHeader";
 import { SummaryCard } from "../features/dashboard/DashboardCards";
 import DashboardCharts from "../features/dashboard/DashboardCharts";
 import {
@@ -78,17 +79,15 @@ export default function PublicDashboard() {
 
   return (
     <section className="finova-section-space">
-      <div className="finova-page-header">
-        <div className="finova-page-header-copy">
-          <h1 className="finova-title">{t("publicDashboard.title")}</h1>
-          <p className="finova-subtitle mb-0">
-            {dashboard?.displayName
-              ? t("publicDashboard.subtitleWithName", { name: dashboard.displayName })
-              : t("publicDashboard.subtitle")}
-          </p>
-        </div>
-
-        <div className="finova-page-header-side">
+      <PageHeader
+        title={t("publicDashboard.title")}
+        subtitle={
+          dashboard?.displayName
+            ? t("publicDashboard.subtitleWithName", { name: dashboard.displayName })
+            : t("publicDashboard.subtitle")
+        }
+        aside={
+          <>
           <label className="form-label text-dark fw-medium" htmlFor="public-dashboard-period">
             {t("pages.dashboardPeriod")}
           </label>
@@ -105,8 +104,9 @@ export default function PublicDashboard() {
               </option>
             ))}
           </select>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       <div className="finova-page-note mb-4">
         {t("publicDashboard.pageNote")}

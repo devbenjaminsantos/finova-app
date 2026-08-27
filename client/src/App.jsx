@@ -1,10 +1,9 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RouteErrorBoundary from "./components/RouteErrorBoundary";
-import RouteLoading from "./components/RouteLoading";
-import { TransactionsProvider } from "./features/transactions/TransactionsProvider";
+import AppShell from "./components/layout/AppShell";
+import PublicLayout from "./components/layout/PublicLayout";
 import {
   hasValidSession,
   syncSessionFromStorageEvent,
@@ -51,96 +50,47 @@ export default function App() {
   }, []);
 
   return (
-    <div className="finova-page">
-      <Navbar />
+    <RouteErrorBoundary>
+      <Routes>
+        <Route element={<PublicLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/compartilhado/:token" element={<PublicDashboard />} />
+        </Route>
 
-      <main className="container py-4">
-        <TransactionsProvider>
-          <RouteErrorBoundary>
-            <Suspense fallback={<RouteLoading />}>
-              <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/compartilhado/:token" element={<PublicDashboard />} />
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppShell />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/" element={<Home />} />
 
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
+          <Route path="/graficos" element={<Dashboard />} />
 
-              <Route
-                path="/graficos"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
+          <Route path="/dashboard" element={<Navigate to="/graficos" replace />} />
 
-              <Route path="/dashboard" element={<Navigate to="/graficos" replace />} />
+          <Route path="/transacoes" element={<Transactions />} />
 
-              <Route
-                path="/transacoes"
-                element={
-                  <ProtectedRoute>
-                    <Transactions />
-                  </ProtectedRoute>
-                }
-              />
+          <Route path="/analises" element={<Analyses />} />
+          <Route path="/insights" element={<Navigate to="/analises" replace />} />
+          <Route path="/comparativos" element={<Navigate to="/analises" replace />} />
+          <Route path="/metas" element={<Navigate to="/analises" replace />} />
 
-              <Route
-                path="/analises"
-                element={
-                  <ProtectedRoute>
-                    <Analyses />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/insights" element={<Navigate to="/analises" replace />} />
-              <Route path="/comparativos" element={<Navigate to="/analises" replace />} />
-              <Route path="/metas" element={<Navigate to="/analises" replace />} />
+          <Route path="/contas" element={<FinancialAccounts />} />
 
-              <Route
-                path="/contas"
-                element={
-                  <ProtectedRoute>
-                    <FinancialAccounts />
-                  </ProtectedRoute>
-                }
-              />
+          <Route path="/perfil" element={<Profile />} />
 
-              <Route
-                path="/perfil"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
+          <Route path="/historico" element={<AuditLogs />} />
 
-              <Route
-                path="/historico"
-                element={
-                  <ProtectedRoute>
-                    <AuditLogs />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route path="/auditoria" element={<Navigate to="/historico" replace />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </Suspense>
-          </RouteErrorBoundary>
-        </TransactionsProvider>
-      </main>
-    </div>
+          <Route path="/auditoria" element={<Navigate to="/historico" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </RouteErrorBoundary>
   );
 }

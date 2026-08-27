@@ -4,16 +4,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 import { hasValidSession } from "./lib/api/auth";
 
-vi.mock("./components/Navbar", () => ({
-  default: () => <nav>Navbar</nav>,
-}));
+vi.mock("./components/layout/AppShell", async () => {
+  const { Outlet } = await import("react-router-dom");
+  return { default: () => <Outlet /> };
+});
 
-vi.mock("./features/transactions/TransactionsProvider", () => ({
-  TransactionsProvider: ({ children }) => children,
-}));
+vi.mock("./components/layout/PublicLayout", async () => {
+  const { Outlet } = await import("react-router-dom");
+  return { default: () => <Outlet /> };
+});
 
 vi.mock("./lib/api/auth", () => ({
   hasValidSession: vi.fn(),
+  getStoredUser: vi.fn(),
+  logout: vi.fn(),
   rememberPostLoginRedirect: vi.fn(),
   syncSessionFromStorageEvent: vi.fn(),
   touchSessionActivity: vi.fn(),

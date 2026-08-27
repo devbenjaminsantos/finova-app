@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import HomeCustomizationCard from "../components/HomeCustomizationCard";
 import PasswordToggleButton from "../components/PasswordToggleButton";
+import PageHeader from "../components/layout/PageHeader";
 import { useI18n } from "../i18n/LanguageProvider";
 import {
   getNotificationDeliveries,
@@ -256,12 +257,7 @@ export default function Profile() {
 
   return (
     <section className="finova-section-space">
-      <div className="finova-page-header">
-        <div className="finova-page-header-copy">
-          <h1 className="finova-title">{t("profile.title")}</h1>
-          <p className="finova-subtitle mb-0">{t("profile.subtitle")}</p>
-        </div>
-      </div>
+      <PageHeader title={t("profile.title")} subtitle={t("profile.subtitle")} />
 
       <div className="finova-page-note">
         {t("profile.pageNote")}

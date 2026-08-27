@@ -1653,3 +1653,490 @@ hr {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Authenticated application shell */
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.app-sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  height: 100vh;
+  padding: var(--space-5) var(--space-3);
+  overflow-y: auto;
+  background: var(--nav-surface);
+  border-right: 1px solid var(--nav-border);
+  color: #ffffff;
+  z-index: 30;
+}
+
+.app-sidebar-brand,
+.app-public-brand,
+.app-topbar-brand {
+  display: inline-flex;
+  color: inherit;
+}
+
+.app-sidebar-brand {
+  padding: 0 var(--space-2) var(--space-5);
+}
+
+.app-sidebar .finova-brand-mark-navbar .finova-brand-wordmark,
+.app-public-header .finova-brand-mark-navbar .finova-brand-wordmark {
+  color: #ffffff;
+}
+
+.app-sidebar-nav {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.app-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  padding: 0.65rem var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.app-nav-link:hover,
+.app-nav-link:focus-visible {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.app-nav-link-active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.app-sidebar-footer {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-5);
+}
+
+.app-sidebar-preferences {
+  padding: var(--space-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.app-preferences {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app-icon-button,
+.app-language-control,
+.app-mobile-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.app-sidebar .app-icon-button,
+.app-sidebar .app-language-control,
+.app-public-header .app-icon-button,
+.app-public-header .app-language-control {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.app-icon-button:hover,
+.app-icon-button:focus-visible,
+.app-language-control:hover,
+.app-language-control:focus-within {
+  border-color: var(--focus);
+  background: var(--brand-soft);
+}
+
+.app-sidebar .app-icon-button:hover,
+.app-sidebar .app-icon-button:focus-visible,
+.app-sidebar .app-language-control:hover,
+.app-sidebar .app-language-control:focus-within,
+.app-public-header .app-icon-button:hover,
+.app-public-header .app-icon-button:focus-visible,
+.app-public-header .app-language-control:hover,
+.app-public-header .app-language-control:focus-within {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.app-language-control {
+  flex: 1;
+  gap: var(--space-1);
+  padding-left: var(--space-2);
+}
+
+.app-language-control select {
+  min-width: 0;
+  width: 100%;
+  height: 38px;
+  padding: 0 var(--space-2);
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.app-language-control option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.app-sidebar-account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app-sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  flex: 1;
+}
+
+.app-sidebar-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.app-sidebar-user-copy {
+  display: grid;
+  min-width: 0;
+  color: #ffffff;
+}
+
+.app-sidebar-user-copy strong,
+.app-sidebar-user-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-sidebar-user-copy strong {
+  font-size: 0.85rem;
+}
+
+.app-sidebar-user-copy small {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.72rem;
+}
+
+.app-shell-content {
+  min-width: 0;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 72px;
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 94%, transparent 6%);
+  backdrop-filter: blur(12px);
+  z-index: 20;
+}
+
+.app-topbar-brand {
+  display: none;
+}
+
+.app-topbar-context {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.app-topbar-context span {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.app-topbar-context strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.app-topbar-action {
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: 0.45rem var(--space-4);
+}
+
+.app-main {
+  width: min(100%, 1480px);
+  margin: 0 auto;
+  padding: 0 var(--space-6) var(--space-8);
+}
+
+.app-mobile-nav,
+.app-mobile-more {
+  display: none;
+}
+
+/* Public and authentication routes intentionally live outside AppShell. */
+.app-public-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding: var(--space-2) max(var(--space-4), calc((100vw - 1320px) / 2));
+  border-bottom: 1px solid var(--nav-border);
+  background: var(--nav-surface);
+  color: #ffffff;
+}
+
+.app-public-header .app-preferences {
+  flex: 0 0 auto;
+}
+
+.app-public-header .app-language-control {
+  width: 62px;
+  flex: 0 0 62px;
+}
+
+.app-public-main > .finova-page {
+  min-height: calc(100vh - 104px);
+}
+
+@media (max-width: 991.98px) {
+  .app-shell {
+    display: block;
+  }
+
+  .app-sidebar {
+    display: none;
+  }
+
+  .app-topbar {
+    min-height: 60px;
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .app-topbar-brand {
+    display: inline-flex;
+    min-width: 0;
+  }
+
+  .app-topbar-brand .finova-brand-mark {
+    gap: var(--space-2);
+  }
+
+  .app-topbar-brand .finova-brand-logo,
+  .app-topbar-brand .finova-brand-symbol {
+    width: 28px;
+    height: 28px;
+  }
+
+  .app-topbar-brand .finova-brand-wordmark {
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .app-topbar-context {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .app-topbar-context span {
+    display: none;
+  }
+
+  .app-topbar-action {
+    display: none;
+  }
+
+  .app-main {
+    padding: 0 var(--space-4) calc(92px + env(safe-area-inset-bottom));
+  }
+
+  .app-mobile-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    min-height: 68px;
+    padding: 0.35rem var(--space-2) calc(0.35rem + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: 0 -2px 8px rgba(32, 36, 31, 0.08);
+    z-index: 50;
+  }
+
+  .app-mobile-nav-link,
+  .app-mobile-create {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    min-width: 0;
+    min-height: 54px;
+    padding: 0.25rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+  }
+
+  .app-mobile-nav-link:hover,
+  .app-mobile-nav-link:focus-visible,
+  .app-mobile-nav-link-active {
+    background: var(--brand-soft);
+    color: var(--brand-strong);
+  }
+
+  .app-mobile-create {
+    position: relative;
+    align-self: end;
+    color: var(--brand-strong);
+  }
+
+  .app-mobile-create svg {
+    width: 42px;
+    height: 42px;
+    margin-top: -20px;
+    padding: 10px;
+    border: 1px solid var(--brand);
+    border-radius: 50%;
+    background: var(--brand);
+    color: var(--primary-contrast);
+    box-shadow: var(--shadow-md);
+  }
+
+  .app-mobile-more {
+    position: fixed;
+    left: var(--space-3);
+    right: var(--space-3);
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    display: grid;
+    gap: var(--space-3);
+    max-height: calc(100vh - 112px);
+    padding: var(--space-4);
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: 0 8px 24px rgba(32, 36, 31, 0.16);
+    z-index: 45;
+  }
+
+  .app-mobile-more-header,
+  .app-mobile-more-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .app-mobile-more-header > div {
+    display: grid;
+    min-width: 0;
+  }
+
+  .app-mobile-more-header small {
+    color: var(--text-muted);
+  }
+
+  .app-mobile-more-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .app-mobile-more-links .app-mobile-nav-link {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+
+  .app-mobile-more-footer {
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--divider);
+  }
+
+  .app-mobile-more-footer .app-preferences {
+    flex: 1;
+  }
+
+  .app-mobile-more-footer .app-language-control {
+    max-width: 84px;
+  }
+
+  .app-mobile-logout {
+    gap: var(--space-2);
+    padding: 0 var(--space-3);
+    color: var(--danger);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .app-topbar {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+
+  .app-topbar-brand .finova-brand-symbol {
+    display: none;
+  }
+
+  .app-main {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+
+  .app-public-header {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+
+  .app-mobile-more-links {
+    grid-template-columns: 1fr;
+  }
+}

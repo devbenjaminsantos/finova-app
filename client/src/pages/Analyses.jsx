@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import PageHeader from "../components/layout/PageHeader";
 import BudgetGoalsSection from "../features/dashboard/BudgetGoalsSection";
 import {
   CategoryInsightCard,
@@ -175,14 +176,11 @@ export default function Analyses() {
 
   return (
     <section className="finova-section-space">
-      <div className="finova-page-header">
-        <div className="finova-page-header-copy">
-          <h1 className="finova-title">{t("pages.analysesTitle")}</h1>
-          <p className="finova-subtitle mb-0">{t("pages.analysesSubtitle")}</p>
-          <p className="finova-subtitle small mt-2 mb-0">{selectedAccountLabel}</p>
-        </div>
-
-        <div className="finova-page-header-side">
+      <PageHeader
+        title={t("pages.analysesTitle")}
+        subtitle={t("pages.analysesSubtitle")}
+        meta={selectedAccountLabel}
+        aside={
           <div className="d-grid gap-2">
             <div>
               <label className="form-label text-dark fw-medium" htmlFor="analyses-period">
@@ -240,8 +238,8 @@ export default function Analyses() {
               </select>
             </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       <div className="finova-page-note mb-4">
         {t("pages.analysesPageNote")}

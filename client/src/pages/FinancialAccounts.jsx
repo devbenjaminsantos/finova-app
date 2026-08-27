@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import PageHeader from "../components/layout/PageHeader";
 import { useTransactions } from "../features/transactions/useTransactions";
 import { useI18n } from "../i18n/LanguageProvider";
 import {
@@ -265,12 +266,7 @@ export default function FinancialAccounts() {
 
   return (
     <section className="finova-section-space">
-      <div className="finova-page-header">
-        <div className="finova-page-header-copy">
-          <h1 className="finova-title">{t("pages.accountsTitle")}</h1>
-          <p className="finova-subtitle mb-0">{t("pages.accountsSubtitle")}</p>
-        </div>
-      </div>
+      <PageHeader title={t("pages.accountsTitle")} subtitle={t("pages.accountsSubtitle")} />
 
       <div className="d-grid gap-4">
         <div className="finova-page-note">
