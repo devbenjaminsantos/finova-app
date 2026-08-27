@@ -99,8 +99,26 @@ describe("Home page", () => {
 
     const historyMatches = await screen.findAllByText("Histórico recente");
     expect(historyMatches.length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Resumo financeiro").length).toBeGreaterThan(0);
+    expect(screen.getByRole("heading", { name: "Seu dinheiro, em perspectiva" })).toBeInTheDocument();
     expect(screen.getByText("Saldo global em todas as contas")).toBeInTheDocument();
+  });
+
+  it("shows the financial hero with scoped metrics and monthly evolution", async () => {
+    renderHome();
+
+    const hero = await screen.findByRole("region", { name: "Seu dinheiro, em perspectiva" });
+    expect(hero).toHaveTextContent("Saldo registrado");
+    expect(hero).toHaveTextContent("R$ 3.800,00");
+    expect(screen.getByRole("img", { name: "Evolução do resultado mensal nos últimos seis meses" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Recorte rápido")).toHaveValue("current-month");
+    expect(screen.getByLabelText("Conta exibida")).toHaveValue("all");
+
+    fireEvent.change(screen.getByLabelText("Recorte rápido"), {
+      target: { value: "all" },
+    });
+
+    expect(hero).toHaveTextContent("R$ 5.000,00");
+    expect(hero).toHaveTextContent("R$ 1.200,00");
   });
 
   it("persists onboarding preference when the user opts in", async () => {

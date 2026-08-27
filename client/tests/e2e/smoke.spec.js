@@ -107,6 +107,10 @@ test.describe("authenticated app shell", () => {
     const sidebar = page.getByRole("complementary", { name: "Navegação principal" });
     await expect(sidebar).toBeVisible({ timeout: 15_000 });
     await expect(sidebar.getByRole("link", { name: "Início" })).toHaveClass(/app-nav-link-active/);
+    await expect(
+      page.getByRole("heading", { name: "Seu dinheiro, em perspectiva" })
+    ).toBeVisible();
+    await expect(page.getByLabel("Recorte rápido")).toBeVisible();
     await expect(page.locator(".app-mobile-nav")).toBeHidden();
 
     await page.getByRole("link", { name: "Nova transação" }).click();

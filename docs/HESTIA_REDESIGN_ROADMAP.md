@@ -174,13 +174,26 @@ devem funcionar sem sobreposição ou salto de layout.
 
 ## Etapa 3 - Home como tela-piloto
 
-- [ ] Criar hero financeiro com saldo, entradas, saídas e resultado.
-- [ ] Destacar uma visualização principal de evolução financeira.
+- [x] Criar hero financeiro com saldo, entradas, saídas e resultado.
+- [x] Destacar uma visualização principal de evolução financeira.
 - [ ] Criar assinatura contextual `Héstia percebeu` sem depender de IA.
 - [ ] Exibir categorias de maior gasto com hierarquia comparável.
 - [ ] Resumir planejamento e atividade recente no canvas da página.
 - [ ] Reduzir cards a agrupamentos ou ações que realmente precisam de moldura.
 - [ ] Preservar estados demo, vazio, carregamento, erro e onboarding.
+
+**Evidência do primeiro incremento (2026-08-27):**
+
+- o topo da Home agora reúne saldo registrado, entradas, saídas e resultado do
+  período selecionado, mantendo os filtros de período e conta no mesmo contexto;
+- a evolução mensal é renderizada em SVG leve a partir das transações já
+  carregadas, sem nova chamada à API ou inclusão de Recharts no bundle da Home;
+- estados de carregamento e vazio possuem cópia própria no hero, enquanto
+  onboarding, widgets, atalhos, comparativos, metas e histórico foram mantidos;
+- PT-BR e inglês receberam as novas chaves; 102 testes unitários, nove smokes
+  Playwright, lint e build passaram;
+- a inspeção de desktop claro e mobile escuro confirmou hero e tendência sem
+  erro de console ou overflow horizontal.
 
 **Gate:** a página deve responder em poucos segundos "como estou?", "por que?"
 e "o que merece atenção?" sem remover funcionalidades existentes.

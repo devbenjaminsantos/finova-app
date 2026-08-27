@@ -1,21 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import HomeCustomizationCard from "../components/HomeCustomizationCard";
-import PageHeader from "../components/layout/PageHeader";
 import {
   CategoryInsightCard,
   ComparisonCard,
   InsightCard,
-  SummaryCard,
 } from "../features/dashboard/DashboardCards";
 import {
+  buildMonthlySeries,
   getComparisonRangeOptions,
   currentMonthISO,
   getAutomaticInsights,
   getCategoryLeaders,
+  getLatestTransactionMonthISO,
   getMonthsForPeriod,
   getPrescriptiveInsights,
   getRelativeMonthsISO,
+  getTrailingMonthsFromAnchor,
   getPeriodOptions,
   summarizeTransactions,
 } from "../features/dashboard/dashboardAnalytics";
@@ -37,7 +37,6 @@ import {
   getFinancialAccountScopeLabel,
 } from "../lib/financialAccounts/scope";
 import { useFinancialAccountOptions } from "../lib/financialAccounts/useFinancialAccountOptions";
-import { formatBRLFromCents } from "../lib/format/currency";
 import {
   DEFAULT_HOME_WIDGETS,
   loadHomeWidgets,
@@ -295,6 +294,184 @@ function HistoryPreview({ logs, isLoading }) {
   );
 }
 
+function getTrendPath(series) {
+  const width = 620;
+  const height = 176;
+  const padding = { top: 18, right: 12, bottom: 24, left: 12 };
+  const values = series.map((item) => Number(item.balance) || 0);
+  const minValue = Math.min(0, ...values);
+  const maxValue = Math.max(0, ...values);
+  const range = maxValue - minValue || 1;
+  const availableWidth = width - padding.left - padding.right;
+  const availableHeight = height - padding.top - padding.bottom;
+
+  const points = series.map((item, index) => {
+    const x = padding.left + (availableWidth * index) / Math.max(series.length - 1, 1);
+    const y = padding.top + ((maxValue - (Number(item.balance) || 0)) / range) * availableHeight;
+
+    return {
+      ...item,
+      x: Number(x.toFixed(2)),
+      y: Number(y.toFixed(2)),
+    };
+  });
+
+  return {
+    baseline: padding.top + (maxValue / range) * availableHeight,
+    points,
+    polyline: points.map((point) => `${point.x},${point.y}`).join(" "),
+  };
+}
+
+function HomeTrend({ isLoading, series }) {
+  const { t, formatCurrencyFromCents } = useI18n();
+  const hasData = series.some((item) => item.income > 0 || item.expense > 0);
+  const trend = useMemo(() => getTrendPath(series), [series]);
+
+  return (
+    <div className="finova-home-trend">
+      <div className="finova-home-trend-heading">
+        <div>
+          <span className="finova-home-eyebrow">{t("home.heroTrendEyebrow")}</span>
+          <h2 className="finova-title h5 mb-0">{t("home.heroTrendTitle")}</h2>
+        </div>
+        <span className="finova-subtitle small">{t("home.heroTrendRange")}</span>
+      </div>
+
+      {isLoading ? (
+        <p className="finova-subtitle mb-0">{t("home.summaryLoading")}</p>
+      ) : hasData ? (
+        <>
+          <svg
+            className="finova-home-trend-chart"
+            viewBox="0 0 620 176"
+            role="img"
+            aria-label={t("home.heroTrendAriaLabel")}
+          >
+            <line
+              x1="12"
+              x2="608"
+              y1={trend.baseline}
+              y2={trend.baseline}
+              className="finova-home-trend-baseline"
+            />
+            <polyline points={trend.polyline} className="finova-home-trend-line" />
+            {trend.points.map((point) => (
+              <circle
+                key={point.month}
+                cx={point.x}
+                cy={point.y}
+                r="3.5"
+                className="finova-home-trend-point"
+              >
+                <title>{`${point.month}: ${formatCurrencyFromCents(point.balance)}`}</title>
+              </circle>
+            ))}
+          </svg>
+          <div className="finova-home-trend-labels" aria-hidden="true">
+            {trend.points.map((point) => (
+              <span key={point.month}>{point.month.slice(5)}</span>
+            ))}
+          </div>
+        </>
+      ) : (
+        <p className="finova-subtitle mb-0">{t("home.heroTrendEmpty")}</p>
+      )}
+    </div>
+  );
+}
+
+function HomeFinancialHero({
+  accountFilter,
+  accounts,
+  isLoading,
+  onAccountChange,
+  onPeriodChange,
+  period,
+  periodOptions,
+  registeredBalance,
+  selectedAccountLabel,
+  selectedPeriodLabel,
+  summary,
+  trendSeries,
+}) {
+  const { formatCurrencyFromCents, t } = useI18n();
+  const metrics = [
+    { key: "balance", label: t("home.heroBalanceLabel"), value: registeredBalance },
+    { key: "income", label: t("home.heroIncomeLabel"), value: summary.income, tone: "income" },
+    { key: "expense", label: t("home.heroExpenseLabel"), value: summary.expense, tone: "expense" },
+    { key: "result", label: t("home.heroResultLabel"), value: summary.balance, tone: "result" },
+  ];
+
+  return (
+    <section className="finova-home-hero" aria-labelledby="home-financial-title">
+      <div className="finova-home-hero-main">
+        <div className="finova-home-hero-copy">
+          <span className="finova-home-eyebrow">{t("home.heroEyebrow")}</span>
+          <h1 id="home-financial-title" className="finova-title">
+            {t("home.heroTitle")}
+          </h1>
+          <p className="finova-subtitle mb-0">
+            {t("home.heroDescription", { period: selectedPeriodLabel.toLowerCase() })}
+          </p>
+          <p className="finova-home-hero-scope mb-0">{selectedAccountLabel}</p>
+        </div>
+
+        <div className="finova-home-hero-controls">
+          <div>
+            <label className="form-label" htmlFor="home-period">
+              {t("pages.homePeriod")}
+            </label>
+            <select
+              id="home-period"
+              className="form-select finova-select"
+              value={period}
+              onChange={(event) => onPeriodChange(event.target.value)}
+            >
+              {periodOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="form-label" htmlFor="home-account">
+              {t("pages.displayedAccountLabel")}
+            </label>
+            <select
+              id="home-account"
+              className="form-select finova-select"
+              value={accountFilter}
+              onChange={(event) => onAccountChange(event.target.value)}
+            >
+              <option value="all">{t("pages.allAccountsScope")}</option>
+              <option value="unassigned">{t("pages.unassignedScope")}</option>
+              {accounts.map((account) => (
+                <option key={account.id} value={String(account.id)}>
+                  {account.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="finova-home-metrics" aria-label={t("home.heroMetricsLabel")}>
+        {metrics.map((metric) => (
+          <div key={metric.key} className={`finova-home-metric finova-home-metric-${metric.tone || "default"}`}>
+            <span>{metric.label}</span>
+            <strong>{isLoading ? "—" : formatCurrencyFromCents(metric.value)}</strong>
+          </div>
+        ))}
+      </div>
+
+      <HomeTrend isLoading={isLoading} series={trendSeries} />
+    </section>
+  );
+}
+
 export default function Home() {
   const { t } = useI18n();
   const { isLoading, transactions } = useTransactions();
@@ -426,6 +603,18 @@ export default function Home() {
 
   const summary = useMemo(() => summarizeTransactions(filteredTransactions), [filteredTransactions]);
 
+  const registeredBalance = useMemo(
+    () => summarizeTransactions(scopedTransactions).balance,
+    [scopedTransactions]
+  );
+
+  const trendSeries = useMemo(() => {
+    const latestMonth = getLatestTransactionMonthISO(scopedTransactions) || currentMonthISO();
+    const months = getTrailingMonthsFromAnchor(latestMonth, 6);
+
+    return buildMonthlySeries(scopedTransactions, months);
+  }, [scopedTransactions]);
+
   const recurringTransactionsCount = useMemo(
     () => scopedTransactions.filter((transaction) => transaction.isRecurring).length,
     [scopedTransactions]
@@ -554,58 +743,24 @@ export default function Home() {
 
   return (
     <section className="finova-section-space">
-      <PageHeader
-        title={t("pages.homeTitle")}
-        subtitle={t("pages.homeSubtitle")}
-        meta={selectedAccountLabel}
-        aside={
-          <div className="d-grid gap-2">
-            <div>
-              <label className="form-label text-dark fw-medium" htmlFor="home-period">
-                {t("pages.homePeriod")}
-              </label>
-              <select
-                id="home-period"
-                className="form-select finova-select"
-                value={period}
-                onChange={(event) => setPeriod(event.target.value)}
-              >
-                {periodOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="form-label text-dark fw-medium" htmlFor="home-account">
-                {t("pages.displayedAccountLabel")}
-              </label>
-              <select
-                id="home-account"
-                className="form-select finova-select"
-                value={accountFilter}
-                onChange={(event) => setAccountFilter(event.target.value)}
-              >
-                <option value="all">{t("pages.allAccountsScope")}</option>
-                <option value="unassigned">{t("pages.unassignedScope")}</option>
-                {accounts.map((account) => (
-                  <option key={account.id} value={String(account.id)}>
-                    {account.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        }
-      />
+      {widgets.summary ? (
+        <HomeFinancialHero
+          accountFilter={accountFilter}
+          accounts={accounts}
+          isLoading={isLoading}
+          onAccountChange={setAccountFilter}
+          onPeriodChange={setPeriod}
+          period={period}
+          periodOptions={periodOptions}
+          registeredBalance={registeredBalance}
+          selectedAccountLabel={selectedAccountLabel}
+          selectedPeriodLabel={selectedPeriodLabel}
+          summary={summary}
+          trendSeries={trendSeries}
+        />
+      ) : null}
 
       <div className="d-grid gap-4">
-        <div className="finova-page-note">
-          {t("pages.homePageNote")}
-        </div>
-
         {visibleWidgetCount === 0 ? (
           <div className="finova-card p-4 text-center">
             <h2 className="finova-title h5 mb-2">{t("home.emptyTitle")}</h2>
@@ -636,41 +791,6 @@ export default function Home() {
               isCompleted={onboardingCompleted}
             />
           )
-        ) : null}
-
-        {widgets.summary ? (
-          <div className="finova-card p-4">
-            <div className="mb-3">
-              <h2 className="finova-title h5 mb-1">{t("home.summaryTitle")}</h2>
-              <p className="finova-subtitle mb-0">
-                {t("home.summaryDescription", {
-                  period: selectedPeriodLabel.toLowerCase(),
-                })}
-              </p>
-            </div>
-
-            {isLoading ? (
-              <p className="finova-subtitle mb-0">{t("home.summaryLoading")}</p>
-            ) : (
-              <div className="row g-3">
-                <SummaryCard
-                  label={t("transactions.incomePlural")}
-                  value={formatBRLFromCents(summary.income)}
-                  tone="income"
-                />
-                <SummaryCard
-                  label={t("transactions.expensePlural")}
-                  value={formatBRLFromCents(summary.expense)}
-                  tone="expense"
-                />
-                <SummaryCard
-                  label={t("publicDashboard.balanceLabel")}
-                  value={formatBRLFromCents(summary.balance)}
-                  tone="default"
-                />
-              </div>
-            )}
-          </div>
         ) : null}
 
         {widgets.shortcuts ? (

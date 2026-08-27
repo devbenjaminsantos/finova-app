@@ -1497,6 +1497,200 @@ hr {
   transform: none;
 }
 
+.finova-home-hero {
+  display: grid;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.finova-home-hero-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.finova-home-hero-copy {
+  max-width: 680px;
+}
+
+.finova-home-eyebrow {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--brand-strong);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.finova-home-hero-copy h1 {
+  margin-bottom: 0.55rem;
+  font-size: clamp(1.8rem, 3vw, 2.55rem);
+  text-wrap: balance;
+}
+
+.finova-home-hero-scope {
+  margin-top: var(--space-3);
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.finova-home-hero-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  width: min(100%, 430px);
+  flex: 0 1 430px;
+}
+
+.finova-home-hero-controls .form-label {
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.finova-home-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.finova-home-metric {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: var(--space-4);
+}
+
+.finova-home-metric + .finova-home-metric {
+  border-left: 1px solid var(--border);
+}
+
+.finova-home-metric span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.finova-home-metric strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: clamp(1.08rem, 1.8vw, 1.45rem);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.finova-home-metric-income strong {
+  color: var(--success-dark);
+}
+
+.finova-home-metric-expense strong {
+  color: var(--danger);
+}
+
+.finova-home-metric-result strong {
+  color: var(--brand-strong);
+}
+
+.finova-home-trend {
+  min-width: 0;
+}
+
+.finova-home-trend-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.finova-home-trend-chart {
+  display: block;
+  width: 100%;
+  height: clamp(132px, 18vw, 176px);
+  overflow: visible;
+}
+
+.finova-home-trend-baseline {
+  stroke: var(--border);
+  stroke-dasharray: 4 5;
+}
+
+.finova-home-trend-line {
+  fill: none;
+  stroke: var(--brand-strong);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.finova-home-trend-point {
+  fill: var(--surface);
+  stroke: var(--brand-strong);
+  stroke-width: 2.5;
+}
+
+.finova-home-trend-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 991.98px) {
+  .finova-home-hero-main {
+    display: grid;
+  }
+
+  .finova-home-hero-controls {
+    width: min(100%, 560px);
+    flex-basis: auto;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .finova-home-hero {
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .finova-home-hero-controls,
+  .finova-home-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .finova-home-metric:nth-child(3) {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .finova-home-metric:nth-child(4) {
+    border-top: 1px solid var(--border);
+  }
+
+  .finova-home-trend-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .finova-home-hero-controls {
+    grid-template-columns: 1fr;
+  }
+}
+
 .finova-financial-account-meta {
   display: flex;
   flex-wrap: wrap;
