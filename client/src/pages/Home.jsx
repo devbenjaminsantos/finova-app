@@ -223,54 +223,70 @@ function ShortcutTile({ title, description, to }) {
   );
 }
 
-function GoalsPreview({ goalsCount, goalsRiskCount }) {
+function GoalsPreview({ error, goalsCount, goalsRiskCount, isLoading }) {
   const { t } = useI18n();
 
   return (
-    <HomeWidgetCard
-      title={t("home.goalsTitle")}
-      description={t("home.goalsDescription")}
-    >
-      <div className="row g-3 mb-3">
-        <div className="col-12 col-md-6">
-          <div className="finova-card-soft p-3 h-100">
-            <div className="finova-subtitle small mb-1">{t("home.goalsConfiguredLabel")}</div>
-            <div className="finova-title h4 mb-1">{goalsCount}</div>
-            <div className="finova-subtitle small mb-0">{t("home.goalsConfiguredHelp")}</div>
-          </div>
-        </div>
-        <div className="col-12 col-md-6">
-          <div className="finova-card-soft p-3 h-100">
-            <div className="finova-subtitle small mb-1">{t("home.goalsRiskLabel")}</div>
-            <div className="finova-title h4 mb-1">{goalsRiskCount}</div>
-            <div className="finova-subtitle small mb-0">{t("home.goalsRiskHelp")}</div>
-          </div>
-        </div>
-      </div>
+    <section className="finova-home-summary-panel" aria-labelledby="home-planning-title">
+      <span className="finova-home-eyebrow">{t("home.planningEyebrow")}</span>
+      <h3 id="home-planning-title" className="finova-title h5 mb-2">
+        {t("home.goalsTitle")}
+      </h3>
+      <p className="finova-subtitle mb-4">{t("home.goalsDescription")}</p>
 
-      <Link to="/analises" className="btn finova-btn-light">
-        {t("home.openAnalyses")}
-      </Link>
-    </HomeWidgetCard>
+      {isLoading ? (
+        <p className="finova-subtitle mb-0">{t("home.goalsLoading")}</p>
+      ) : error ? (
+        <p className="finova-home-status finova-home-status-error" role="alert">
+          {t("home.goalsError")}
+        </p>
+      ) : (
+        <>
+          <dl className="finova-home-stat-list">
+            <div>
+              <dt>{t("home.goalsConfiguredLabel")}</dt>
+              <dd>{goalsCount}</dd>
+              <p>{goalsCount === 0 ? t("home.goalsEmpty") : t("home.goalsConfiguredHelp")}</p>
+            </div>
+            <div>
+              <dt>{t("home.goalsRiskLabel")}</dt>
+              <dd>{goalsRiskCount}</dd>
+              <p>{t("home.goalsRiskHelp")}</p>
+            </div>
+          </dl>
+
+          <Link to="/analises" className="btn finova-btn-light">
+            {t("home.openAnalyses")}
+          </Link>
+        </>
+      )}
+    </section>
   );
 }
 
-function HistoryPreview({ logs, isLoading }) {
+function HistoryPreview({ error, logs, isLoading }) {
   const { t, formatDateTime } = useI18n();
 
   return (
-    <HomeWidgetCard
-      title={t("home.historyTitle")}
-      description={t("home.historyDescription")}
-    >
+    <section className="finova-home-summary-panel" aria-labelledby="home-activity-title">
+      <span className="finova-home-eyebrow">{t("home.activityEyebrow")}</span>
+      <h3 id="home-activity-title" className="finova-title h5 mb-2">
+        {t("home.historyTitle")}
+      </h3>
+      <p className="finova-subtitle mb-4">{t("home.historyDescription")}</p>
+
       {isLoading ? (
         <p className="finova-subtitle mb-0">{t("history.loading")}</p>
+      ) : error ? (
+        <p className="finova-home-status finova-home-status-error" role="alert">
+          {t("home.historyError")}
+        </p>
       ) : logs.length === 0 ? (
         <p className="finova-subtitle mb-0">{t("home.historyEmpty")}</p>
       ) : (
-        <div className="d-grid gap-2">
+        <ol className="finova-home-activity-list">
           {logs.map((log) => (
-            <div key={log.id} className="finova-card-soft p-3">
+            <li key={log.id}>
               <div className="d-flex justify-content-between align-items-start gap-3 mb-2">
                 <span className={getActionToneClass(log.action)}>
                   {formatActionLabel(log.action, t)}
@@ -280,9 +296,9 @@ function HistoryPreview({ logs, isLoading }) {
                 </span>
               </div>
               <div className="fw-medium small">{log.summary}</div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
       )}
 
       <div className="mt-3">
@@ -290,7 +306,7 @@ function HistoryPreview({ logs, isLoading }) {
           {t("home.openHistory")}
         </Link>
       </div>
-    </HomeWidgetCard>
+    </section>
   );
 }
 
@@ -566,8 +582,11 @@ export default function Home() {
   const [isApplyingOnboarding, setIsApplyingOnboarding] = useState(false);
   const [goals, setGoals] = useState([]);
   const [isLoadingGoals, setIsLoadingGoals] = useState(true);
+  const [goalsError, setGoalsError] = useState(false);
+  const [goalsRefresh, setGoalsRefresh] = useState(0);
   const [historyLogs, setHistoryLogs] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [historyError, setHistoryError] = useState(false);
   const periodOptions = useMemo(() => getPeriodOptions(t), [t]);
   const comparisonRangeOptions = useMemo(() => getComparisonRangeOptions(t), [t]);
 
@@ -576,12 +595,11 @@ export default function Home() {
       const nextUser = getStoredUser();
       setUser(nextUser);
       setWidgets(loadHomeWidgets(nextUser));
-      setIsLoadingGoals(true);
-      setIsLoadingHistory(true);
+      setGoalsRefresh((current) => current + 1);
     }
 
     function handleBudgetGoalsChange() {
-      setIsLoadingGoals(true);
+      setGoalsRefresh((current) => current + 1);
     }
 
     window.addEventListener("finova-session-change", handleSessionChange);
@@ -600,10 +618,14 @@ export default function Home() {
       if (!user || user.isDemo) {
         if (active) {
           setGoals([]);
+          setGoalsError(false);
           setIsLoadingGoals(false);
         }
         return;
       }
+
+      setIsLoadingGoals(true);
+      setGoalsError(false);
 
       try {
         const data = await getBudgetGoals(currentMonthISO());
@@ -613,6 +635,7 @@ export default function Home() {
       } catch {
         if (active) {
           setGoals([]);
+          setGoalsError(true);
         }
       } finally {
         if (active) {
@@ -626,7 +649,7 @@ export default function Home() {
     return () => {
       active = false;
     };
-  }, [user, isLoadingGoals]);
+  }, [user, goalsRefresh]);
 
   useEffect(() => {
     let active = true;
@@ -635,10 +658,14 @@ export default function Home() {
       if (!user) {
         if (active) {
           setHistoryLogs([]);
+          setHistoryError(false);
           setIsLoadingHistory(false);
         }
         return;
       }
+
+      setIsLoadingHistory(true);
+      setHistoryError(false);
 
       try {
         const data = await getAuditLogs(10);
@@ -651,6 +678,7 @@ export default function Home() {
       } catch {
         if (active) {
           setHistoryLogs([]);
+          setHistoryError(true);
         }
       } finally {
         if (active) {
@@ -996,22 +1024,42 @@ export default function Home() {
           ) : null}
         </div>
 
-        <div className="row g-4">
-          {widgets.goals ? (
-            <div className="col-12 col-xl-6">
-              <GoalsPreview
-                goalsCount={isLoadingGoals ? "-" : goalsCount}
-                goalsRiskCount={isLoadingGoals ? "-" : goalsRiskCount}
-              />
+        {widgets.goals || widgets.history ? (
+          <section className="finova-home-planning-activity" aria-labelledby="home-planning-activity-title">
+            <div className="finova-home-planning-activity-heading">
+              <div>
+                <span className="finova-home-eyebrow">{t("home.planningActivityEyebrow")}</span>
+                <h2 id="home-planning-activity-title" className="finova-title h4 mb-1">
+                  {t("home.planningActivityTitle")}
+                </h2>
+                <p className="finova-subtitle mb-0">{t("home.planningActivityDescription")}</p>
+              </div>
             </div>
-          ) : null}
 
-          {widgets.history ? (
-            <div className="col-12 col-xl-6">
-              <HistoryPreview logs={historyLogs} isLoading={isLoadingHistory} />
+            <div className="row g-4">
+              {widgets.goals ? (
+                <div className="col-12 col-xl-6">
+                  <GoalsPreview
+                    error={goalsError}
+                    goalsCount={goalsCount}
+                    goalsRiskCount={goalsRiskCount}
+                    isLoading={isLoadingGoals}
+                  />
+                </div>
+              ) : null}
+
+              {widgets.history ? (
+                <div className="col-12 col-xl-6">
+                  <HistoryPreview
+                    error={historyError}
+                    logs={historyLogs}
+                    isLoading={isLoadingHistory}
+                  />
+                </div>
+              ) : null}
             </div>
-          ) : null}
-        </div>
+          </section>
+        ) : null}
       </div>
     </section>
   );

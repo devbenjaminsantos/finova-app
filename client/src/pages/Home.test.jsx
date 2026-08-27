@@ -136,6 +136,68 @@ describe("Home page", () => {
     expect(spendingPanel).toHaveTextContent("100% das saídas");
   });
 
+  it("preserves the demo state", async () => {
+    getStoredUser.mockReturnValue({
+      id: 7,
+      name: "Keller",
+      email: "keller@example.com",
+      isDemo: true,
+      onboardingOptIn: false,
+    });
+
+    renderHome();
+
+    expect(await screen.findByRole("heading", { name: "Conta de demonstração" })).toBeInTheDocument();
+  });
+
+  it("shows explicit loading states in the consolidated summaries", async () => {
+    useTransactions.mockReturnValue({ isLoading: true, transactions: [] });
+    getBudgetGoals.mockImplementation(() => new Promise(() => {}));
+    getAuditLogs.mockImplementation(() => new Promise(() => {}));
+
+    renderHome();
+
+    expect(await screen.findByText("Carregando planejamento...")).toBeInTheDocument();
+    expect(screen.getByText("Carregando histórico...")).toBeInTheDocument();
+    expect(screen.getAllByText("Carregando insights...")).toHaveLength(2);
+  });
+
+  it("shows explicit empty states when there is no financial activity", async () => {
+    useTransactions.mockReturnValue({ isLoading: false, transactions: [] });
+    getStoredUser.mockReturnValue({
+      id: 7,
+      name: "Keller",
+      email: "keller@example.com",
+      isDemo: false,
+      onboardingOptIn: false,
+    });
+    getBudgetGoals.mockResolvedValue([]);
+    getAuditLogs.mockResolvedValue([]);
+
+    renderHome();
+
+    expect(
+      await screen.findByText("Adicione receitas ou despesas para que a Héstia destaque o próximo ponto de atenção.")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Ainda não há despesas no recorte selecionado.")).toBeInTheDocument();
+    expect(screen.getByText("Nenhuma meta configurada neste momento.")).toBeInTheDocument();
+    expect(screen.getByText("Assim que você usar o sistema, as principais ações aparecem aqui.")).toBeInTheDocument();
+  });
+
+  it("shows explicit errors when planning or activity cannot be loaded", async () => {
+    getBudgetGoals.mockRejectedValue(new Error("goals unavailable"));
+    getAuditLogs.mockRejectedValue(new Error("history unavailable"));
+
+    renderHome();
+
+    expect(
+      await screen.findByText("Não foi possível carregar o planejamento agora. Tente novamente mais tarde.")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Não foi possível carregar a atividade recente agora. Tente novamente mais tarde.")
+    ).toBeInTheDocument();
+  });
+
   it("persists onboarding preference when the user opts in", async () => {
     updateOnboardingPreferenceRequest.mockResolvedValue({
       id: 7,

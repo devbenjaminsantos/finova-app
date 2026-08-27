@@ -178,9 +178,9 @@ devem funcionar sem sobreposição ou salto de layout.
 - [x] Destacar uma visualização principal de evolução financeira.
 - [x] Criar assinatura contextual `Héstia percebeu` sem depender de IA.
 - [x] Exibir categorias de maior gasto com hierarquia comparável.
-- [ ] Resumir planejamento e atividade recente no canvas da página.
-- [ ] Reduzir cards a agrupamentos ou ações que realmente precisam de moldura.
-- [ ] Preservar estados demo, vazio, carregamento, erro e onboarding.
+- [x] Resumir planejamento e atividade recente no canvas da página.
+- [x] Reduzir cards a agrupamentos ou ações que realmente precisam de moldura.
+- [x] Preservar estados demo, vazio, carregamento, erro e onboarding.
 
 **Evidência do primeiro incremento (2026-08-27):**
 
@@ -205,6 +205,24 @@ devem funcionar sem sobreposição ou salto de layout.
 - a inspeção em desktop claro e mobile escuro não encontrou erro de console,
   overlay ou overflow horizontal; 103 testes unitários, nove smokes Playwright,
   lint e build passaram.
+
+**Evidência do terceiro incremento e conclusão (2026-08-27):**
+
+- planejamento e atividade recente agora compartilham uma única seção da Home,
+  com divisões tipográficas e de borda sutis em vez de dois cards de conteúdo
+  aninhado;
+- metas, histórico, leitura financeira e categorias têm cópias explícitas para
+  carregamento, vazio e erro; o estado demo e a retomada opcional do onboarding
+  continuam disponíveis;
+- a atualização das metas deixou de depender do próprio estado de carregamento,
+  eliminando uma dependência que podia disparar nova busca a cada renderização;
+- PT-BR e inglês foram atualizados em paridade. `npm run lint`, 107 testes
+  unitários em execução serial, nove smokes Playwright e `npm run build`
+  passaram;
+- o navegador disponível fora do sandbox não alcançou a mesma instância Vite
+  local desta sessão, portanto a checagem visual direta deste incremento não foi
+  registrada como evidência. Os smokes autenticados em Chromium passaram no
+  servidor de teste controlado pelo Playwright.
 
 **Gate:** a página deve responder em poucos segundos "como estou?", "por que?"
 e "o que merece atenção?" sem remover funcionalidades existentes.

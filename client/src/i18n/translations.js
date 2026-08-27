@@ -302,6 +302,16 @@ export const translations = {
       spendingDescription: "Veja quais categorias estão consumindo a maior parte das saídas.",
       spendingEmpty: "Ainda não há despesas no recorte selecionado.",
       spendingShare: "{{share}}% das saídas",
+      planningActivityEyebrow: "Visão prática",
+      planningActivityTitle: "Planejamento e atividade",
+      planningActivityDescription:
+        "Acompanhe o que está planejado e as últimas mudanças relevantes sem sair da página inicial.",
+      planningEyebrow: "Planejamento",
+      activityEyebrow: "Atividade recente",
+      goalsLoading: "Carregando planejamento...",
+      goalsEmpty: "Nenhuma meta configurada neste momento.",
+      goalsError: "Não foi possível carregar o planejamento agora. Tente novamente mais tarde.",
+      historyError: "Não foi possível carregar a atividade recente agora. Tente novamente mais tarde.",
       demoTitle: "Conta de demonstração",
       demoDescription:
         "Você está explorando um ambiente com dados fictícios. Use esta página inicial como vitrine dos blocos que mais importam para você e aprofunde a análise nas páginas dedicadas.",
@@ -1265,6 +1275,16 @@ export const translations = {
       spendingDescription: "See which categories are taking the largest share of your expenses.",
       spendingEmpty: "There are no expenses in the selected range yet.",
       spendingShare: "{{share}}% of expenses",
+      planningActivityEyebrow: "Practical overview",
+      planningActivityTitle: "Planning and activity",
+      planningActivityDescription:
+        "Follow what is planned and the latest relevant changes without leaving Home.",
+      planningEyebrow: "Planning",
+      activityEyebrow: "Recent activity",
+      goalsLoading: "Loading planning...",
+      goalsEmpty: "There are no goals configured right now.",
+      goalsError: "We could not load your planning right now. Please try again later.",
+      historyError: "We could not load recent activity right now. Please try again later.",
       demoTitle: "Demo account",
       demoDescription:
         "You are exploring an environment with fictional data. Use this Home as a showcase for the blocks that matter most to you and go deeper in the dedicated pages.",
