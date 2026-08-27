@@ -1,4 +1,5 @@
 import { useI18n } from "../i18n/LanguageProvider";
+import Button from "./ui/Button";
 
 function EyeIcon({ isVisible }) {
   if (isVisible) {
@@ -45,9 +46,10 @@ export default function PasswordToggleButton({ isVisible, onToggle, disabled = f
   const tooltip = isVisible ? t("common.hidePassword") : t("common.showPassword");
 
   return (
-    <button
+    <Button
       type="button"
-      className="btn finova-btn-light finova-password-toggle finova-icon-tooltip"
+      variant="secondary"
+      className="finova-password-toggle finova-icon-tooltip"
       onClick={onToggle}
       disabled={disabled}
       aria-label={tooltip}
@@ -55,6 +57,6 @@ export default function PasswordToggleButton({ isVisible, onToggle, disabled = f
       data-tooltip={tooltip}
     >
       <EyeIcon isVisible={isVisible} />
-    </button>
+    </Button>
   );
 }

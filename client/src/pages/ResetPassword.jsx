@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import BrandMark from "../components/BrandMark";
 import PasswordToggleButton from "../components/PasswordToggleButton";
+import Button from "../components/ui/Button";
 import { useI18n } from "../i18n/LanguageProvider";
 import { resetPasswordRequest } from "../lib/api/auth";
 import { isPasswordStrong } from "../lib/auth/passwordPolicy";
@@ -124,13 +125,13 @@ export default function ResetPassword() {
               </div>
             ) : null}
 
-            <button
+            <Button
               type="submit"
-              className="btn finova-btn-primary"
-              disabled={isSubmitting || !!success}
+              loading={isSubmitting}
+              disabled={!!success}
             >
               {isSubmitting ? t("auth.submittingReset") : t("auth.submitReset")}
-            </button>
+            </Button>
           </form>
 
           <div className="text-center mt-4 finova-auth-footer">

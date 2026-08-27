@@ -1,4 +1,5 @@
 import { useI18n } from "../../../i18n/LanguageProvider";
+import Button from "../../../components/ui/Button";
 
 function getTransactionOriginMeta(transaction, t) {
   switch (transaction.source) {
@@ -76,23 +77,23 @@ export default function TransactionsTable({
         </div>
 
         <div className="finova-actions-row">
-          <button
+          <Button
             type="button"
-            className="btn finova-btn-light"
+            variant="secondary"
             onClick={onExportCsv}
             disabled={transactions.length === 0}
           >
             {t("transactions.exportCsv")}
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
-            className="btn finova-btn-light"
+            variant="secondary"
             onClick={onExportPdf}
             disabled={transactions.length === 0}
           >
             {t("transactions.exportPdf")}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -210,23 +211,25 @@ export default function TransactionsTable({
 
                     <td className="text-end">
                       <div className="finova-actions-row finova-actions-row-end">
-                        <button
+                        <Button
                           type="button"
-                          className="btn finova-btn-light btn-sm"
+                          variant="secondary"
+                          className="btn-sm"
                           onClick={() => onEdit(transaction)}
                           disabled={isMutating}
                         >
                           {t("transactions.edit")}
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button
                           type="button"
-                          className="btn btn-sm btn-outline-danger"
+                          variant="danger"
+                          className="btn-sm"
                           onClick={() => onRemove(transaction.id)}
                           disabled={isMutating}
                         >
                           {t("transactions.remove")}
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import BrandMark from "../components/BrandMark";
 import PasswordToggleButton from "../components/PasswordToggleButton";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { useI18n } from "../i18n/LanguageProvider";
 import { hasValidSession, registerRequest } from "../lib/api/auth";
 import { isPasswordStrong } from "../lib/auth/passwordPolicy";
@@ -76,62 +78,47 @@ export default function Register() {
           </div>
 
           <form onSubmit={handleSubmit} className="d-grid gap-3">
-            <div>
-              <label className="form-label text-dark fw-medium" htmlFor="register-name">
-                {t("common.name")}
-              </label>
-              <input
-                id="register-name"
-                type="text"
-                className="form-control finova-input"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder={t("common.preferredNamePlaceholder")}
-                disabled={isSubmitting}
-                required
-              />
-              <div className="form-text">{t("common.preferredNameHelp")}</div>
-            </div>
+            <Input
+              id="register-name"
+              type="text"
+              label={t("common.name")}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder={t("common.preferredNamePlaceholder")}
+              helpText={t("common.preferredNameHelp")}
+              disabled={isSubmitting}
+              required
+            />
 
-            <div>
-              <label className="form-label text-dark fw-medium" htmlFor="register-email">
-                {t("common.email")}
-              </label>
-              <input
-                id="register-email"
-                type="email"
-                className="form-control finova-input"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder={t("common.emailPlaceholder")}
-                disabled={isSubmitting}
-                required
-              />
-            </div>
+            <Input
+              id="register-email"
+              type="email"
+              label={t("common.email")}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder={t("common.emailPlaceholder")}
+              disabled={isSubmitting}
+              required
+            />
 
-            <div>
-              <label className="form-label text-dark fw-medium" htmlFor="register-password">
-                {t("common.password")}
-              </label>
-              <div className="input-group">
-                <input
-                  id="register-password"
-                  type={isPasswordVisible ? "text" : "password"}
-                  className="form-control finova-input"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder={t("common.password")}
-                  disabled={isSubmitting}
-                  required
-                />
+            <Input
+              id="register-password"
+              type={isPasswordVisible ? "text" : "password"}
+              label={t("common.password")}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder={t("common.password")}
+              helpText={t("passwordPolicy.message")}
+              endAdornment={
                 <PasswordToggleButton
                   isVisible={isPasswordVisible}
                   onToggle={() => setIsPasswordVisible((current) => !current)}
                   disabled={isSubmitting}
                 />
-              </div>
-              <div className="form-text">{t("passwordPolicy.message")}</div>
-            </div>
+              }
+              disabled={isSubmitting}
+              required
+            />
 
             {error ? (
               <div className="alert alert-danger py-2 mb-0" role="alert">
@@ -145,9 +132,9 @@ export default function Register() {
               </div>
             ) : null}
 
-            <button type="submit" className="btn finova-btn-primary" disabled={isSubmitting}>
+            <Button type="submit" loading={isSubmitting}>
               {isSubmitting ? t("auth.submittingRegister") : t("auth.submitRegister")}
-            </button>
+            </Button>
           </form>
 
           <div className="text-center mt-4 finova-auth-footer">

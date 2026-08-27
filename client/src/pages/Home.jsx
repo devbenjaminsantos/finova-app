@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import Button from "../components/ui/Button";
 import {
   CategoryInsightCard,
   ComparisonCard,
@@ -67,22 +68,21 @@ function OnboardingPromptCard({ isSaving, onChoose }) {
         </div>
 
         <div className="finova-actions-row">
-          <button
+          <Button
             type="button"
-            className="btn finova-btn-primary"
-            disabled={isSaving}
+            loading={isSaving}
             onClick={() => onChoose(true)}
           >
             {isSaving ? t("common.loading") : t("home.onboardingPromptAccept")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="btn finova-btn-light"
+            variant="secondary"
             disabled={isSaving}
             onClick={() => onChoose(false)}
           >
             {t("home.onboardingPromptDecline")}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -136,14 +136,14 @@ function OnboardingChecklistCard({
             <p className="finova-subtitle mb-0">{t("home.onboardingHiddenDescription")}</p>
           </div>
 
-          <button
+          <Button
             type="button"
-            className="btn finova-btn-light"
-            disabled={isSaving}
+            variant="secondary"
+            loading={isSaving}
             onClick={onShowAgain}
           >
             {isSaving ? t("common.loading") : t("home.onboardingShowAgain")}
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -168,14 +168,14 @@ function OnboardingChecklistCard({
               total: items.length,
             })}
           </span>
-          <button
+          <Button
             type="button"
-            className="btn finova-btn-light"
-            disabled={isSaving}
+            variant="secondary"
+            loading={isSaving}
             onClick={onHide}
           >
             {t("home.onboardingHide")}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -892,9 +892,9 @@ export default function Home() {
           <div className="finova-card p-4 text-center">
             <h2 className="finova-title h5 mb-2">{t("home.emptyTitle")}</h2>
             <p className="finova-subtitle mb-3">{t("home.emptyDescription")}</p>
-            <button type="button" className="btn finova-btn-primary" onClick={handleResetWidgets}>
+            <Button type="button" onClick={handleResetWidgets}>
               {t("home.restoreWidgets")}
-            </button>
+            </Button>
           </div>
         ) : null}
 

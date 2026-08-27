@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import BrandMark from "../components/BrandMark";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { useI18n } from "../i18n/LanguageProvider";
 import { forgotPasswordRequest } from "../lib/api/auth";
 
@@ -69,21 +71,16 @@ export default function ForgotPassword() {
               </div>
             ) : null}
 
-            <div>
-              <label className="form-label text-dark fw-medium" htmlFor="forgot-password-email">
-                {t("common.email")}
-              </label>
-              <input
-                id="forgot-password-email"
-                type="email"
-                className="form-control finova-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("common.emailPlaceholder")}
-                disabled={isSubmitting}
-                required
-              />
-            </div>
+            <Input
+              id="forgot-password-email"
+              type="email"
+              label={t("common.email")}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder={t("common.emailPlaceholder")}
+              disabled={isSubmitting}
+              required
+            />
 
             {error ? (
               <div className="alert alert-danger py-2 mb-0" role="alert">
@@ -104,9 +101,9 @@ export default function ForgotPassword() {
               </div>
             ) : null}
 
-            <button type="submit" className="btn finova-btn-primary" disabled={isSubmitting}>
+            <Button type="submit" loading={isSubmitting}>
               {isSubmitting ? t("auth.submittingForgot") : t("auth.submitForgot")}
-            </button>
+            </Button>
           </form>
 
           <div className="text-center mt-4 finova-auth-footer">

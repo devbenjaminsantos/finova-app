@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import BrandMark from "../components/BrandMark";
 import PasswordToggleButton from "../components/PasswordToggleButton";
+import Button from "../components/ui/Button";
 import { useI18n } from "../i18n/LanguageProvider";
 import {
   consumePostLoginRedirect,
@@ -124,14 +125,15 @@ export default function Login() {
                 </div>
               </div>
 
-              <button
+              <Button
                 type="button"
-                className="btn finova-btn-primary px-4"
+                className="px-4"
                 onClick={handleDemoLogin}
-                disabled={isSubmitting || isDemoSubmitting || isResendingVerification}
+                loading={isDemoSubmitting}
+                disabled={isSubmitting || isResendingVerification}
               >
                 {isDemoSubmitting ? t("auth.demoButtonLoading") : t("auth.demoButton")}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -193,16 +195,17 @@ export default function Login() {
               <div className="alert alert-danger py-2 mb-0" role="alert">
                 <div>{error}</div>
                 {shouldShowResendVerification ? (
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-link px-0 mt-2 text-decoration-none fw-semibold finova-auth-link"
+                    variant="link"
+                    className="mt-2 finova-auth-link"
                     onClick={handleResendVerification}
-                    disabled={isResendingVerification}
+                    loading={isResendingVerification}
                   >
                     {isResendingVerification
                       ? t("auth.resendingVerification")
                       : t("auth.resendVerification")}
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             ) : null}
@@ -213,13 +216,13 @@ export default function Login() {
               </div>
             ) : null}
 
-            <button
+            <Button
               type="submit"
-              className="btn finova-btn-primary"
-              disabled={isSubmitting || isDemoSubmitting || isResendingVerification}
+              loading={isSubmitting}
+              disabled={isDemoSubmitting || isResendingVerification}
             >
               {isSubmitting ? t("auth.submittingLogin") : t("auth.submitLogin")}
-            </button>
+            </Button>
           </form>
 
           <div className="text-center mt-4 finova-auth-footer">

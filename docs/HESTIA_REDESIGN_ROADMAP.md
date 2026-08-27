@@ -252,6 +252,42 @@ e "o que merece atenção?" sem remover funcionalidades existentes.
 - [ ] Substituir alertas grandes por feedback discreto quando apropriado.
 - [ ] Evitar cards aninhados e componentes puramente decorativos.
 
+**Evidência do primeiro incremento (2026-08-27):**
+
+- `Button`, `Input` e `Select` foram criados como primitivos controlados, sem
+  estado próprio de formulário; cobrem loading, disabled, foco, rótulo, ajuda e
+  erro acessível;
+- Cadastro e Recuperação de senha passaram a usar `Input` e `Button`, mantendo
+  os mesmos IDs, validação de senha, redirecionamento de e-mail existente e
+  chamadas de autenticação;
+- `Modal`, `Toast`, `EmptyState` e os componentes financeiros permanecem para
+  os próximos incrementos, portanto o checklist consolidado da etapa continua
+  aberto;
+- lint, quatro testes unitários focados, build e os smokes Playwright de
+  Cadastro e Recuperação passaram.
+
+**Evidência do segundo incremento (2026-08-27):**
+
+- `Button` passou a cobrir as ações nativas de onboarding e restauração da
+  Home, login demo, login, redefinição de senha, personalização da Home e
+  visibilidade de senha;
+- as variantes primária e secundária concentram os estados disabled, loading e
+  `aria-busy`, preservando textos, handlers e a semântica de links existentes;
+- ações que ainda dependem de aparência de link, comportamento destrutivo ou
+  fluxos de modal permanecem no HTML atual até suas variantes específicas;
+- lint, 12 testes unitários focados, build e nove smokes Playwright passaram.
+
+**Evidência do terceiro incremento (2026-08-27):**
+
+- `Button` recebeu variantes de link e de ação destrutiva, com hover, foco,
+  disabled e loading coerentes com os tokens da aplicação;
+- exportação, edição e remoção da tabela de transações usam as variantes
+  secundária e destrutiva; o reenvio de verificação no login usa a variante de
+  link, preservando todos os handlers;
+- 15 testes unitários focados em execução serial, build e nove smokes
+  Playwright passaram. Os modais existentes continuam inalterados neste
+  incremento.
+
 **Gate:** componentes devem ter estados normal, hover, focus, disabled, loading e
 erro quando aplicáveis, sem duplicar regras em cada página.
 

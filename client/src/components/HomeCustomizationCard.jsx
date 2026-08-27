@@ -3,6 +3,7 @@ import {
   HOME_WIDGET_OPTIONS,
 } from "../lib/home/homePreferences";
 import { useI18n } from "../i18n/LanguageProvider";
+import Button from "./ui/Button";
 
 export default function HomeCustomizationCard({
   widgets,
@@ -26,9 +27,9 @@ export default function HomeCustomizationCard({
           </p>
         </div>
 
-        <button type="button" className="btn finova-btn-light" onClick={onReset}>
+        <Button type="button" variant="secondary" onClick={onReset}>
           {resetLabel ?? t("profile.homeCustomizationReset")}
-        </button>
+        </Button>
       </div>
 
       <div className="row g-2">
