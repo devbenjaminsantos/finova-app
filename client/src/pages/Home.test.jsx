@@ -121,6 +121,21 @@ describe("Home page", () => {
     expect(hero).toHaveTextContent("R$ 1.200,00");
   });
 
+  it("derives the Héstia reading and spending hierarchy from the selected range", async () => {
+    renderHome();
+
+    fireEvent.change(await screen.findByLabelText("Recorte rápido"), {
+      target: { value: "all" },
+    });
+
+    expect(screen.getByText("Héstia percebeu")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Oportunidade clara" })).toBeInTheDocument();
+
+    const spendingPanel = screen.getByRole("region", { name: "Maiores gastos do período" });
+    expect(spendingPanel).toHaveTextContent("Alimentacao");
+    expect(spendingPanel).toHaveTextContent("100% das saídas");
+  });
+
   it("persists onboarding preference when the user opts in", async () => {
     updateOnboardingPreferenceRequest.mockResolvedValue({
       id: 7,

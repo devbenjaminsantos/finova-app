@@ -292,6 +292,16 @@ export const translations = {
       heroTrendRange: "Últimos 6 meses",
       heroTrendAriaLabel: "Evolução do resultado mensal nos últimos seis meses",
       heroTrendEmpty: "Registre movimentações para visualizar a evolução financeira.",
+      perceptionEyebrow: "Héstia percebeu",
+      perceptionTitle: "Seu recorte está pronto para ganhar contexto",
+      perceptionRuleBased: "Leitura baseada nas suas movimentações",
+      perceptionEmpty:
+        "Adicione receitas ou despesas para que a Héstia destaque o próximo ponto de atenção.",
+      spendingEyebrow: "Hierarquia de gastos",
+      spendingTitle: "Maiores gastos do período",
+      spendingDescription: "Veja quais categorias estão consumindo a maior parte das saídas.",
+      spendingEmpty: "Ainda não há despesas no recorte selecionado.",
+      spendingShare: "{{share}}% das saídas",
       demoTitle: "Conta de demonstração",
       demoDescription:
         "Você está explorando um ambiente com dados fictícios. Use esta página inicial como vitrine dos blocos que mais importam para você e aprofunde a análise nas páginas dedicadas.",
@@ -1245,6 +1255,16 @@ export const translations = {
       heroTrendRange: "Last 6 months",
       heroTrendAriaLabel: "Monthly result evolution for the last six months",
       heroTrendEmpty: "Add transactions to visualize your financial evolution.",
+      perceptionEyebrow: "Héstia noticed",
+      perceptionTitle: "Your current range is ready for more context",
+      perceptionRuleBased: "Reading based on your transactions",
+      perceptionEmpty:
+        "Add income or expenses so Héstia can highlight the next point that deserves attention.",
+      spendingEyebrow: "Spending hierarchy",
+      spendingTitle: "Largest expenses in the period",
+      spendingDescription: "See which categories are taking the largest share of your expenses.",
+      spendingEmpty: "There are no expenses in the selected range yet.",
+      spendingShare: "{{share}}% of expenses",
       demoTitle: "Demo account",
       demoDescription:
         "You are exploring an environment with fictional data. Use this Home as a showcase for the blocks that matter most to you and go deeper in the dedicated pages.",

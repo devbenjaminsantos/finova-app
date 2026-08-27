@@ -1648,6 +1648,71 @@ hr {
   font-variant-numeric: tabular-nums;
 }
 
+.finova-home-reading-panel {
+  height: 100%;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.finova-home-reading-panel > .finova-home-eyebrow {
+  margin-bottom: 0.45rem;
+}
+
+.finova-home-spending-list {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.finova-home-spending-row {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.finova-home-spending-row-copy {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.finova-home-spending-row-copy strong {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.finova-home-spending-row-copy span {
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.finova-home-spending-track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-soft);
+}
+
+.finova-home-spending-track span {
+  display: block;
+  height: 100%;
+  min-width: 6px;
+  border-radius: inherit;
+  background: var(--brand);
+}
+
+.finova-home-spending-row small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
 @media (max-width: 991.98px) {
   .finova-home-hero-main {
     display: grid;

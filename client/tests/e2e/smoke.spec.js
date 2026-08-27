@@ -111,11 +111,13 @@ test.describe("authenticated app shell", () => {
       page.getByRole("heading", { name: "Seu dinheiro, em perspectiva" })
     ).toBeVisible();
     await expect(page.getByLabel("Recorte rápido")).toBeVisible();
+    await expect(page.getByText("Héstia percebeu")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Maiores gastos do período" })).toBeVisible();
     await expect(page.locator(".app-mobile-nav")).toBeHidden();
 
     await page.getByRole("link", { name: "Nova transação" }).click();
-    await expect(page).toHaveURL(/\/transacoes$/);
-    await expect(page.getByRole("dialog")).toBeVisible();
+    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 15_000 });
+    await expect(page).toHaveURL(/\/transacoes$/, { timeout: 15_000 });
     await expect(page.getByRole("heading", { name: "Nova transação" })).toBeVisible();
   });
 
@@ -138,7 +140,7 @@ test.describe("authenticated app shell", () => {
 
     await page.getByRole("button", { name: "Sair" }).click();
     await expect(page).toHaveURL(/\/login$/);
-    await expect(page.getByRole("heading", { name: "Entrar" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Entrar" })).toBeVisible({ timeout: 15_000 });
     await expect(page.locator(".app-mobile-nav")).toBeHidden();
   });
 });

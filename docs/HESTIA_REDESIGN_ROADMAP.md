@@ -176,8 +176,8 @@ devem funcionar sem sobreposição ou salto de layout.
 
 - [x] Criar hero financeiro com saldo, entradas, saídas e resultado.
 - [x] Destacar uma visualização principal de evolução financeira.
-- [ ] Criar assinatura contextual `Héstia percebeu` sem depender de IA.
-- [ ] Exibir categorias de maior gasto com hierarquia comparável.
+- [x] Criar assinatura contextual `Héstia percebeu` sem depender de IA.
+- [x] Exibir categorias de maior gasto com hierarquia comparável.
 - [ ] Resumir planejamento e atividade recente no canvas da página.
 - [ ] Reduzir cards a agrupamentos ou ações que realmente precisam de moldura.
 - [ ] Preservar estados demo, vazio, carregamento, erro e onboarding.
@@ -194,6 +194,17 @@ devem funcionar sem sobreposição ou salto de layout.
   Playwright, lint e build passaram;
 - a inspeção de desktop claro e mobile escuro confirmou hero e tendência sem
   erro de console ou overflow horizontal.
+
+**Evidência do segundo incremento (2026-08-27):**
+
+- `Héstia percebeu` prioriza uma leitura determinística das receitas, despesas,
+  recorrências e categorias do recorte; não chama modelo, não armazena conversa
+  e não altera decisões financeiras;
+- a hierarquia mostra até quatro categorias por valor e participação nas saídas,
+  usando o mesmo filtro de período e conta do hero;
+- a inspeção em desktop claro e mobile escuro não encontrou erro de console,
+  overlay ou overflow horizontal; 103 testes unitários, nove smokes Playwright,
+  lint e build passaram.
 
 **Gate:** a página deve responder em poucos segundos "como estou?", "por que?"
 e "o que merece atenção?" sem remover funcionalidades existentes.

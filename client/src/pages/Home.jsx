@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import {
   CategoryInsightCard,
   ComparisonCard,
-  InsightCard,
 } from "../features/dashboard/DashboardCards";
 import {
+  buildExpenseTotalsByCategory,
   buildMonthlySeries,
   getComparisonRangeOptions,
   currentMonthISO,
@@ -472,6 +472,89 @@ function HomeFinancialHero({
   );
 }
 
+function getPerceptionBadgeClass(tone) {
+  if (tone === "income") {
+    return "finova-badge-income";
+  }
+
+  if (tone === "expense") {
+    return "finova-badge-expense";
+  }
+
+  if (tone === "neutral") {
+    return "finova-badge-neutral";
+  }
+
+  return "finova-badge-primary";
+}
+
+function HomePerception({ insight, isLoading }) {
+  const { t } = useI18n();
+
+  return (
+    <section className="finova-home-reading-panel" aria-labelledby="home-perception-title">
+      <span className="finova-home-eyebrow">{t("home.perceptionEyebrow")}</span>
+      <h2 id="home-perception-title" className="finova-title h4 mb-2">
+        {insight?.title || t("home.perceptionTitle")}
+      </h2>
+
+      {isLoading ? (
+        <p className="finova-subtitle mb-0">{t("home.insightsLoading")}</p>
+      ) : insight ? (
+        <>
+          <div className="d-flex align-items-center gap-2 mb-3">
+            <span className={getPerceptionBadgeClass(insight.tone)}>{insight.badge}</span>
+            <span className="finova-subtitle small">{t("home.perceptionRuleBased")}</span>
+          </div>
+          <p className="finova-subtitle mb-0">{insight.description}</p>
+          <div className="mt-4">
+            <Link to="/analises" className="btn finova-btn-light">
+              {t("home.openFullAnalyses")}
+            </Link>
+          </div>
+        </>
+      ) : (
+        <p className="finova-subtitle mb-0">{t("home.perceptionEmpty")}</p>
+      )}
+    </section>
+  );
+}
+
+function HomeSpendingCategories({ categories, isLoading }) {
+  const { formatCurrencyFromCents, t } = useI18n();
+
+  return (
+    <section className="finova-home-reading-panel" aria-labelledby="home-spending-title">
+      <span className="finova-home-eyebrow">{t("home.spendingEyebrow")}</span>
+      <h2 id="home-spending-title" className="finova-title h4 mb-2">
+        {t("home.spendingTitle")}
+      </h2>
+      <p className="finova-subtitle mb-4">{t("home.spendingDescription")}</p>
+
+      {isLoading ? (
+        <p className="finova-subtitle mb-0">{t("home.insightsLoading")}</p>
+      ) : categories.length === 0 ? (
+        <p className="finova-subtitle mb-0">{t("home.spendingEmpty")}</p>
+      ) : (
+        <ol className="finova-home-spending-list">
+          {categories.map((category) => (
+            <li key={category.name} className="finova-home-spending-row">
+              <div className="finova-home-spending-row-copy">
+                <strong>{category.name}</strong>
+                <span>{formatCurrencyFromCents(category.value)}</span>
+              </div>
+              <div className="finova-home-spending-track" aria-hidden="true">
+                <span style={{ width: `${category.share}%` }} />
+              </div>
+              <small>{t("home.spendingShare", { share: category.share })}</small>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+  );
+}
+
 export default function Home() {
   const { t } = useI18n();
   const { isLoading, transactions } = useTransactions();
@@ -693,6 +776,22 @@ export default function Home() {
     [filteredTransactions, t]
   );
 
+  const perceptionInsight = prescriptiveInsights[0] ?? automaticInsights[0] ?? null;
+
+  const spendingCategories = useMemo(() => {
+    const totals = buildExpenseTotalsByCategory(filteredTransactions, t);
+    const totalExpense = Array.from(totals.values()).reduce((sum, value) => sum + value, 0);
+
+    return Array.from(totals.entries())
+      .sort(([, leftValue], [, rightValue]) => rightValue - leftValue)
+      .slice(0, 4)
+      .map(([name, value]) => ({
+        name,
+        value,
+        share: totalExpense > 0 ? Math.round((value / totalExpense) * 100) : 0,
+      }));
+  }, [filteredTransactions, t]);
+
   async function handleOnboardingChoice(onboardingOptIn) {
     setIsApplyingOnboarding(true);
 
@@ -825,37 +924,14 @@ export default function Home() {
 
         <div className="row g-4">
           {widgets.insights ? (
-            <div className="col-12 col-xxl-6">
-              <HomeWidgetCard
-                title={t("home.insightsTitle")}
-                description={t("home.insightsDescription")}
-              >
-                {isLoading ? (
-                  <p className="finova-subtitle mb-0">{t("home.insightsLoading")}</p>
-                ) : automaticInsights.length === 0 && prescriptiveInsights.length === 0 ? (
-                  <p className="finova-subtitle mb-0">{t("home.insightsEmpty")}</p>
-                ) : (
-                  <>
-                    <div className="row g-3">
-                      {[...automaticInsights, ...prescriptiveInsights].map((insight) => (
-                        <InsightCard
-                          key={insight.key}
-                          title={insight.title}
-                          description={insight.description}
-                          badge={insight.badge}
-                          tone={insight.tone}
-                        />
-                      ))}
-                    </div>
+            <div className="col-12 col-xl-5">
+              <HomePerception insight={perceptionInsight} isLoading={isLoading} />
+            </div>
+          ) : null}
 
-                    <div className="mt-3">
-                      <Link to="/analises" className="btn finova-btn-light">
-                        {t("home.openFullAnalyses")}
-                      </Link>
-                    </div>
-                  </>
-                )}
-              </HomeWidgetCard>
+          {widgets.insights ? (
+            <div className="col-12 col-xl-7">
+              <HomeSpendingCategories categories={spendingCategories} isLoading={isLoading} />
             </div>
           ) : null}
 
