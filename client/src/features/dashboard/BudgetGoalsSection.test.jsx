@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import BudgetGoalsSection from "./BudgetGoalsSection";
 
@@ -9,7 +9,7 @@ vi.mock("../../lib/api/budgetGoals", () => ({
   updateBudgetGoal: vi.fn(),
 }));
 
-import { getBudgetGoals } from "../../lib/api/budgetGoals";
+import { deleteBudgetGoal, getBudgetGoals } from "../../lib/api/budgetGoals";
 
 const now = new Date();
 const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -79,6 +79,26 @@ describe("BudgetGoalsSection", () => {
 
     await waitFor(() => {
       expect(getBudgetGoals).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it("confirms a goal deletion in the shared modal before calling the API", async () => {
+    getBudgetGoals.mockResolvedValue([
+      { id: 1, month: currentMonth, category: "", amountCents: 300000 },
+    ]);
+    deleteBudgetGoal.mockResolvedValue(undefined);
+
+    render(<BudgetGoalsSection transactions={transactions} />);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Excluir" }));
+    const dialog = screen.getByRole("dialog", { name: "Excluir" });
+    expect(dialog).toBeInTheDocument();
+    expect(deleteBudgetGoal).not.toHaveBeenCalled();
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Excluir" }));
+
+    await waitFor(() => {
+      expect(deleteBudgetGoal).toHaveBeenCalledWith(1);
     });
   });
 });

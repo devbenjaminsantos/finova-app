@@ -1258,6 +1258,145 @@ a {
   box-shadow: none;
 }
 
+.finova-empty-state-action {
+  margin-top: 0.25rem;
+}
+
+.finova-metric {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+}
+
+.finova-metric-label,
+.finova-metric-helper {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.finova-metric-label {
+  font-weight: 600;
+}
+
+.finova-metric-value {
+  color: var(--text);
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.finova-metric-income .finova-metric-value {
+  color: var(--success-dark);
+}
+
+.finova-metric-income {
+  background: color-mix(in srgb, var(--success-bg) 84%, var(--surface) 16%);
+  border-color: color-mix(in srgb, var(--success) 24%, var(--border) 76%);
+}
+
+.finova-metric-expense .finova-metric-value {
+  color: var(--danger);
+}
+
+.finova-metric-expense {
+  background: color-mix(in srgb, var(--danger-bg) 78%, var(--surface) 22%);
+  border-color: color-mix(in srgb, var(--danger) 22%, var(--border) 78%);
+}
+
+.finova-money-delta {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.finova-money-delta-positive {
+  color: var(--success-dark);
+  background: var(--success-bg);
+  border-color: color-mix(in srgb, var(--success) 34%, var(--border) 66%);
+}
+
+.finova-money-delta-negative {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
+}
+
+.finova-money-delta-neutral {
+  color: var(--info);
+  background: var(--info-bg);
+}
+
+.finova-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+}
+
+.finova-toast-success {
+  color: var(--success-dark);
+  background: var(--success-bg);
+  border-color: color-mix(in srgb, var(--success) 34%, var(--border) 66%);
+}
+
+.finova-toast-danger {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
+}
+
+.finova-toast-dismiss {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: currentColor;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.finova-toast-dismiss:hover,
+.finova-toast-dismiss:focus-visible {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.finova-chart-container {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.finova-chart-container-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.finova-chart-container-footer {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
 .finova-status-banner {
   box-shadow: var(--shadow-sm);
   font-weight: 600;

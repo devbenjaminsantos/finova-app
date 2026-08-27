@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import EmptyState from "../components/ui/EmptyState";
 import PageHeader from "../components/layout/PageHeader";
 import { SummaryCard } from "../features/dashboard/DashboardCards";
 import DashboardCharts from "../features/dashboard/DashboardCharts";
@@ -180,15 +181,15 @@ export default function Dashboard() {
 
           {filteredTransactions.length === 0 ? (
             <div className="finova-card p-4">
-              <div className="finova-empty-state">
-                <h2 className="finova-title h5 mb-2">{t("pages.dashboardEmptyTitle")}</h2>
-                <p className="finova-subtitle mb-0">{t("pages.dashboardEmptySubtitle")}</p>
-              </div>
+              <EmptyState
+                title={t("pages.dashboardEmptyTitle")}
+                description={t("pages.dashboardEmptySubtitle")}
+              />
             </div>
           ) : (
-            <div className="finova-card p-4">
+            <section className="mb-4" aria-labelledby="dashboard-charts-title">
               <div className="mb-3">
-                <h2 className="finova-title h5 mb-1">{t("pages.dashboardCardTitle")}</h2>
+                <h2 id="dashboard-charts-title" className="finova-title h5 mb-1">{t("pages.dashboardCardTitle")}</h2>
                 <p className="finova-subtitle mb-0">
                   {t("pages.dashboardCardSubtitle", {
                     period: selectedPeriodLabel.toLowerCase(),
@@ -201,7 +202,7 @@ export default function Dashboard() {
                 chartMonths={chartMonths}
                 periodLabel={selectedPeriodLabel}
               />
-            </div>
+            </section>
           )}
         </>
       )}

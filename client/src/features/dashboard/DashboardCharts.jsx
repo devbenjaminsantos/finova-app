@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import ChartContainer from "../../components/ui/ChartContainer";
 import { useI18n } from "../../i18n/LanguageProvider";
 
 function monthLabel(yyyyMM) {
@@ -108,77 +109,56 @@ export default function DashboardCharts({ transactions, chartMonths, periodLabel
   return (
     <div className="row g-3">
       <div className="col-12 col-lg-5" style={{ minWidth: 0 }}>
-        <div className="finova-card h-100" style={{ minWidth: 0 }}>
-          <div className="p-4">
-            <div className="d-flex justify-content-between align-items-baseline mb-2 gap-2 flex-wrap">
-              <h2 className="finova-title h5 mb-0">{t("dashboard.expensesByCategory")}</h2>
-              <span className="text-muted small">{categoryCaption}</span>
+        <ChartContainer
+          className="finova-card h-100 p-4"
+          title={t("dashboard.expensesByCategory")}
+          meta={categoryCaption}
+        >
+          {expenseByCategory.length === 0 ? (
+            <div className="finova-subtitle">{t("dashboard.noExpensesInPeriod")}</div>
+          ) : (
+            <div className="finova-chart-shell">
+              <ResponsiveContainer width="100%" height="100%" debounce={100}>
+                <PieChart>
+                  <Tooltip formatter={(value) => formatCurrencyFromCents(value)} />
+                  <Pie data={pieLegend} dataKey="value" nameKey="label" innerRadius={60} outerRadius={100} paddingAngle={2}>
+                    {expenseByCategory.map((item, idx) => (
+                      <Cell key={item.name} fill={pieColors[idx % pieColors.length]} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-
-            {expenseByCategory.length === 0 ? (
-              <div className="finova-subtitle">{t("dashboard.noExpensesInPeriod")}</div>
-            ) : (
-              <div className="finova-chart-shell">
-                <ResponsiveContainer width="100%" height="100%" debounce={100}>
-                  <PieChart>
-                    <Tooltip formatter={(value) => formatCurrencyFromCents(value)} />
-                    <Pie
-                      data={pieLegend}
-                      dataKey="value"
-                      nameKey="label"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={2}
-                    >
-                      {expenseByCategory.map((item, idx) => (
-                        <Cell key={item.name} fill={pieColors[idx % pieColors.length]} />
-                      ))}
-                    </Pie>
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-          </div>
-        </div>
+          )}
+        </ChartContainer>
       </div>
 
       <div className="col-12 col-lg-7" style={{ minWidth: 0 }}>
-        <div className="finova-card h-100" style={{ minWidth: 0 }}>
-          <div className="p-4">
-            <h2 className="finova-title h5 mb-2">{t("dashboard.incomeVsExpense")}</h2>
-            <p className="finova-subtitle small mb-3">{periodLabel}</p>
-
-            {hasIncomeVsExpenseData ? (
-              <>
-                <div className="finova-chart-shell">
-                  <ResponsiveContainer width="100%" height="100%" debounce={100}>
-                    <BarChart data={incomeVsExpense} margin={{ left: 10, right: 10 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" tickFormatter={monthLabel} />
-                      <YAxis tickFormatter={formatAxisValue} width={70} />
-                      <Tooltip
-                        formatter={(value) => formatCurrencyFromCents(value)}
-                        labelFormatter={monthLabel}
-                      />
-                      <Legend />
-                      <Bar dataKey="income" name={t("transactions.incomePlural")} fill="#198754" />
-                      <Bar
-                        dataKey="expense"
-                        name={t("transactions.expensePlural")}
-                        fill="#dc3545"
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="text-muted small">{t("dashboard.chartFootnote")}</div>
-              </>
-            ) : (
-              <div className="finova-subtitle">{t("dashboard.noMovementComparison")}</div>
-            )}
-          </div>
-        </div>
+        <ChartContainer
+          className="finova-card h-100 p-4"
+          title={t("dashboard.incomeVsExpense")}
+          meta={periodLabel}
+          footer={hasIncomeVsExpenseData ? t("dashboard.chartFootnote") : null}
+        >
+          {hasIncomeVsExpenseData ? (
+            <div className="finova-chart-shell">
+              <ResponsiveContainer width="100%" height="100%" debounce={100}>
+                <BarChart data={incomeVsExpense} margin={{ left: 10, right: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" tickFormatter={monthLabel} />
+                  <YAxis tickFormatter={formatAxisValue} width={70} />
+                  <Tooltip formatter={(value) => formatCurrencyFromCents(value)} labelFormatter={monthLabel} />
+                  <Legend />
+                  <Bar dataKey="income" name={t("transactions.incomePlural")} fill="#198754" />
+                  <Bar dataKey="expense" name={t("transactions.expensePlural")} fill="#dc3545" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="finova-subtitle">{t("dashboard.noMovementComparison")}</div>
+          )}
+        </ChartContainer>
       </div>
     </div>
   );

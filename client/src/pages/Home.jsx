@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/ui/Button";
+import CategoryRow from "../components/ui/CategoryRow";
 import {
   CategoryInsightCard,
   ComparisonCard,
@@ -554,16 +555,13 @@ function HomeSpendingCategories({ categories, isLoading }) {
       ) : (
         <ol className="finova-home-spending-list">
           {categories.map((category) => (
-            <li key={category.name} className="finova-home-spending-row">
-              <div className="finova-home-spending-row-copy">
-                <strong>{category.name}</strong>
-                <span>{formatCurrencyFromCents(category.value)}</span>
-              </div>
-              <div className="finova-home-spending-track" aria-hidden="true">
-                <span style={{ width: `${category.share}%` }} />
-              </div>
-              <small>{t("home.spendingShare", { share: category.share })}</small>
-            </li>
+            <CategoryRow
+              key={category.name}
+              label={category.name}
+              value={formatCurrencyFromCents(category.value)}
+              share={category.share}
+              shareLabel={t("home.spendingShare", { share: category.share })}
+            />
           ))}
         </ol>
       )}

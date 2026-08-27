@@ -246,11 +246,11 @@ e "o que merece atenção?" sem remover funcionalidades existentes.
 
 ## Etapa 4 - componentes reutilizáveis
 
-- [ ] Criar `Button`, `Input`, `Select`, `Modal`, `Toast` e `EmptyState`.
-- [ ] Criar `Metric`, `MoneyDelta`, `TransactionRow` e `CategoryRow`.
-- [ ] Criar `BudgetProgress`, `InsightCard` e `ChartContainer`.
-- [ ] Substituir alertas grandes por feedback discreto quando apropriado.
-- [ ] Evitar cards aninhados e componentes puramente decorativos.
+- [x] Criar `Button`, `Input`, `Select`, `Modal`, `Toast` e `EmptyState`.
+- [x] Criar `Metric`, `MoneyDelta`, `TransactionRow` e `CategoryRow`.
+- [x] Criar `BudgetProgress`, `InsightCard` e `ChartContainer`.
+- [x] Substituir alertas grandes por feedback discreto quando apropriado.
+- [x] Evitar cards aninhados e componentes puramente decorativos.
 
 **Evidência do primeiro incremento (2026-08-27):**
 
@@ -287,6 +287,23 @@ e "o que merece atenção?" sem remover funcionalidades existentes.
 - 15 testes unitários focados em execução serial, build e nove smokes
   Playwright passaram. Os modais existentes continuam inalterados neste
   incremento.
+
+**Evidência de conclusão (2026-08-27):**
+
+- `Modal` oferece rótulo acessível, foco inicial, contenção de tabulação,
+  Escape, clique no backdrop e restauração de foco; a remoção de uma meta agora
+  exige essa confirmação em vez de `window.confirm`;
+- `Toast` passou a exibir a confirmação de criação, edição ou remoção de meta
+  como feedback discreto e dispensável. Erros de formulário permanecem
+  contextuais, junto aos campos ou à operação que falhou;
+- `EmptyState`, `Metric`, `MoneyDelta`, `TransactionRow`, `CategoryRow`,
+  `BudgetProgress`, `InsightCard` e `ChartContainer` foram aplicados nos
+  estados vazios, dashboard, Home, metas, gráficos e tabela de transações,
+  preservando handlers, filtros, exportação e i18n existentes;
+- os gráficos e as metas não mantêm mais uma superfície de card adicional ao
+  redor de cards semânticos internos, reduzindo o aninhamento decorativo;
+- lint, 119 testes unitários em execução serial, build e nove smokes Playwright
+  passaram. Nenhum contrato de API, banco, autenticação ou Brevo foi alterado.
 
 **Gate:** componentes devem ter estados normal, hover, focus, disabled, loading e
 erro quando aplicáveis, sem duplicar regras em cada página.

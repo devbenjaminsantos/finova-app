@@ -8,6 +8,12 @@ import {
 import { EXPENSE_TRANSACTION_CATEGORIES } from "../../lib/constants/transactionCategories";
 import { parseMoneyToCents } from "../../lib/format/currency";
 import { useI18n } from "../../i18n/LanguageProvider";
+import BudgetProgress from "../../components/ui/BudgetProgress";
+import Button from "../../components/ui/Button";
+import EmptyState from "../../components/ui/EmptyState";
+import Metric from "../../components/ui/Metric";
+import Modal from "../../components/ui/Modal";
+import Toast from "../../components/ui/Toast";
 
 function dispatchBudgetGoalsChange() {
   window.dispatchEvent(new Event("finova-budget-goals-change"));
@@ -101,21 +107,12 @@ function GoalCard({ goal, spentCents, onEdit, onDelete, isDeleting, t, formatCur
         </div>
 
         <div className="finova-actions-row finova-actions-row-end">
-          <button
-            type="button"
-            className="btn btn-sm finova-btn-light"
-            onClick={() => onEdit(goal)}
-          >
+          <Button type="button" variant="secondary" className="btn-sm" onClick={() => onEdit(goal)}>
             {t("transactions.edit")}
-          </button>
-          <button
-            type="button"
-            className="btn btn-sm btn-outline-danger"
-            onClick={() => onDelete(goal.id)}
-            disabled={isDeleting}
-          >
+          </Button>
+          <Button type="button" variant="danger" className="btn-sm" onClick={() => onDelete(goal)} loading={isDeleting}>
             {isDeleting ? t("accounts.removing") : t("dashboard.goalDelete")}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -136,26 +133,16 @@ function GoalCard({ goal, spentCents, onEdit, onDelete, isDeleting, t, formatCur
         </strong>
       </div>
 
-      <div className="finova-goal-progress mb-2">
-        <div
-          className={`finova-goal-progress-bar finova-goal-progress-bar-${tone}`}
-          style={{ width: `${Math.min(progress * 100, 100)}%` }}
-        />
-      </div>
+      <BudgetProgress
+        className="mb-2"
+        label={t("dashboard.goalProgressConsumed", { percent })}
+        progress={progress * 100}
+        tone={tone}
+      />
 
       <div className="small finova-subtitle">
         {t("dashboard.goalProgressConsumed", { percent })}
       </div>
-    </div>
-  );
-}
-
-function GoalSummaryStat({ label, value, helper }) {
-  return (
-    <div className="finova-card-soft p-3 h-100">
-      <div className="finova-subtitle small mb-1">{label}</div>
-      <div className="finova-title h5 mb-1">{value}</div>
-      <div className="finova-subtitle small mb-0">{helper}</div>
     </div>
   );
 }
@@ -168,6 +155,7 @@ export default function BudgetGoalsSection({ transactions }) {
   const [isSaving, setIsSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [editingGoalId, setEditingGoalId] = useState(null);
+  const [goalPendingDelete, setGoalPendingDelete] = useState(null);
   const [category, setCategory] = useState("__overall__");
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
@@ -337,10 +325,6 @@ export default function BudgetGoalsSection({ transactions }) {
   }
 
   async function handleDelete(id) {
-    if (!window.confirm(t("dashboard.goalDeleteConfirm"))) {
-      return;
-    }
-
     setDeletingId(id);
     setError("");
     setFeedback("");
@@ -359,6 +343,7 @@ export default function BudgetGoalsSection({ transactions }) {
       setError(requestError.message || t("dashboard.goalDeleteError"));
     } finally {
       setDeletingId(null);
+      setGoalPendingDelete(null);
     }
   }
 
@@ -374,7 +359,7 @@ export default function BudgetGoalsSection({ transactions }) {
   const isCurrentMonth = month === currentMonth;
 
   return (
-    <div className="finova-card p-4 mb-4">
+    <div className="finova-budget-goals-section">
       <div className="d-flex flex-column flex-xl-row justify-content-between align-items-xl-end gap-3 mb-4">
         <div>
           <h2 className="finova-title h4 mb-1">{t("dashboard.goalsTitle")}</h2>
@@ -414,28 +399,32 @@ export default function BudgetGoalsSection({ transactions }) {
 
       <div className="row g-3 mb-4">
         <div className="col-12 col-md-6 col-xl-3">
-          <GoalSummaryStat
+          <Metric
+            className="finova-card-soft p-3 h-100"
             label={t("dashboard.summarySpentMonth")}
             value={formatCurrencyFromCents(totalSpent)}
             helper={t("dashboard.summarySpentMonthHelp")}
           />
         </div>
         <div className="col-12 col-md-6 col-xl-3">
-          <GoalSummaryStat
+          <Metric
+            className="finova-card-soft p-3 h-100"
             label={t("dashboard.summaryGoalCategories")}
             value={String(categoryGoals.length)}
             helper={t("dashboard.summaryGoalCategoriesHelp")}
           />
         </div>
         <div className="col-12 col-md-6 col-xl-3">
-          <GoalSummaryStat
+          <Metric
+            className="finova-card-soft p-3 h-100"
             label={t("dashboard.summaryWithoutGoal")}
             value={String(Math.max(categoriesWithExpenses.length - categoryGoals.length, 0))}
             helper={t("dashboard.summaryWithoutGoalHelp")}
           />
         </div>
         <div className="col-12 col-md-6 col-xl-3">
-          <GoalSummaryStat
+          <Metric
+            className="finova-card-soft p-3 h-100"
             label={t("dashboard.summaryGoalsAtRisk")}
             value={String(categoriesOverLimitCount)}
             helper={t("dashboard.summaryGoalsAtRiskHelp")}
@@ -534,7 +523,11 @@ export default function BudgetGoalsSection({ transactions }) {
       </form>
 
       {error ? <div className="alert alert-danger py-2">{error}</div> : null}
-      {feedback ? <div className="alert alert-success py-2">{feedback}</div> : null}
+      {feedback ? (
+        <Toast tone="success" dismissLabel={t("transactions.close")} onDismiss={() => setFeedback("")}>
+          {feedback}
+        </Toast>
+      ) : null}
 
       {isLoading ? (
         <div className="finova-subtitle">{t("dashboard.goalsLoading")}</div>
@@ -553,18 +546,18 @@ export default function BudgetGoalsSection({ transactions }) {
                 goal={overallGoal}
                 spentCents={totalSpent}
                 onEdit={handleEdit}
-                onDelete={handleDelete}
+                onDelete={setGoalPendingDelete}
                 isDeleting={deletingId === overallGoal.id}
                 t={t}
                 formatCurrencyFromCents={formatCurrencyFromCents}
               />
             ) : (
-              <div className="finova-card-soft p-4">
-                <h4 className="finova-title h6 mb-2">
-                  {t("dashboard.overviewEmptyTitle", { month: monthLabel })}
-                </h4>
-                <p className="finova-subtitle mb-0">{t("dashboard.overviewEmptySubtitle")}</p>
-              </div>
+              <EmptyState
+                className="finova-card-soft p-4"
+                titleAs="h4"
+                title={t("dashboard.overviewEmptyTitle", { month: monthLabel })}
+                description={t("dashboard.overviewEmptySubtitle")}
+              />
             )}
           </div>
 
@@ -580,10 +573,12 @@ export default function BudgetGoalsSection({ transactions }) {
             </div>
 
             {categoryGoals.length === 0 ? (
-              <div className="finova-card-soft p-4">
-                <h4 className="finova-title h6 mb-2">{t("dashboard.categoryGoalsEmptyTitle")}</h4>
-                <p className="finova-subtitle mb-0">{t("dashboard.categoryGoalsEmptySubtitle")}</p>
-              </div>
+              <EmptyState
+                className="finova-card-soft p-4"
+                titleAs="h4"
+                title={t("dashboard.categoryGoalsEmptyTitle")}
+                description={t("dashboard.categoryGoalsEmptySubtitle")}
+              />
             ) : (
               <div className="row g-3">
                 {categoryGoals.map((goal) => (
@@ -592,7 +587,7 @@ export default function BudgetGoalsSection({ transactions }) {
                       goal={goal}
                       spentCents={spentByCategory.get(goal.category) || 0}
                       onEdit={handleEdit}
-                      onDelete={handleDelete}
+                      onDelete={setGoalPendingDelete}
                       isDeleting={deletingId === goal.id}
                       t={t}
                       formatCurrencyFromCents={formatCurrencyFromCents}
@@ -604,6 +599,25 @@ export default function BudgetGoalsSection({ transactions }) {
           </div>
         </>
       )}
+      <Modal
+        isOpen={Boolean(goalPendingDelete)}
+        onClose={() => setGoalPendingDelete(null)}
+        dismissible={!deletingId}
+        title={t("dashboard.goalDelete")}
+        closeLabel={t("transactions.close")}
+        footer={(
+          <div className="finova-actions-row finova-actions-row-end w-100">
+            <Button type="button" variant="secondary" onClick={() => setGoalPendingDelete(null)} disabled={Boolean(deletingId)}>
+              {t("common.cancel")}
+            </Button>
+            <Button type="button" variant="danger" loading={Boolean(deletingId)} onClick={() => handleDelete(goalPendingDelete.id)}>
+              {t("dashboard.goalDelete")}
+            </Button>
+          </div>
+        )}
+      >
+        <p className="finova-subtitle mb-0">{t("dashboard.goalDeleteConfirm")}</p>
+      </Modal>
     </div>
   );
 }

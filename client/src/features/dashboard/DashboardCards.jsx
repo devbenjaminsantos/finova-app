@@ -1,46 +1,12 @@
 import { useI18n } from "../../i18n/LanguageProvider";
+import SharedInsightCard from "../../components/ui/InsightCard";
+import Metric from "../../components/ui/Metric";
+import MoneyDelta from "../../components/ui/MoneyDelta";
 
 export function SummaryCard({ label, value, tone = "default" }) {
-  const toneMap = {
-    default: {
-      bg: "var(--surface)",
-      border: "var(--border)",
-      text: "var(--text)",
-    },
-    income: {
-      bg: "rgba(34, 197, 94, 0.08)",
-      border: "rgba(34, 197, 94, 0.14)",
-      text: "var(--success-dark)",
-    },
-    expense: {
-      bg: "rgba(239, 68, 68, 0.06)",
-      border: "rgba(239, 68, 68, 0.12)",
-      text: "#dc2626",
-    },
-  };
-
-  const styles = toneMap[tone] || toneMap.default;
-
   return (
     <div className="col-12 col-md-4">
-      <div
-        className="finova-card-soft h-100 p-4"
-        style={{
-          background: styles.bg,
-          borderColor: styles.border,
-        }}
-      >
-        <div className="finova-subtitle small mb-2">{label}</div>
-        <div
-          className="finova-title mb-0"
-          style={{
-            fontSize: "1.75rem",
-            color: styles.text,
-          }}
-        >
-          {value}
-        </div>
-      </div>
+      <Metric className="finova-card-soft h-100 p-4" label={label} value={value} tone={tone} />
     </div>
   );
 }
@@ -57,13 +23,6 @@ export function ComparisonCard({
   const hasPreviousData = previousValue > 0;
   const percentChange = hasPreviousData ? Math.round((delta / previousValue) * 100) : null;
 
-  const toneClass =
-    delta > 0
-      ? "finova-badge-income"
-      : delta < 0
-        ? "finova-badge-expense"
-        : "finova-badge-primary";
-
   const toneText =
     delta > 0
       ? t("dashboardCards.deltaUp")
@@ -79,7 +38,7 @@ export function ComparisonCard({
             <div className="finova-subtitle small mb-1">{label}</div>
             <div className="finova-title h5 mb-0">{formatCurrencyFromCents(currentValue)}</div>
           </div>
-          <span className={toneClass}>{toneText}</span>
+          <MoneyDelta delta={delta} label={toneText} />
         </div>
 
         <div className="small finova-subtitle mb-2">
@@ -148,24 +107,15 @@ export function CategoryInsightCard({ title, category, value, tone }) {
 }
 
 export function InsightCard({ title, description, badge, tone = "primary" }) {
-  const badgeClass =
-    tone === "income"
-      ? "finova-badge-income"
-      : tone === "expense"
-        ? "finova-badge-expense"
-        : tone === "neutral"
-          ? "finova-badge-neutral"
-          : "finova-badge-primary";
-
   return (
     <div className="col-12 col-lg-4">
-      <div className="finova-card-soft h-100 p-4">
-        <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
-          <h2 className="finova-title h6 mb-0">{title}</h2>
-          <span className={badgeClass}>{badge}</span>
-        </div>
-        <p className="finova-subtitle mb-0">{description}</p>
-      </div>
+      <SharedInsightCard
+        className="finova-card-soft h-100 p-4"
+        title={title}
+        description={description}
+        badge={badge}
+        tone={tone}
+      />
     </div>
   );
 }
