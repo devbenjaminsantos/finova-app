@@ -16,6 +16,7 @@ const FinancialAccounts = lazy(() => import("./pages/FinancialAccounts"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
+const Planning = lazy(() => import("./pages/Planning"));
 const Profile = lazy(() => import("./pages/Profile"));
 const PublicDashboard = lazy(() => import("./pages/PublicDashboard"));
 const Register = lazy(() => import("./pages/Register"));
@@ -78,7 +79,8 @@ export default function App() {
           <Route path="/analises" element={<Analyses />} />
           <Route path="/insights" element={<Navigate to="/analises" replace />} />
           <Route path="/comparativos" element={<Navigate to="/analises" replace />} />
-          <Route path="/metas" element={<Navigate to="/analises" replace />} />
+          <Route path="/planejamento" element={<Planning />} />
+          <Route path="/metas" element={<Navigate to="/planejamento" replace />} />
 
           <Route path="/contas" element={<FinancialAccounts />} />
 

@@ -86,7 +86,17 @@ function RecurringRulesSection({ formatCurrencyFromCents, formatDate, overview, 
   );
 }
 
-function InstallmentPlansSection({ formatCurrencyFromCents, formatDate, groups, isMutating, onEdit, onRemove, overview, t }) {
+function InstallmentPlansSection({
+  formatCurrencyFromCents,
+  formatDate,
+  groups,
+  isMutating,
+  onEdit,
+  onRemove,
+  overview,
+  showActions,
+  t,
+}) {
   if (groups.length === 0) {
     return null;
   }
@@ -189,14 +199,16 @@ function InstallmentPlansSection({ formatCurrencyFromCents, formatDate, groups, 
                 />
               </div>
 
-              <div className="finova-actions-row finova-transaction-list-actions">
-                <Button variant="secondary" className="btn-sm" onClick={() => onEdit(group)} disabled={isMutating}>
-                  {t("transactions.editInstallmentPlan")}
-                </Button>
-                <Button variant="danger" className="btn-sm" onClick={() => onRemove(group.id)} disabled={isMutating}>
-                  {t("transactions.removeInstallmentPlan")}
-                </Button>
-              </div>
+              {showActions ? (
+                <div className="finova-actions-row finova-transaction-list-actions">
+                  <Button variant="secondary" className="btn-sm" onClick={() => onEdit(group)} disabled={isMutating}>
+                    {t("transactions.editInstallmentPlan")}
+                  </Button>
+                  <Button variant="danger" className="btn-sm" onClick={() => onRemove(group.id)} disabled={isMutating}>
+                    {t("transactions.removeInstallmentPlan")}
+                  </Button>
+                </div>
+              ) : null}
             </li>
           );
         })}
@@ -215,6 +227,7 @@ export default function TransactionCommitments({
   onRemoveInstallment,
   recurringOverview,
   recurringRules,
+  showInstallmentActions = true,
   t,
 }) {
   if (recurringRules.length === 0 && installmentGroups.length === 0) {
@@ -239,6 +252,7 @@ export default function TransactionCommitments({
         t={t}
         formatDate={formatDate}
         formatCurrencyFromCents={formatCurrencyFromCents}
+        showActions={showInstallmentActions}
       />
     </div>
   );

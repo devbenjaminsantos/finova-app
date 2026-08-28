@@ -35,6 +35,10 @@ vi.mock("./pages/Analyses", () => ({
   default: () => <h1>Analyses route</h1>,
 }));
 
+vi.mock("./pages/Planning", () => ({
+  default: () => <h1>Planning route</h1>,
+}));
+
 function LocationProbe() {
   const location = useLocation();
   return <output data-testid="location">{location.pathname}</output>;
@@ -99,6 +103,32 @@ describe("App routing", () => {
 
       expect(await screen.findByRole("heading", { name: "Analyses route" })).toBeInTheDocument();
       expect(screen.getByTestId("location")).toHaveTextContent("/analises");
+    },
+    15_000
+  );
+
+  it(
+    "renders planning and keeps the legacy goals route compatible",
+    async () => {
+      hasValidSession.mockReturnValue(true);
+
+      renderApp("/planejamento");
+
+      expect(await screen.findByRole("heading", { name: "Planning route" })).toBeInTheDocument();
+      expect(screen.getByTestId("location")).toHaveTextContent("/planejamento");
+    },
+    15_000
+  );
+
+  it(
+    "redirects legacy goals routes to planning for authenticated sessions",
+    async () => {
+      hasValidSession.mockReturnValue(true);
+
+      renderApp("/metas");
+
+      expect(await screen.findByRole("heading", { name: "Planning route" })).toBeInTheDocument();
+      expect(screen.getByTestId("location")).toHaveTextContent("/planejamento");
     },
     15_000
   );

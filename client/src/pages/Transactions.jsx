@@ -9,6 +9,12 @@ import TransactionCommitments from "../features/transactions/components/Transact
 import TransactionModal from "../features/transactions/components/TransactionModal";
 import TransactionsFilters from "../features/transactions/components/TransactionsFilters";
 import TransactionsTable from "../features/transactions/components/TransactionsTable";
+import {
+  getInstallmentOverview,
+  getRecurringOverview,
+  sortInstallmentPlans,
+  sortRecurringRules,
+} from "../features/transactions/commitmentOverview";
 import { useTransactions } from "../features/transactions/useTransactions";
 import { getFinancialAccounts } from "../lib/api/financialAccounts";
 import { getTransactionCategories } from "../lib/constants/transactionCategories";
@@ -277,35 +283,13 @@ export default function Transactions() {
       list = list.filter((plan) => plan.category === categoryFilter);
     }
 
-    return list.sort((a, b) => (a.description || "").localeCompare(b.description || ""));
+    return sortInstallmentPlans(list);
   }, [installmentPlans, q, tagFilter, typeFilter, categoryFilter]);
 
-  const installmentOverview = useMemo(() => {
-    return installmentGroups.reduce(
-      (accumulator, group) => {
-        const nextInstallmentAmount =
-          group.nextInstallmentDate && group.nextInstallmentIndex
-            ? Number(group.amountPerInstallmentCents) || 0
-            : 0;
-
-        return {
-          openPlans: accumulator.openPlans + 1,
-          remainingAmountCents:
-            accumulator.remainingAmountCents + (Number(group.remainingAmountCents) || 0),
-          upcomingInstallments:
-            accumulator.upcomingInstallments + (Number(group.upcomingInstallments) || 0),
-          nextInstallmentsAmountCents:
-            accumulator.nextInstallmentsAmountCents + nextInstallmentAmount,
-        };
-      },
-      {
-        openPlans: 0,
-        remainingAmountCents: 0,
-        upcomingInstallments: 0,
-        nextInstallmentsAmountCents: 0,
-      }
-    );
-  }, [installmentGroups]);
+  const installmentOverview = useMemo(
+    () => getInstallmentOverview(installmentGroups),
+    [installmentGroups]
+  );
 
   const visibleRecurringRules = useMemo(() => {
     let list = [...recurringRules];
@@ -331,31 +315,13 @@ export default function Transactions() {
       list = list.filter((rule) => rule.category === categoryFilter);
     }
 
-    return list.sort((left, right) => {
-      if (left.isActive !== right.isActive) {
-        return left.isActive ? -1 : 1;
-      }
-
-      return (left.nextOccurrenceDate || "9999-12-31").localeCompare(
-        right.nextOccurrenceDate || "9999-12-31"
-      );
-    });
+    return sortRecurringRules(list);
   }, [recurringRules, q, tagFilter, typeFilter, categoryFilter]);
 
-  const recurringOverview = useMemo(() => {
-    return visibleRecurringRules.reduce(
-      (accumulator, rule) => ({
-        activeRules: accumulator.activeRules + (rule.isActive ? 1 : 0),
-        nextMonthAmountCents:
-          accumulator.nextMonthAmountCents +
-          (rule.isActive && rule.nextOccurrenceDate ? Number(rule.amountCents) || 0 : 0),
-      }),
-      {
-        activeRules: 0,
-        nextMonthAmountCents: 0,
-      }
-    );
-  }, [visibleRecurringRules]);
+  const recurringOverview = useMemo(
+    () => getRecurringOverview(visibleRecurringRules),
+    [visibleRecurringRules]
+  );
 
   function openCreate() {
     if (isMutating) {

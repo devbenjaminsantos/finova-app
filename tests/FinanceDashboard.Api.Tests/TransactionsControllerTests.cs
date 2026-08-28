@@ -354,6 +354,40 @@ public class TransactionsControllerTests
     }
 
     [Fact]
+    public async Task Import_RejectsMoreThanMaximumItemsWithoutPersistingTransactions()
+    {
+        using var context = CreateContext();
+        var controller = CreateController(context, userId: 15);
+        var dto = new TransactionImportRequest
+        {
+            ImportFormat = "csv",
+            Transactions = Enumerable.Range(0, TransactionImportLimits.MaxItems + 1)
+                .Select(index => new TransactionImportItemRequest
+                {
+                    Description = $"Transação {index}",
+                    Category = "Outros",
+                    AmountCents = 1000,
+                    Date = new DateTime(2026, 4, 11),
+                    Type = "expense"
+                })
+                .ToList()
+        };
+
+        var result = await controller.Import(dto);
+
+        var validation = Assert.IsType<ObjectResult>(result.Result);
+        var details = Assert.IsType<ValidationProblemDetails>(validation.Value);
+
+        Assert.Equal(StatusCodes.Status400BadRequest, validation.StatusCode);
+        Assert.Contains(nameof(dto.Transactions), details.Errors.Keys);
+        Assert.Contains(
+            $"Limite de {TransactionImportLimits.MaxItems} transações por importação.",
+            details.Errors[nameof(dto.Transactions)]);
+        Assert.Empty(context.Transactions);
+        Assert.Empty(context.AuditLogs);
+    }
+
+    [Fact]
     public async Task Import_RejectsFinancialAccountFromAnotherUser()
     {
         using var context = CreateContext();

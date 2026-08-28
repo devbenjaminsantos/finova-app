@@ -313,13 +313,13 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 - [x] Migrar Transações para lista densa e criação rápida.
 - [x] Manter tags, recorrência e campos raros em `Mais opções`.
 - [x] Consolidar gráficos e comparações em Análises.
-- [ ] Criar `/planejamento` para metas, orçamentos e compromissos.
+- [x] Criar `/planejamento` para metas, orçamentos e compromissos.
 - [x] Redirecionar `/graficos` e `/metas` sem quebrar favoritos antigos.
 - [x] Migrar Contas para o novo shell e tom visual.
 - [x] Preservar Perfil, Histórico e dashboard público como áreas secundárias.
 - [x] Alinhar nomes de exportação CSV/PDF e suas asserções de teste com a marca
   aprovada.
-- [ ] Limitar a quantidade de itens aceita por importação na API e manter o
+- [x] Limitar a quantidade de itens aceita por importação na API e manter o
   limite de tamanho do arquivo no frontend.
 
 **Evidência da fundação de Transações (2026-08-28):**
@@ -419,6 +419,32 @@ erro quando aplicáveis, sem duplicar regras em cada página.
   Playwright no Chromium passaram. O último carregou dois lançamentos simulados,
   acionou o download e validou o PDF produzido. Lint, build e verificação de
   diff também passaram; API, banco e Brevo não foram alterados.
+
+**Evidência do limite de importação (2026-08-28):**
+
+- o contrato de importação declara e a action reforça no servidor o máximo de
+  500 lançamentos. Uma tentativa com 501 itens recebe `400` controlado antes de
+  persistir lançamentos ou registros de auditoria; o limite deixou de ser um
+  número mágico no controller;
+- o frontend continua recusando arquivos maiores que 2 MB antes de ler seu
+  conteúdo. O teto de itens no servidor é deliberadamente independente da
+  validação do navegador;
+- a asserção automatizada para o caso de 501 itens foi adicionada e a checagem
+  de diff passou. A execução de `dotnet test` ficou pendente: o executor local
+  não iniciou a compilação e foi cancelado sem diagnosticar erro de código.
+
+**Evidência de Planejamento (2026-08-28):**
+
+- `/planejamento` concentra metas/orçamento existentes e compromissos
+  recorrentes ou parcelados, sem criar endpoint, modelo ou cálculo financeiro
+  paralelo. Parcelamentos aparecem em leitura e continuam editáveis somente em
+  Transações;
+- `/metas` preserva favoritos com redirecionamento para a nova rota. Análises
+  deixou de duplicar metas e mantém apenas insights, gráficos, comparativos e
+  previsão; a navegação desktop e mobile passou a expor Planejamento;
+- quatro arquivos de teste, com dez cenários focados, lint e build de produção
+  passaram. A inspeção visual automatizada não foi possível porque
+  `agent-browser` não está instalado neste ambiente.
 
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.

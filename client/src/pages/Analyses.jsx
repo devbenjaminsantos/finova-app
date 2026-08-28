@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import PageHeader from "../components/layout/PageHeader";
-import BudgetGoalsSection from "../features/dashboard/BudgetGoalsSection";
 import DashboardCharts from "../features/dashboard/DashboardCharts";
 import {
   CategoryInsightCard,
@@ -548,15 +547,6 @@ export default function Analyses() {
             </div>
           </div>
 
-          <div className="finova-card p-4">
-            <AnalysisSectionHeader
-              eyebrow={t("analyses.goalsEyebrow")}
-              title={t("analyses.goalsTitle")}
-              description={t("analyses.goalsDescription")}
-            />
-
-            <BudgetGoalsSection transactions={scopedTransactions} />
-          </div>
         </>
       )}
     </section>

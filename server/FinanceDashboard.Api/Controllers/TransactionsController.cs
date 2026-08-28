@@ -211,9 +211,11 @@ namespace FinanceDashboard.Api.Controllers
         {
             var userId = _currentUserService.GetRequiredUserId();
 
-            if (dto.Transactions.Count > 500)
+            if (dto.Transactions.Count > TransactionImportLimits.MaxItems)
             {
-                ModelState.AddModelError(nameof(dto.Transactions), "Limite de 500 transações por importação.");
+                ModelState.AddModelError(
+                    nameof(dto.Transactions),
+                    $"Limite de {TransactionImportLimits.MaxItems} transações por importação.");
                 return ValidationProblem(ModelState);
             }
 

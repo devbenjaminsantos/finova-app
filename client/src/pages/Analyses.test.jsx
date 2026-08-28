@@ -11,10 +11,6 @@ vi.mock("../lib/api/financialAccounts", () => ({
   getFinancialAccounts: vi.fn(),
 }));
 
-vi.mock("../features/dashboard/BudgetGoalsSection", () => ({
-  default: () => <div>Metas mockadas</div>,
-}));
-
 vi.mock("../features/dashboard/DashboardCharts", () => ({
   default: () => <div>Gráficos mockados</div>,
 }));
@@ -44,7 +40,7 @@ describe("Analyses page", () => {
     ]);
   });
 
-  it("shows merged insights, comparisons, and goals sections", () => {
+  it("shows merged insights and comparisons without duplicating planning", () => {
     useTransactions.mockReturnValue({
       isLoading: false,
       transactions: [
@@ -138,8 +134,7 @@ describe("Analyses page", () => {
     expect(screen.getByText("Comparativos")).toBeInTheDocument();
     expect(screen.getByText("Gráficos do período")).toBeInTheDocument();
     expect(screen.getByText("Gráficos mockados")).toBeInTheDocument();
-    expect(screen.getByText("Metas do mês")).toBeInTheDocument();
     expect(screen.getByText("Previsão dos próximos meses")).toBeInTheDocument();
-    expect(screen.getByText("Metas mockadas")).toBeInTheDocument();
+    expect(screen.queryByText("Metas mockadas")).not.toBeInTheDocument();
   });
 });

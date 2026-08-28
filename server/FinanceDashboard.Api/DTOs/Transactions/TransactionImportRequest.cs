@@ -9,6 +9,7 @@ namespace FinanceDashboard.Api.DTOs
 
         [Required]
         [MinLength(1)]
+        [MaxLength(TransactionImportLimits.MaxItems)]
         public List<TransactionImportItemRequest> Transactions { get; set; } = new();
     }
 }

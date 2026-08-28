@@ -61,6 +61,7 @@ export const translations = {
       home: "Início",
       charts: "Gráficos",
       transactions: "Transações",
+      planning: "Planejamento",
       analyses: "Análises",
       insights: "Insights",
       comparisons: "Comparativos",
@@ -363,7 +364,7 @@ export const translations = {
       shortcutsDescription:
         "Cada área ganhou uma página própria. Deixe aqui os caminhos que você mais usa.",
       shortcutChartsDescription: "Acompanhe gráficos e resumo geral do período.",
-      shortcutAnalysesDescription: "Reúna insights, comparativos e metas em uma única área.",
+      shortcutAnalysesDescription: "Reúna insights e comparativos para interpretar mudanças no período.",
       shortcutTransactionsDescription: "Consulte lançamentos, filtros e importações em um só lugar.",
       shortcutAccountsDescription: "Gerencie bancos, cartões e contas manuais cadastradas.",
       insightsTitle: "Insights em destaque",
@@ -648,13 +649,24 @@ export const translations = {
       removeInstallmentGroupTitle: "Remover compra parcelada",
       removeTransactionNote: "Esta ação não pode ser desfeita.",
       confirmRemove: "Remover agora",
+      planningTitle: "Planejamento",
+      planningSubtitle: "Organize metas, orçamento mensal e compromissos em um único lugar.",
+      planningPageNote:
+        "Defina limites para o mês, acompanhe o que já foi consumido e confira compromissos recorrentes ou parcelados antes de ajustar os próximos passos.",
+      planningCommitmentsTitle: "Compromissos financeiros",
+      planningCommitmentsSubtitle:
+        "Recorrências e parcelamentos que já impactam os próximos meses.",
+      planningManageCommitments: "Gerenciar em transações",
+      planningCommitmentsEmptyTitle: "Nenhum compromisso cadastrado",
+      planningCommitmentsEmptySubtitle:
+        "Quando você criar uma recorrência ou compra parcelada, ela aparecerá aqui para apoiar seu planejamento.",
       analysesTitle: "Análises",
       analysesSubtitle:
-        "Reúna insights, comparativos e metas em uma área única para interpretar o momento financeiro e decidir os próximos ajustes.",
+        "Reúna insights e comparativos para interpretar o momento financeiro e decidir os próximos ajustes.",
       analysesPeriod: "Período",
       analysesRange: "Janela comparativa",
       analysesPageNote:
-        "Esta área concentra leitura, comparação e planejamento no mesmo fluxo para reduzir troca de contexto e facilitar decisões.",
+        "Esta área concentra leitura e comparação. Para definir metas e revisar compromissos, use Planejamento.",
       displayedAccountLabel: "Conta exibida",
       allAccountsScope: "Todas as contas (saldo global)",
       unassignedScope: "Sem conta vinculada",
@@ -1045,6 +1057,7 @@ export const translations = {
       home: "Home",
       charts: "Charts",
       transactions: "Transactions",
+      planning: "Planning",
       analyses: "Analyses",
       insights: "Insights",
       comparisons: "Comparisons",
@@ -1346,7 +1359,7 @@ export const translations = {
       shortcutsDescription:
         "Each area now has its own page. Keep here the paths you use the most.",
       shortcutChartsDescription: "Follow charts and the overall summary for the selected period.",
-      shortcutAnalysesDescription: "Bring together insights, comparisons, and goals in one area.",
+      shortcutAnalysesDescription: "Bring together insights and comparisons to interpret changes in the selected period.",
       shortcutTransactionsDescription: "Review entries, filters, and imports in one place.",
       shortcutAccountsDescription: "Manage banks, cards, and registered manual accounts.",
       insightsTitle: "Highlighted insights",
@@ -1630,13 +1643,24 @@ export const translations = {
       removeInstallmentGroupTitle: "Remove installment purchase",
       removeTransactionNote: "This action cannot be undone.",
       confirmRemove: "Remove now",
+      planningTitle: "Planning",
+      planningSubtitle: "Organize goals, your monthly budget, and commitments in one place.",
+      planningPageNote:
+        "Set monthly limits, track what has already been used, and review recurring or installment commitments before adjusting your next steps.",
+      planningCommitmentsTitle: "Financial commitments",
+      planningCommitmentsSubtitle:
+        "Recurring entries and installments that already affect the coming months.",
+      planningManageCommitments: "Manage in transactions",
+      planningCommitmentsEmptyTitle: "No commitments yet",
+      planningCommitmentsEmptySubtitle:
+        "When you create a recurring entry or installment purchase, it will appear here to support your planning.",
       analysesTitle: "Analyses",
       analysesSubtitle:
-        "Bring together insights, comparisons, and goals in one area to interpret your current financial picture and decide the next adjustments.",
+        "Bring together insights and comparisons to interpret your current financial picture and decide the next adjustments.",
       analysesPeriod: "Period",
       analysesRange: "Comparison window",
       analysesPageNote:
-        "This area concentrates interpretation, comparison, and planning in the same flow to reduce context switching and support decisions.",
+        "This area concentrates interpretation and comparison. Use Planning to set goals and review commitments.",
       displayedAccountLabel: "Displayed account",
       allAccountsScope: "All accounts (global balance)",
       unassignedScope: "No linked account",
