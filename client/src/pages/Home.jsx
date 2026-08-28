@@ -925,11 +925,6 @@ export default function Home() {
           >
             <div className="row g-3">
               <ShortcutTile
-                title={t("navbar.charts")}
-                description={t("home.shortcutChartsDescription")}
-                to="/graficos"
-              />
-              <ShortcutTile
                 title={t("navbar.analyses")}
                 description={t("home.shortcutAnalysesDescription")}
                 to="/analises"

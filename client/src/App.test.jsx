@@ -31,6 +31,10 @@ vi.mock("./pages/Login", () => ({
   default: () => <h1>Login route</h1>,
 }));
 
+vi.mock("./pages/Analyses", () => ({
+  default: () => <h1>Analyses route</h1>,
+}));
+
 function LocationProbe() {
   const location = useLocation();
   return <output data-testid="location">{location.pathname}</output>;
@@ -82,6 +86,19 @@ describe("App routing", () => {
 
       expect(await screen.findByRole("heading", { name: "Home route" })).toBeInTheDocument();
       expect(screen.getByTestId("location")).toHaveTextContent("/");
+    },
+    15_000
+  );
+
+  it(
+    "redirects legacy chart routes to analyses for authenticated sessions",
+    async () => {
+      hasValidSession.mockReturnValue(true);
+
+      renderApp("/graficos");
+
+      expect(await screen.findByRole("heading", { name: "Analyses route" })).toBeInTheDocument();
+      expect(screen.getByTestId("location")).toHaveTextContent("/analises");
     },
     15_000
   );

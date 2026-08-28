@@ -415,6 +415,9 @@ export const translations = {
       insightsTitle: "Insights do período",
       insightsDescription:
         "Sinais automáticos e recomendações objetivas para o recorte selecionado.",
+      chartsEyebrow: "Leitura visual",
+      chartsTitle: "Gráficos do período",
+      chartsDescription: "Acompanhe a distribuição e o ritmo de entradas e saídas em {{period}}.",
       insightsEmptyTitle: "Ainda não há dados suficientes",
       insightsEmptyDescription:
         "Adicione transações para que a Héstia consiga interpretar padrões e sugerir ações.",
@@ -1393,6 +1396,9 @@ export const translations = {
       insightsTitle: "Period insights",
       insightsDescription:
         "Automatic signals and objective recommendations for the selected range.",
+      chartsEyebrow: "Visual reading",
+      chartsTitle: "Period charts",
+      chartsDescription: "Follow the distribution and pace of income and expenses in {{period}}.",
       insightsEmptyTitle: "There is still not enough data",
       insightsEmptyDescription:
         "Add transactions so Héstia can interpret patterns and suggest actions.",

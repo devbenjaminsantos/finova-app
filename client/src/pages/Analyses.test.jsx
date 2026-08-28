@@ -15,6 +15,10 @@ vi.mock("../features/dashboard/BudgetGoalsSection", () => ({
   default: () => <div>Metas mockadas</div>,
 }));
 
+vi.mock("../features/dashboard/DashboardCharts", () => ({
+  default: () => <div>Gráficos mockados</div>,
+}));
+
 import { useTransactions } from "../features/transactions/useTransactions";
 import { getFinancialAccounts } from "../lib/api/financialAccounts";
 
@@ -132,6 +136,8 @@ describe("Analyses page", () => {
     expect(screen.getByText("Análises")).toBeInTheDocument();
     expect(screen.getByText("Insights do período")).toBeInTheDocument();
     expect(screen.getByText("Comparativos")).toBeInTheDocument();
+    expect(screen.getByText("Gráficos do período")).toBeInTheDocument();
+    expect(screen.getByText("Gráficos mockados")).toBeInTheDocument();
     expect(screen.getByText("Metas do mês")).toBeInTheDocument();
     expect(screen.getByText("Previsão dos próximos meses")).toBeInTheDocument();
     expect(screen.getByText("Metas mockadas")).toBeInTheDocument();

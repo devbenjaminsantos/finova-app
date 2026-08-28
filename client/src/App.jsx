@@ -12,7 +12,6 @@ import {
 
 const Analyses = lazy(() => import("./pages/Analyses"));
 const AuditLogs = lazy(() => import("./pages/AuditLogs"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
 const FinancialAccounts = lazy(() => import("./pages/FinancialAccounts"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Home = lazy(() => import("./pages/Home"));
@@ -70,9 +69,9 @@ export default function App() {
         >
           <Route path="/" element={<Home />} />
 
-          <Route path="/graficos" element={<Dashboard />} />
+          <Route path="/graficos" element={<Navigate to="/analises" replace />} />
 
-          <Route path="/dashboard" element={<Navigate to="/graficos" replace />} />
+          <Route path="/dashboard" element={<Navigate to="/analises" replace />} />
 
           <Route path="/transacoes" element={<Transactions />} />
 

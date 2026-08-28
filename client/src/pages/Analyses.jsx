@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import PageHeader from "../components/layout/PageHeader";
 import BudgetGoalsSection from "../features/dashboard/BudgetGoalsSection";
+import DashboardCharts from "../features/dashboard/DashboardCharts";
 import {
   CategoryInsightCard,
   ComparisonCard,
@@ -13,6 +14,7 @@ import {
   getCategoryLeaders,
   getForecastSnapshot,
   getMonthsForPeriod,
+  lastNMonthsISO,
   getPrescriptiveInsights,
   getRelativeMonthsISO,
   getPeriodOptions,
@@ -108,6 +110,11 @@ export default function Analyses() {
   );
 
   const summary = useMemo(() => summarizeTransactions(filteredTransactions), [filteredTransactions]);
+
+  const chartMonths = useMemo(
+    () => (period === "all" ? lastNMonthsISO(6) : getMonthsForPeriod(period)),
+    [period]
+  );
 
   const automaticInsights = useMemo(
     () => getAutomaticInsights(filteredTransactions, t),
@@ -377,6 +384,22 @@ export default function Analyses() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="finova-card p-4 mb-4">
+            <AnalysisSectionHeader
+              eyebrow={t("analyses.chartsEyebrow")}
+              title={t("analyses.chartsTitle")}
+              description={t("analyses.chartsDescription", {
+                period: selectedPeriodLabel.toLowerCase(),
+              })}
+            />
+
+            <DashboardCharts
+              transactions={filteredTransactions}
+              chartMonths={chartMonths}
+              periodLabel={selectedPeriodLabel}
+            />
           </div>
 
           <div className="finova-card p-4 mb-4">

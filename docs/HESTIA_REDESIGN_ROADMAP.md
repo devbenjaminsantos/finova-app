@@ -312,9 +312,9 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 
 - [x] Migrar Transações para lista densa e criação rápida.
 - [x] Manter tags, recorrência e campos raros em `Mais opções`.
-- [ ] Consolidar gráficos e comparações em Análises.
+- [x] Consolidar gráficos e comparações em Análises.
 - [ ] Criar `/planejamento` para metas, orçamentos e compromissos.
-- [ ] Redirecionar `/graficos` e `/metas` sem quebrar favoritos antigos.
+- [x] Redirecionar `/graficos` e `/metas` sem quebrar favoritos antigos.
 - [ ] Migrar Contas para o novo shell e tom visual.
 - [ ] Preservar Perfil, Histórico e dashboard público como áreas secundárias.
 - [ ] Alinhar nomes de exportação CSV/PDF e suas asserções de teste com a marca
@@ -372,6 +372,18 @@ erro quando aplicáveis, sem duplicar regras em cada página.
   de diff passaram. A checagem visual automatizada ficou indisponível porque o
   executável `agent-browser` não está instalado neste ambiente. API, banco e
   Brevo seguem inalterados.
+
+**Evidência de consolidação de Análises (2026-08-28):**
+
+- os gráficos por categoria e por evolução mensal agora ficam em `/analises`,
+  usando exatamente os mesmos filtros de período e escopo de conta dos
+  insights, comparativos, previsão e metas;
+- `/graficos` e o alias `/dashboard` passaram a redirecionar para `/analises`.
+  A navegação e o atalho da Home deixam de oferecer uma área de gráficos
+  duplicada; `/metas` já preservava o redirecionamento compatível;
+- lint, 15 testes focados (rotas, Análises, Home e i18n), build de produção e
+  verificação de diff passaram. Nenhuma chamada de API, regra de banco ou
+  configuração do Brevo foi alterada.
 
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.

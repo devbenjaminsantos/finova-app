@@ -5,7 +5,6 @@ import BrandMark from "../BrandMark";
 
 const PAGE_TITLE_KEYS = {
   "/": "pages.homeTitle",
-  "/graficos": "pages.dashboardTitle",
   "/transacoes": "pages.transactionsTitle",
   "/analises": "pages.analysesTitle",
   "/contas": "pages.accountsTitle",
@@ -36,4 +35,3 @@ export default function Topbar() {
     </header>
   );
 }
-
