@@ -2,8 +2,38 @@ const PAGE_WIDTH = 595;
 const PAGE_HEIGHT = 842;
 const PAGE_MARGIN_X = 40;
 const PAGE_TOP = 800;
+const PDF_FONT_SIZE = 9;
 const LINE_HEIGHT = 16;
 const ROWS_PER_PAGE = 28;
+const WIN_ANSI_BYTES = new Map([
+  [0x20ac, 0x80],
+  [0x201a, 0x82],
+  [0x0192, 0x83],
+  [0x201e, 0x84],
+  [0x2026, 0x85],
+  [0x2020, 0x86],
+  [0x2021, 0x87],
+  [0x02c6, 0x88],
+  [0x2030, 0x89],
+  [0x0160, 0x8a],
+  [0x2039, 0x8b],
+  [0x0152, 0x8c],
+  [0x017d, 0x8e],
+  [0x2018, 0x91],
+  [0x2019, 0x92],
+  [0x201c, 0x93],
+  [0x201d, 0x94],
+  [0x2022, 0x95],
+  [0x2013, 0x96],
+  [0x2014, 0x97],
+  [0x02dc, 0x98],
+  [0x2122, 0x99],
+  [0x0161, 0x9a],
+  [0x203a, 0x9b],
+  [0x0153, 0x9c],
+  [0x017e, 0x9e],
+  [0x0178, 0x9f],
+]);
 
 function padText(value, length, align = "left") {
   const normalized = String(value ?? "");
@@ -21,23 +51,15 @@ function formatRow(columns) {
   return columns.join(" | ");
 }
 
-function toPdfHexString(value) {
+function toPdfWinAnsiHexString(value) {
   const input = String(value ?? "");
-  let hex = "FEFF";
+  let hex = "";
 
   for (const character of input) {
     const codePoint = character.codePointAt(0);
+    const byte = codePoint <= 0xff ? codePoint : WIN_ANSI_BYTES.get(codePoint) ?? 0x3f;
 
-    if (codePoint <= 0xffff) {
-      hex += codePoint.toString(16).padStart(4, "0").toUpperCase();
-      continue;
-    }
-
-    const adjusted = codePoint - 0x10000;
-    const high = 0xd800 + (adjusted >> 10);
-    const low = 0xdc00 + (adjusted & 0x3ff);
-    hex += high.toString(16).padStart(4, "0").toUpperCase();
-    hex += low.toString(16).padStart(4, "0").toUpperCase();
+    hex += byte.toString(16).padStart(2, "0").toUpperCase();
   }
 
   return `<${hex}>`;
@@ -107,24 +129,24 @@ function buildPageChunks(lines) {
 function buildContentStream(lines, pageNumber, pageCount, pageLabel, pageOfLabel) {
   const commands = [
     "BT",
-    "/F1 12 Tf",
+    `/F1 ${PDF_FONT_SIZE} Tf`,
     `${LINE_HEIGHT} TL`,
     `${PAGE_MARGIN_X} ${PAGE_TOP} Td`,
   ];
 
   lines.forEach((line, index) => {
     if (index === 0) {
-      commands.push(`${toPdfHexString(line)} Tj`);
+      commands.push(`${toPdfWinAnsiHexString(line)} Tj`);
       return;
     }
 
     commands.push("T*");
-    commands.push(`${toPdfHexString(line)} Tj`);
+    commands.push(`${toPdfWinAnsiHexString(line)} Tj`);
   });
 
   commands.push("T*");
   commands.push(
-    `${toPdfHexString(`${pageLabel} ${pageNumber} ${pageOfLabel} ${pageCount}`)} Tj`
+    `${toPdfWinAnsiHexString(`${pageLabel} ${pageNumber} ${pageOfLabel} ${pageCount}`)} Tj`
   );
   commands.push("ET");
 
@@ -163,7 +185,10 @@ function buildPdfDocument(pageContents) {
       .map((id) => `${id} 0 R`)
       .join(" ")}] >>`,
   };
-  const fontObject = { id: 3, body: "<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>" };
+  const fontObject = {
+    id: 3,
+    body: "<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>",
+  };
 
   const orderedObjects = [catalogObject, pagesObject, fontObject, ...objects].sort(
     (left, right) => left.id - right.id

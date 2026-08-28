@@ -317,7 +317,7 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 - [x] Redirecionar `/graficos` e `/metas` sem quebrar favoritos antigos.
 - [x] Migrar Contas para o novo shell e tom visual.
 - [x] Preservar Perfil, Histórico e dashboard público como áreas secundárias.
-- [ ] Alinhar nomes de exportação CSV/PDF e suas asserções de teste com a marca
+- [x] Alinhar nomes de exportação CSV/PDF e suas asserções de teste com a marca
   aprovada.
 - [ ] Limitar a quantidade de itens aceita por importação na API e manter o
   limite de tamanho do arquivo no frontend.
@@ -407,6 +407,18 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 - lint, seis testes focados (Contas e i18n), build de produção e verificação de
   diff passaram. Nenhuma chamada da API, regra de banco ou configuração do
   Brevo foi alterada.
+
+**Evidência da correção de exportação (2026-08-28):**
+
+- CSV e PDF usam os nomes exatos `hestia-transacoes-todos.csv` e
+  `hestia-transacoes-todos.pdf` no fluxo sem filtro; as asserções cobrem ambos;
+- o PDF usa Courier com `WinAnsiEncoding` e fonte de 9 pt. Isso preserva
+  acentos e mantém data, descrição, categoria, tipo e valor dentro da página,
+  sem a duplicação de largura causada pelo UTF-16 anterior;
+- três testes unitários do gerador, dois testes focados de exportação e um fluxo
+  Playwright no Chromium passaram. O último carregou dois lançamentos simulados,
+  acionou o download e validou o PDF produzido. Lint, build e verificação de
+  diff também passaram; API, banco e Brevo não foram alterados.
 
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.

@@ -20,6 +20,29 @@ describe("pdf export helpers", () => {
     expect(pdf).toContain("%%EOF");
   });
 
+  it("keeps accented text and all table columns in the page width", () => {
+    const pdf = buildTransactionsPdf({
+      title: "Transações",
+      subtitle: "Todos os períodos | 1 registro(s)",
+      columns: ["Data", "Descrição", "Categoria", "Tipo", "Valor"],
+      rows: [["14/08/2026", "Mercado São Bento", "Alimentação", "Despesa", "R$ 153,45"]],
+      emptyMessage: "Nenhuma transação encontrada.",
+      generatedAtLabel: "Gerado em",
+      pageLabel: "Página",
+      pageOfLabel: "de",
+      locale: "pt-BR",
+    });
+
+    expect(pdf).toContain("/Encoding /WinAnsiEncoding");
+    expect(pdf).toContain("/F1 9 Tf");
+    expect(pdf).not.toContain("FEFF");
+    expect(pdf).toContain("5472616E7361E7F56573");
+    expect(pdf).toContain("446573637269E7E36F");
+    expect(pdf).toContain("4D65726361646F2053E36F2042656E746F");
+    expect(pdf).toContain("416C696D656E7461E7E36F");
+    expect(pdf).toContain("5224203135332C3435");
+  });
+
   it("downloads the generated pdf using a blob url", () => {
     const originalCreateElement = document.createElement.bind(document);
     const appendChildSpy = vi.spyOn(document.body, "appendChild");

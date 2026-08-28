@@ -260,7 +260,7 @@ describe("Transactions page", () => {
     expect(mockDownloadCsv).toHaveBeenCalledTimes(1);
     const [filename, rows] = mockDownloadCsv.mock.calls[0];
 
-    expect(filename).toContain("hestia-transacoes");
+    expect(filename).toBe("hestia-transacoes-todos.csv");
     expect(rows).toHaveLength(4);
     expect(rows[1][1]).toBe("Notebook");
     expect(rows[1][3]).toBe("trabalho");
@@ -277,6 +277,7 @@ describe("Transactions page", () => {
     expect(mockExportPdf).toHaveBeenCalledTimes(1);
     const [document] = mockExportPdf.mock.calls[0];
 
+    expect(document.filename).toBe("hestia-transacoes-todos.pdf");
     expect(document.columns).toEqual(["Data", "Descrição", "Categoria", "Tipo", "Valor"]);
     expect(document.rows).toHaveLength(1);
     expect(document.rows[0]).toEqual([
