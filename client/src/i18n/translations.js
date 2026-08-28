@@ -543,6 +543,8 @@ export const translations = {
         "Remover {{institution}} - {{account}}?",
       removeConfirmWithTransactions:
         "Remover {{institution}} - {{account}}? As {{count}} transações vinculadas continuarão no sistema, mas ficarão sem conta associada.",
+      removeTitle: "Remover conta",
+      confirmRemove: "Remover agora",
       removeSuccess: "Conta removida com sucesso.",
       removeSuccessWithTransactions:
         "Conta removida. As transações foram preservadas e seguiram sem vinculação.",
@@ -1523,6 +1525,8 @@ export const translations = {
       removeConfirm: "Remove {{institution}} - {{account}}?",
       removeConfirmWithTransactions:
         "Remove {{institution}} - {{account}}? The {{count}} linked transactions will remain in the system, but without an associated account.",
+      removeTitle: "Remove account",
+      confirmRemove: "Remove now",
       removeSuccess: "Account removed successfully.",
       removeSuccessWithTransactions:
         "Account removed. The transactions were preserved and now remain without a linked account.",

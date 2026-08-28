@@ -59,7 +59,7 @@ describe("FinancialAccounts page", () => {
     renderPage();
 
     expect(await screen.findByText("Nubank")).toBeInTheDocument();
-    expect(screen.getByText("Conta principal")).toBeInTheDocument();
+    expect(screen.getByText(/Conta: Conta principal/)).toBeInTheDocument();
     expect(screen.getAllByText("Conta bancária").length).toBeGreaterThan(0);
     expect(screen.getByText("Pendente")).toBeInTheDocument();
     expect(screen.getByText("Controle manual")).toBeInTheDocument();
@@ -159,14 +159,11 @@ describe("FinancialAccounts page", () => {
     });
 
     expect(await screen.findByText("Conta financeira atualizada com sucesso.")).toBeInTheDocument();
-    expect(screen.getByText("Reserva imediata")).toBeInTheDocument();
+    expect(screen.getByText(/Conta: Reserva imediata/)).toBeInTheDocument();
   });
 
   it("removes an account and preserves transactions", async () => {
     const reloadTransactions = vi.fn().mockResolvedValue(undefined);
-    const originalConfirm = window.confirm;
-    window.confirm = vi.fn(() => true);
-
     useTransactions.mockReturnValue({
       loadAll: reloadTransactions,
     });
@@ -177,6 +174,10 @@ describe("FinancialAccounts page", () => {
     await screen.findByText("Nubank");
 
     fireEvent.click(screen.getByRole("button", { name: "Remover" }));
+    expect(screen.getByRole("dialog", { name: "Remover conta" })).toBeInTheDocument();
+    expect(deleteFinancialAccount).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Remover agora" }));
 
     await waitFor(() => {
       expect(deleteFinancialAccount).toHaveBeenCalledWith(1);
@@ -190,7 +191,5 @@ describe("FinancialAccounts page", () => {
       await screen.findByText("Conta removida. As transações foram preservadas e seguiram sem vinculação.")
     ).toBeInTheDocument();
     expect(screen.queryByText("Nubank")).not.toBeInTheDocument();
-
-    window.confirm = originalConfirm;
   });
 });

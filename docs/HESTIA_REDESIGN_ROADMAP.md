@@ -315,7 +315,7 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 - [x] Consolidar gráficos e comparações em Análises.
 - [ ] Criar `/planejamento` para metas, orçamentos e compromissos.
 - [x] Redirecionar `/graficos` e `/metas` sem quebrar favoritos antigos.
-- [ ] Migrar Contas para o novo shell e tom visual.
+- [x] Migrar Contas para o novo shell e tom visual.
 - [x] Preservar Perfil, Histórico e dashboard público como áreas secundárias.
 - [ ] Alinhar nomes de exportação CSV/PDF e suas asserções de teste com a marca
   aprovada.
@@ -395,6 +395,18 @@ erro quando aplicáveis, sem duplicar regras em cada página.
   da navegação autenticada;
 - lint, cinco testes focados de rota/navegação, build de produção e verificação
   de diff passaram. API, banco e Brevo não foram alterados.
+
+**Evidência da migração de Contas (2026-08-28):**
+
+- os saldos agora usam as métricas compartilhadas do novo shell e as contas
+  cadastradas uma lista densa, mantendo instituição, identificador, tipo,
+  escopo e saldo visíveis;
+- criação, edição e recarga dos lançamentos preservam os mesmos contratos. A
+  remoção passou a usar o modal compartilhado, que deixa explícito quando há
+  lançamentos vinculados antes de confirmar a ação;
+- lint, seis testes focados (Contas e i18n), build de produção e verificação de
+  diff passaram. Nenhuma chamada da API, regra de banco ou configuração do
+  Brevo foi alterada.
 
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.

@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import PageHeader from "../components/layout/PageHeader";
+import Button from "../components/ui/Button";
+import EmptyState from "../components/ui/EmptyState";
+import Metric from "../components/ui/Metric";
+import Modal from "../components/ui/Modal";
 import { useTransactions } from "../features/transactions/useTransactions";
 import { useI18n } from "../i18n/LanguageProvider";
 import {
@@ -95,6 +99,60 @@ function sortAccounts(list) {
   });
 }
 
+function FinancialAccountRow({ account, formatDateTime, isRemoving, onEdit, onRemove, t }) {
+  const statusMeta = getStatusMeta(account.status, t);
+  const accountTypeMeta = getAccountTypeMeta(account.accountType, t);
+
+  return (
+    <li className="finova-account-list-item">
+      <div className="finova-account-list-main">
+        <div className="finova-account-list-copy">
+          <strong className="finova-transaction-list-description">{account.institutionName}</strong>
+          <div className="finova-transaction-list-badges">
+            <span className={statusMeta.className}>{statusMeta.label}</span>
+            <span className={accountTypeMeta.className}>{accountTypeMeta.label}</span>
+            <span className="finova-badge-neutral">{formatProviderLabel(account.provider, t)}</span>
+          </div>
+        </div>
+
+        <div className="finova-actions-row finova-transaction-list-actions">
+          <Button variant="secondary" className="btn-sm" onClick={() => onEdit(account)} disabled={isRemoving}>
+            {t("accounts.editButton")}
+          </Button>
+          <Button variant="danger" className="btn-sm" onClick={() => onRemove(account)} disabled={isRemoving} loading={isRemoving}>
+            {isRemoving ? t("accounts.removing") : t("accounts.remove")}
+          </Button>
+        </div>
+      </div>
+
+      <div className="finova-account-list-label">
+        {formatFinancialAccountLabel(account, {
+          fallbackName: t("accounts.fallbackAccountName"),
+          endingLabel: t("accounts.endingLabel"),
+        })}
+      </div>
+
+      <div className="finova-financial-account-meta">
+        <span>{t("accounts.metaAccount")}: {account.accountName}</span>
+        <span>{t("accounts.metaType")}: {accountTypeMeta.label}</span>
+        {account.accountMask ? <span>{t("accounts.metaEnding")}: {account.accountMask}</span> : null}
+        <span>{t("accounts.metaTransactions")}: {account.linkedTransactionsCount ?? 0}</span>
+        <span>
+          {t("accounts.metaLastSync")}: {account.lastSyncedAtUtc
+            ? formatDateTime(account.lastSyncedAtUtc)
+            : t("accounts.neverSynced")}
+        </span>
+      </div>
+
+      {account.linkedTransactionsCount > 0 ? (
+        <p className="finova-account-list-warning mb-0">
+          {t("accounts.linkedTransactionsWarning", { count: account.linkedTransactionsCount })}
+        </p>
+      ) : null}
+    </li>
+  );
+}
+
 export default function FinancialAccounts() {
   const { t, formatDateTime } = useI18n();
   const { loadAll: reloadTransactions } = useTransactions();
@@ -104,6 +162,7 @@ export default function FinancialAccounts() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [removingAccountId, setRemovingAccountId] = useState(null);
+  const [removalTarget, setRemovalTarget] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -222,20 +281,18 @@ export default function FinancialAccounts() {
     }
   }
 
-  async function handleRemove(account) {
-    const message =
-      account.linkedTransactionsCount > 0
-        ? t("accounts.removeConfirmWithTransactions", {
-            institution: account.institutionName,
-            account: account.accountName,
-            count: account.linkedTransactionsCount,
-          })
-        : t("accounts.removeConfirm", {
-            institution: account.institutionName,
-            account: account.accountName,
-          });
+  function requestRemoval(account) {
+    if (isSubmitting || removingAccountId) {
+      return;
+    }
 
-    if (!window.confirm(message)) {
+    setRemovalTarget(account);
+  }
+
+  async function confirmRemoval() {
+    const account = removalTarget;
+
+    if (!account || isSubmitting || removingAccountId) {
       return;
     }
 
@@ -261,6 +318,7 @@ export default function FinancialAccounts() {
       setError(err.message || t("accounts.removeError"));
     } finally {
       setRemovingAccountId(null);
+      setRemovalTarget(null);
     }
   }
 
@@ -273,39 +331,12 @@ export default function FinancialAccounts() {
           {t("pages.accountsPageNote")}
         </div>
 
-        <div className="finova-card p-4">
-          <div className="row g-3">
-            <div className="col-12 col-md-6 col-xl">
-              <div className="finova-card-soft p-3 h-100">
-                <div className="finova-subtitle small mb-1">{t("accounts.summaryRegistered")}</div>
-                <div className="finova-title h4 mb-0">{summary.total}</div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 col-xl">
-              <div className="finova-card-soft p-3 h-100">
-                <div className="finova-subtitle small mb-1">{t("accounts.summaryConnected")}</div>
-                <div className="finova-title h4 mb-0">{summary.connected}</div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 col-xl">
-              <div className="finova-card-soft p-3 h-100">
-                <div className="finova-subtitle small mb-1">{t("accounts.summaryPending")}</div>
-                <div className="finova-title h4 mb-0">{summary.pending}</div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 col-xl">
-              <div className="finova-card-soft p-3 h-100">
-                <div className="finova-subtitle small mb-1">{t("accounts.summarySynced")}</div>
-                <div className="finova-title h4 mb-0">{summary.synced}</div>
-              </div>
-            </div>
-            <div className="col-12 col-md-6 col-xl">
-              <div className="finova-card-soft p-3 h-100">
-                <div className="finova-subtitle small mb-1">{t("accounts.summaryCreditCards")}</div>
-                <div className="finova-title h4 mb-0">{summary.creditCards}</div>
-              </div>
-            </div>
-          </div>
+        <div className="finova-account-metrics">
+          <Metric label={t("accounts.summaryRegistered")} value={summary.total} />
+          <Metric label={t("accounts.summaryConnected")} value={summary.connected} tone="income" />
+          <Metric label={t("accounts.summaryPending")} value={summary.pending} tone="warning" />
+          <Metric label={t("accounts.summarySynced")} value={summary.synced} tone="primary" />
+          <Metric label={t("accounts.summaryCreditCards")} value={summary.creditCards} />
         </div>
 
         <div className="row g-4">
@@ -476,16 +507,15 @@ export default function FinancialAccounts() {
                 <div className="col-12">
                   <div className="finova-actions-row finova-actions-row-end pt-2">
                     {editingAccountId ? (
-                      <button
-                        type="button"
-                        className="btn finova-btn-light"
+                      <Button
+                        variant="secondary"
                         onClick={handleCancelEdit}
                         disabled={isSubmitting}
                       >
                         {t("accounts.cancelEdit")}
-                      </button>
+                      </Button>
                     ) : null}
-                    <button type="submit" className="btn finova-btn-primary px-4" disabled={isSubmitting}>
+                    <Button type="submit" className="px-4" loading={isSubmitting}>
                       {isSubmitting
                         ? editingAccountId
                           ? t("accounts.saving")
@@ -493,7 +523,7 @@ export default function FinancialAccounts() {
                         : editingAccountId
                           ? t("accounts.saveChanges")
                           : t("accounts.addButton")}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </form>
@@ -508,9 +538,9 @@ export default function FinancialAccounts() {
                   <p className="finova-subtitle mb-0">{t("accounts.listSubtitle")}</p>
                 </div>
 
-                <button type="button" className="btn finova-btn-light" onClick={loadAccounts} disabled={isLoading}>
+                <Button variant="secondary" onClick={loadAccounts} loading={isLoading}>
                   {isLoading ? t("accounts.refreshing") : t("accounts.refresh")}
-                </button>
+                </Button>
               </div>
 
               <div className="finova-card-soft p-3 mb-3">
@@ -531,98 +561,60 @@ export default function FinancialAccounts() {
                   <p className="finova-subtitle mb-0">{t("accounts.loading")}</p>
                 </div>
               ) : accounts.length === 0 ? (
-                <div className="finova-empty-state">
-                  <h3 className="finova-title h6 mb-2">{t("accounts.emptyTitle")}</h3>
-                  <p className="finova-subtitle mb-0">{t("accounts.emptySubtitle")}</p>
-                </div>
+                <EmptyState titleAs="h3" title={t("accounts.emptyTitle")} description={t("accounts.emptySubtitle")} />
               ) : (
-                <div className="d-grid gap-3">
+                <ul className="finova-account-list list-unstyled mb-0" aria-label={t("accounts.listTitle")}>
                   {accounts.map((account) => {
-                    const statusMeta = getStatusMeta(account.status, t);
-                    const accountTypeMeta = getAccountTypeMeta(account.accountType, t);
-                    const isRemoving = removingAccountId === account.id;
-
                     return (
-                      <div key={account.id} className="finova-card-soft p-3">
-                        <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3">
-                          <div className="flex-grow-1">
-                            <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
-                              <h3 className="finova-title h6 mb-0">{account.institutionName}</h3>
-                              <span className={statusMeta.className}>{statusMeta.label}</span>
-                              <span className={accountTypeMeta.className}>{accountTypeMeta.label}</span>
-                              <span className="finova-badge-neutral">
-                                {formatProviderLabel(account.provider, t)}
-                              </span>
-                            </div>
-
-                            <div className="finova-subtitle small mb-2">
-                              {formatFinancialAccountLabel(account, {
-                                fallbackName: t("accounts.fallbackAccountName"),
-                                endingLabel: t("accounts.endingLabel"),
-                              })}
-                            </div>
-
-                            <div className="finova-financial-account-meta">
-                              <span>
-                                <strong>{t("accounts.metaAccount")}:</strong> {account.accountName}
-                              </span>
-                              <span>
-                                <strong>{t("accounts.metaType")}:</strong> {accountTypeMeta.label}
-                              </span>
-                              {account.accountMask ? (
-                                <span>
-                                  <strong>{t("accounts.metaEnding")}:</strong> {account.accountMask}
-                                </span>
-                              ) : null}
-                              <span>
-                                <strong>{t("accounts.metaTransactions")}:</strong>{" "}
-                                {account.linkedTransactionsCount ?? 0}
-                              </span>
-                              <span>
-                                <strong>{t("accounts.metaLastSync")}:</strong>{" "}
-                                {account.lastSyncedAtUtc
-                                  ? formatDateTime(account.lastSyncedAtUtc)
-                                  : t("accounts.neverSynced")}
-                              </span>
-                            </div>
-
-                            {account.linkedTransactionsCount > 0 ? (
-                              <div className="finova-page-note mt-3">
-                                {t("accounts.linkedTransactionsWarning", {
-                                  count: account.linkedTransactionsCount,
-                                })}
-                              </div>
-                            ) : null}
-                          </div>
-
-                          <div className="finova-actions-row">
-                            <button
-                              type="button"
-                              className="btn finova-btn-light"
-                              onClick={() => handleStartEdit(account)}
-                              disabled={isRemoving}
-                            >
-                              {t("accounts.editButton")}
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-outline-danger"
-                              onClick={() => handleRemove(account)}
-                              disabled={isRemoving}
-                            >
-                              {isRemoving ? t("accounts.removing") : t("accounts.remove")}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                      <FinancialAccountRow
+                        key={account.id}
+                        account={account}
+                        formatDateTime={formatDateTime}
+                        isRemoving={removingAccountId === account.id}
+                        onEdit={handleStartEdit}
+                        onRemove={requestRemoval}
+                        t={t}
+                      />
                     );
                   })}
-                </div>
+                </ul>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={Boolean(removalTarget)}
+        onClose={() => setRemovalTarget(null)}
+        title={t("accounts.removeTitle")}
+        subtitle={
+          removalTarget?.linkedTransactionsCount > 0
+            ? t("accounts.removeConfirmWithTransactions", {
+                institution: removalTarget.institutionName,
+                account: removalTarget.accountName,
+                count: removalTarget.linkedTransactionsCount,
+              })
+            : t("accounts.removeConfirm", {
+                institution: removalTarget?.institutionName,
+                account: removalTarget?.accountName,
+              })
+        }
+        closeLabel={t("common.cancel")}
+        dismissible={!removingAccountId}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setRemovalTarget(null)} disabled={Boolean(removingAccountId)}>
+              {t("common.cancel")}
+            </Button>
+            <Button variant="danger" onClick={confirmRemoval} loading={Boolean(removingAccountId)}>
+              {t("accounts.confirmRemove")}
+            </Button>
+          </>
+        }
+      >
+        <p className="mb-0">{t("accounts.removeNote")}</p>
+      </Modal>
     </section>
   );
 }
