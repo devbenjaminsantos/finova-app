@@ -310,8 +310,8 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 
 ## Etapa 5 - fluxos principais
 
-- [ ] Migrar Transações para lista densa e criação rápida.
-- [ ] Manter tags, recorrência e campos raros em `Mais opções`.
+- [x] Migrar Transações para lista densa e criação rápida.
+- [x] Manter tags, recorrência e campos raros em `Mais opções`.
 - [ ] Consolidar gráficos e comparações em Análises.
 - [ ] Criar `/planejamento` para metas, orçamentos e compromissos.
 - [ ] Redirecionar `/graficos` e `/metas` sem quebrar favoritos antigos.
@@ -358,6 +358,20 @@ erro quando aplicáveis, sem duplicar regras em cada página.
   de confirmação. O build foi iniciado e atingiu a geração de chunks, mas o
   executor local encerrou sua captura antes do resultado final; essa validação
   permanece pendente antes de fechar a etapa.
+
+**Evidência de fechamento do bloco de Transações (2026-08-28):**
+
+- recorrências e compras parceladas passaram a usar seções e listas densas,
+  separadas do estado e dos filtros da página. As métricas, tags, categoria,
+  valor, próxima ocorrência, saldo, progresso, edição e remoção continuam
+  disponíveis no mesmo fluxo;
+- o progresso de parcelamento usa o componente acessível compartilhado e os
+  itens longos usam `content-visibility`, sem introduzir nova busca, estado
+  duplicado, endpoint ou regra financeira;
+- lint, 17 testes focados em execução serial, build de produção e verificação
+  de diff passaram. A checagem visual automatizada ficou indisponível porque o
+  executável `agent-browser` não está instalado neste ambiente. API, banco e
+  Brevo seguem inalterados.
 
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.

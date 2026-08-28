@@ -319,6 +319,12 @@ describe("Transactions page", () => {
     expect(screen.getByText("Próxima parcela")).toBeInTheDocument();
     expect(screen.getByText("Progresso da quitação")).toBeInTheDocument();
     expect(screen.getByText(/Parcela 3 em/i)).toBeInTheDocument();
+    expect(screen.getByRole("list", { name: "Regras recorrentes" })).toBeInTheDocument();
+    expect(screen.getByRole("list", { name: "Compras parceladas" })).toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Progresso da quitação" })).toHaveAttribute(
+      "aria-valuenow",
+      "67"
+    );
   });
 
   it("shows import feedback after confirming an import", async () => {
