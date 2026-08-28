@@ -11,6 +11,7 @@ using FinanceDashboard.Api.Services.Email;
 using FinanceDashboard.Api.Services.Notifications;
 using FinanceDashboard.Api.Services.PublicDashboard;
 using FinanceDashboard.Api.Services.Recurring;
+using FinanceDashboard.Api.Services.Security;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -181,6 +182,12 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.OnRejected = async (context, cancellationToken) =>
     {
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+        {
+            context.HttpContext.Response.Headers.RetryAfter =
+                Math.Max(1, Math.Ceiling(retryAfter.TotalSeconds)).ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
         context.HttpContext.Response.ContentType = "application/problem+json";
         await context.HttpContext.Response.WriteAsJsonAsync(new ProblemDetails
         {
@@ -189,20 +196,39 @@ builder.Services.AddRateLimiter(options =>
         }, cancellationToken: cancellationToken);
     };
 
-    options.AddPolicy("auth", httpContext =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: $"{httpContext.Connection.RemoteIpAddress}:{httpContext.Request.Path.Value?.ToLowerInvariant()}",
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        if (HttpMethods.IsOptions(httpContext.Request.Method) ||
+            httpContext.Request.Path.StartsWithSegments("/health"))
+        {
+            return RateLimitPartition.GetNoLimiter("system");
+        }
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: RateLimitPartitionKeys.ByIp(httpContext),
             factory: _ => new FixedWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit = 30,
+                PermitLimit = 120,
+                QueueLimit = 0,
+                Window = TimeSpan.FromMinutes(1)
+            });
+    });
+
+    options.AddPolicy(RateLimitPolicyNames.Auth, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: RateLimitPartitionKeys.ByIpAndPath(httpContext),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 10,
                 QueueLimit = 0,
                 Window = TimeSpan.FromMinutes(1)
             }));
 
-    options.AddPolicy("demo", httpContext =>
+    options.AddPolicy(RateLimitPolicyNames.Demo, httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            partitionKey: RateLimitPartitionKeys.ByIp(httpContext),
             factory: _ => new FixedWindowRateLimiterOptions
             {
                 AutoReplenishment = true,

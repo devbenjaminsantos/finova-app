@@ -5,6 +5,7 @@ using FinanceDashboard.Api.Services.Audit;
 using FinanceDashboard.Api.Services.Auth;
 using FinanceDashboard.Api.Services.Email;
 using FinanceDashboard.Api.Services.Demo;
+using FinanceDashboard.Api.Services.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,7 @@ namespace FinanceDashboard.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableRateLimiting("auth")]
+    [EnableRateLimiting(RateLimitPolicyNames.Auth)]
     public class AuthController : ControllerBase
     {
         private const int MaxFailedLoginAttempts = 5;
@@ -240,7 +241,7 @@ namespace FinanceDashboard.Api.Controllers
         }
 
         [HttpPost("demo-login")]
-        [EnableRateLimiting("demo")]
+        [EnableRateLimiting(RateLimitPolicyNames.Demo)]
         public async Task<ActionResult<AuthResponse>> DemoLogin()
         {
             if (!_configuration.GetValue("Demo:Enabled", true))

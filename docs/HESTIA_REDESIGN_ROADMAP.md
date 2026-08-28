@@ -507,6 +507,18 @@ o redesign pronto para produção.
   principais depois do novo domínio.
 - [ ] Manter preview deployments fora do banco e das credenciais de produção.
 
+**Evidência da fundação de rate limiting (2026-08-28):**
+
+- a API passou a aplicar 120 requisições por minuto por IP como proteção global,
+  com exceção de preflight e health check; autenticação usa 10 por minuto por
+  IP e rota, e a conta demo preserva o limite de 5 por minuto;
+- respostas `429` retornam `ProblemDetails` e `Retry-After`. As chaves usam
+  somente `RemoteIpAddress` já processado pelo middleware, ignorando um
+  `X-Forwarded-For` bruto vindo do cliente e normalizando IPv4 mapeado em IPv6;
+- três testes focados da chave de partição e a suíte completa da API (92 testes)
+  passaram. O range confiável de proxies Railway ainda precisa ser reduzido e
+  validado antes de marcar o item P0 correspondente como concluído.
+
 ### P1 - dados públicos e entradas grandes
 
 - [ ] Definir o período e o conjunto mínimo de dados exibidos no dashboard
