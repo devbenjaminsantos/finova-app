@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useI18n } from "../../i18n/LanguageProvider";
 import BrandMark from "../BrandMark";
 import ShellPreferences from "./ShellPreferences";
-import { PRIMARY_NAV_ITEMS } from "./navigationItems";
+import { PRIMARY_NAV_ITEMS, SECONDARY_NAV_ITEMS } from "./navigationItems";
 
 function getNavClass({ isActive }) {
   return `app-nav-link${isActive ? " app-nav-link-active" : ""}`;
@@ -37,6 +37,10 @@ export default function Sidebar({ user, onLogout }) {
       </nav>
 
       <div className="app-sidebar-footer">
+        {SECONDARY_NAV_ITEMS.map((item) => (
+          <SidebarNavItem key={item.to} item={item} />
+        ))}
+
         <NavLink to="/perfil" className={getNavClass}>
           <UserRound size={19} strokeWidth={1.8} aria-hidden="true" />
           <span>{t("navbar.profile")}</span>

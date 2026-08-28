@@ -316,7 +316,7 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 - [ ] Criar `/planejamento` para metas, orçamentos e compromissos.
 - [x] Redirecionar `/graficos` e `/metas` sem quebrar favoritos antigos.
 - [ ] Migrar Contas para o novo shell e tom visual.
-- [ ] Preservar Perfil, Histórico e dashboard público como áreas secundárias.
+- [x] Preservar Perfil, Histórico e dashboard público como áreas secundárias.
 - [ ] Alinhar nomes de exportação CSV/PDF e suas asserções de teste com a marca
   aprovada.
 - [ ] Limitar a quantidade de itens aceita por importação na API e manter o
@@ -384,6 +384,17 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 - lint, 15 testes focados (rotas, Análises, Home e i18n), build de produção e
   verificação de diff passaram. Nenhuma chamada de API, regra de banco ou
   configuração do Brevo foi alterada.
+
+**Evidência de limpeza do fluxo legado (2026-08-28):**
+
+- `Dashboard.jsx` e seu teste, que já não possuíam rota nem importador após a
+  consolidação em Análises, foram removidos. Os aliases `/graficos` e
+  `/dashboard` continuam protegidos e redirecionam para `/analises`;
+- Histórico foi movido para a navegação secundária no desktop e no menu
+  `Mais` no mobile. Perfil já era secundário e o painel público continua fora
+  da navegação autenticada;
+- lint, cinco testes focados de rota/navegação, build de produção e verificação
+  de diff passaram. API, banco e Brevo não foram alterados.
 
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.
