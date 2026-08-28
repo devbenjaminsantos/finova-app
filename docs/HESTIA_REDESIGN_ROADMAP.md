@@ -346,6 +346,19 @@ erro quando aplicáveis, sem duplicar regras em cada página.
   16 testes unitários focados em execução serial, build e verificação de diff
   passaram; API, banco e Brevo não foram alterados.
 
+**Evidência do terceiro incremento de Transações (2026-08-28):**
+
+- a exclusão de lançamento avulso e de compra parcelada deixou de depender de
+  `window.confirm`: ambas usam o Modal compartilhado, com foco gerenciado,
+  Escape/backdrop bloqueados durante a mutação e uma confirmação explícita;
+- as mensagens de título, consequência e ação foram adicionadas em PT/EN. A
+  confirmação só chama os mesmos handlers de remoção já existentes, sem alterar
+  API, banco ou Brevo;
+- lint e 14 testes focados em execução serial passaram, incluindo os dois fluxos
+  de confirmação. O build foi iniciado e atingiu a geração de chunks, mas o
+  executor local encerrou sua captura antes do resultado final; essa validação
+  permanece pendente antes de fechar a etapa.
+
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.
 

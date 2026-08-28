@@ -637,8 +637,12 @@ export const translations = {
       importNoNew:
         "A revisão foi concluída, mas nenhuma transação nova foi importada via {{format}}.",
       removeTransactionConfirm: "Remover esta transação?",
+      removeTransactionTitle: "Remover transação",
       removeInstallmentGroupConfirm:
         "Remover toda esta compra parcelada e todas as parcelas já lançadas?",
+      removeInstallmentGroupTitle: "Remover compra parcelada",
+      removeTransactionNote: "Esta ação não pode ser desfeita.",
+      confirmRemove: "Remover agora",
       analysesTitle: "Análises",
       analysesSubtitle:
         "Reúna insights, comparativos e metas em uma área única para interpretar o momento financeiro e decidir os próximos ajustes.",
@@ -1610,8 +1614,12 @@ export const translations = {
       importNoNew:
         "Review completed, but no new transactions were imported via {{format}}.",
       removeTransactionConfirm: "Remove this transaction?",
+      removeTransactionTitle: "Remove transaction",
       removeInstallmentGroupConfirm:
         "Remove this entire installment purchase and all posted installments?",
+      removeInstallmentGroupTitle: "Remove installment purchase",
+      removeTransactionNote: "This action cannot be undone.",
+      confirmRemove: "Remove now",
       analysesTitle: "Analyses",
       analysesSubtitle:
         "Bring together insights, comparisons, and goals in one area to interpret your current financial picture and decide the next adjustments.",

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import PageHeader from "../components/layout/PageHeader";
+import Button from "../components/ui/Button";
+import Modal from "../components/ui/Modal";
 import InstallmentGroupModal from "../features/transactions/components/InstallmentGroupModal";
 import TransactionImportModal from "../features/transactions/components/TransactionImportModal";
 import TransactionModal from "../features/transactions/components/TransactionModal";
@@ -115,6 +117,7 @@ export default function Transactions() {
   const [mode, setMode] = useState("create");
   const [selected, setSelected] = useState(null);
   const [selectedInstallmentGroup, setSelectedInstallmentGroup] = useState(null);
+  const [removalTarget, setRemovalTarget] = useState(null);
   const [isMutating, setIsMutating] = useState(false);
   const [importFeedback, setImportFeedback] = useState("");
   const [highlightImportedSince, setHighlightImportedSince] = useState("");
@@ -440,18 +443,20 @@ export default function Transactions() {
     }
   }
 
-  async function handleRemove(id) {
-    if (!window.confirm(t("pages.removeTransactionConfirm"))) {
+  function requestTransactionRemoval(id) {
+    if (isMutating) {
       return;
     }
 
-    setIsMutating(true);
+    setRemovalTarget({ id, type: "transaction" });
+  }
 
-    try {
-      await removeTransaction(id);
-    } finally {
-      setIsMutating(false);
+  function requestInstallmentGroupRemoval(id) {
+    if (isMutating) {
+      return;
     }
+
+    setRemovalTarget({ id, type: "installment" });
   }
 
   async function handleSubmitInstallmentGroup(data) {
@@ -468,17 +473,22 @@ export default function Transactions() {
     }
   }
 
-  async function handleRemoveInstallmentGroup(installmentGroupId) {
-    if (!window.confirm(t("pages.removeInstallmentGroupConfirm"))) {
+  async function confirmRemoval() {
+    if (!removalTarget || isMutating) {
       return;
     }
 
     setIsMutating(true);
 
     try {
-      await removeInstallmentGroup(installmentGroupId);
+      if (removalTarget.type === "installment") {
+        await removeInstallmentGroup(removalTarget.id);
+      } else {
+        await removeTransaction(removalTarget.id);
+      }
     } finally {
       setIsMutating(false);
+      setRemovalTarget(null);
     }
   }
 
@@ -600,6 +610,27 @@ export default function Transactions() {
         initial={selected}
         accounts={accounts}
       />
+
+      <Modal
+        isOpen={Boolean(removalTarget)}
+        onClose={() => setRemovalTarget(null)}
+        title={t(removalTarget?.type === "installment" ? "pages.removeInstallmentGroupTitle" : "pages.removeTransactionTitle")}
+        subtitle={t(removalTarget?.type === "installment" ? "pages.removeInstallmentGroupConfirm" : "pages.removeTransactionConfirm")}
+        closeLabel={t("common.cancel")}
+        dismissible={!isMutating}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setRemovalTarget(null)} disabled={isMutating}>
+              {t("common.cancel")}
+            </Button>
+            <Button variant="danger" onClick={confirmRemoval} loading={isMutating}>
+              {t("pages.confirmRemove")}
+            </Button>
+          </>
+        }
+      >
+        <p className="mb-0">{t("pages.removeTransactionNote")}</p>
+      </Modal>
 
       <InstallmentGroupModal
         isOpen={Boolean(selectedInstallmentGroup)}
@@ -913,7 +944,7 @@ export default function Transactions() {
                     <button
                       type="button"
                       className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleRemoveInstallmentGroup(group.id)}
+                      onClick={() => requestInstallmentGroupRemoval(group.id)}
                       disabled={isMutating}
                     >
                       {t("transactions.removeInstallmentPlan")}
@@ -937,7 +968,7 @@ export default function Transactions() {
           transactions={filteredWithAccountLabels}
           totalTransactionsCount={transactions.length}
           onEdit={openEdit}
-          onRemove={handleRemove}
+          onRemove={requestTransactionRemoval}
           onExportCsv={exportFilteredTransactionsCsv}
           onExportPdf={exportFilteredTransactionsPdf}
           highlightImportedSince={highlightImportedSince}

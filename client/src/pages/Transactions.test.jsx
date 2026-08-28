@@ -332,9 +332,8 @@ describe("Transactions page", () => {
     ).toBeInTheDocument();
   });
 
-  it("removes an installment purchase from the grouped card", () => {
+  it("confirms before removing an installment purchase from the grouped card", async () => {
     const removeInstallmentGroup = vi.fn().mockResolvedValue(undefined);
-    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
 
     useTransactions.mockReturnValue({
       transactions: transactionsFixture,
@@ -352,9 +351,46 @@ describe("Transactions page", () => {
     renderTransactions();
 
     fireEvent.click(screen.getByRole("button", { name: "Remover compra" }));
+    expect(screen.getByRole("dialog", { name: "Remover compra parcelada" })).toBeInTheDocument();
+    expect(screen.getByText("Esta ação não pode ser desfeita.")).toBeInTheDocument();
+    expect(removeInstallmentGroup).not.toHaveBeenCalled();
 
-    expect(confirmSpy).toHaveBeenCalled();
-    expect(removeInstallmentGroup).toHaveBeenCalledWith("installment-plan-1");
+    fireEvent.click(screen.getByRole("button", { name: "Remover agora" }));
+
+    await vi.waitFor(() => {
+      expect(removeInstallmentGroup).toHaveBeenCalledWith("installment-plan-1");
+    });
+  });
+
+  it("confirms before removing an individual transaction", async () => {
+    const removeTransaction = vi.fn().mockResolvedValue(undefined);
+
+    useTransactions.mockReturnValue({
+      transactions: transactionsFixture,
+      installmentPlans: installmentPlansFixture,
+      recurringRules: recurringRulesFixture,
+      addTransaction: vi.fn(),
+      importTransactions: vi.fn().mockResolvedValue({ importedCount: 1 }),
+      removeTransaction,
+      removeInstallmentGroup: vi.fn(),
+      updateTransaction: vi.fn(),
+      updateInstallmentGroup: vi.fn(),
+      isLoading: false,
+    });
+
+    renderTransactions();
+
+    fireEvent.click(
+      within(screen.getByText("Mercado").closest("li")).getByRole("button", { name: "Remover" })
+    );
+    expect(screen.getByRole("dialog", { name: "Remover transação" })).toBeInTheDocument();
+    expect(removeTransaction).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Remover agora" }));
+
+    await vi.waitFor(() => {
+      expect(removeTransaction).toHaveBeenCalledWith(1);
+    });
   });
 
   it("edits an installment purchase from the grouped card", async () => {
