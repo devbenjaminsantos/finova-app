@@ -334,6 +334,18 @@ erro quando aplicáveis, sem duplicar regras em cada página.
   diff passaram. A lista densa, a confirmação de remoção de transações e a
   revisão dos blocos recorrentes/parcelados permanecem como próximos cortes.
 
+**Evidência do segundo incremento de Transações (2026-08-28):**
+
+- o histórico financeiro deixou a tabela de seis colunas e passou a usar uma
+  lista densa sem cards por item: data, descrição, origem, tags, valor, tipo,
+  categoria, conta e ações continuam disponíveis no mesmo lançamento;
+- a lista usa semântica `ul`/`li`, preserva itens destacados após importação e
+  aplica `content-visibility` para listas extensas, sem nova busca ou estado
+  duplicado no frontend;
+- exportação CSV/PDF, filtros, edição e remoção mantêm os mesmos handlers. lint,
+  16 testes unitários focados em execução serial, build e verificação de diff
+  passaram; API, banco e Brevo não foram alterados.
+
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.
 

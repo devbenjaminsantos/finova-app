@@ -22,6 +22,7 @@ function getInstallmentMeta(transaction) {
   }
 
   const remainingInstallments = Math.max(installmentCount - installmentIndex + 1, 0);
+
   return {
     label: `${installmentIndex}/${installmentCount}`,
     remainingInstallments,
@@ -43,45 +44,83 @@ export default function TransactionRow({
   const isRecentlyImported =
     transaction.importedAtUtc &&
     highlightImportedSince &&
-    new Date(transaction.importedAtUtc).getTime() >= new Date(highlightImportedSince).getTime() - 10000;
+    new Date(transaction.importedAtUtc).getTime() >=
+      new Date(highlightImportedSince).getTime() - 10000;
   const originMeta = getTransactionOriginMeta(transaction, t);
   const installmentMeta = getInstallmentMeta(transaction);
+  const isIncome = transaction.type === "income";
 
   return (
-    <tr className={isRecentlyImported ? "finova-row-highlight" : undefined}>
-      <td>{formatDate(transaction.date)}</td>
-      <td>
-        <div className="fw-medium text-dark">{transaction.description}</div>
-        <div className="mt-1 d-flex flex-wrap gap-2">
-          <span className={originMeta.className}>{originMeta.label}</span>
-          {transaction.isRecurring ? <span className="finova-badge-neutral">{t("transactions.recurringMonthly")}</span> : null}
-          {installmentMeta ? <span className="finova-badge-warning">{t("transactions.installmentBadge", { index: installmentMeta.label })}</span> : null}
-          {(transaction.tagNames || []).map((tagName) => <span key={`${transaction.id}-${tagName}`} className="finova-badge-primary">#{tagName}</span>)}
-        </div>
-        {transaction.importedAtUtc ? <div className="small text-muted mt-2 finova-transaction-meta-line">{t("transactions.importedAt", { date: formatDateTime(transaction.importedAtUtc) })}</div> : null}
-        {installmentMeta ? (
-          <div className="small text-muted mt-2 finova-transaction-meta-line">
-            {t("transactions.installmentRemaining", { count: installmentMeta.remainingInstallments, amount: formatCurrencyFromCents(installmentMeta.remainingAmountCents) })}
+    <li className={`finova-transaction-list-item${isRecentlyImported ? " finova-row-highlight" : ""}`}>
+      <div className="finova-transaction-list-main">
+        <div className="finova-transaction-list-copy">
+          <time className="finova-transaction-list-date" dateTime={transaction.date}>
+            {formatDate(transaction.date)}
+          </time>
+          <strong className="finova-transaction-list-description">{transaction.description}</strong>
+          <div className="finova-transaction-list-badges">
+            <span className={originMeta.className}>{originMeta.label}</span>
+            {transaction.isRecurring ? (
+              <span className="finova-badge-neutral">{t("transactions.recurringMonthly")}</span>
+            ) : null}
+            {installmentMeta ? (
+              <span className="finova-badge-warning">
+                {t("transactions.installmentBadge", { index: installmentMeta.label })}
+              </span>
+            ) : null}
+            {(transaction.tagNames || []).map((tagName) => (
+              <span key={`${transaction.id}-${tagName}`} className="finova-badge-primary">#{tagName}</span>
+            ))}
           </div>
+        </div>
+
+        <div className="finova-transaction-list-value">
+          <span className={isIncome ? "finova-badge-income" : "finova-badge-expense"}>
+            {isIncome ? t("transactions.income") : t("transactions.expense")}
+          </span>
+          <strong className={isIncome ? "finova-transaction-amount-income" : "finova-transaction-amount-expense"}>
+            {formatCurrencyFromCents(transaction.amountCents)}
+          </strong>
+        </div>
+      </div>
+
+      <div className="finova-transaction-list-meta">
+        <span>{t("common.category")}: {transaction.category || t("transactions.noCategory")}</span>
+        <span>{t("transactions.accountLabel")}: {transaction.financialAccountLabel || t("transactions.unlinkedAccount")}</span>
+        {transaction.importedAtUtc ? (
+          <span>{t("transactions.importedAt", { date: formatDateTime(transaction.importedAtUtc) })}</span>
         ) : null}
-        <div className="small text-muted mt-2 finova-transaction-meta-line">
-          {t("transactions.accountLabel")}: {transaction.financialAccountLabel || t("transactions.unlinkedAccount")}
-        </div>
-        {isRecentlyImported ? <div className="small mt-2"><span className="finova-badge-warning">{t("transactions.newInImport")}</span></div> : null}
-      </td>
-      <td><span className="finova-subtitle">{transaction.category || t("transactions.noCategory")}</span></td>
-      <td>
-        <span className={transaction.type === "income" ? "finova-badge-income" : "finova-badge-expense"}>
-          {transaction.type === "income" ? t("transactions.income") : t("transactions.expense")}
-        </span>
-      </td>
-      <td className="text-end fw-semibold">{formatCurrencyFromCents(transaction.amountCents)}</td>
-      <td className="text-end">
-        <div className="finova-actions-row finova-actions-row-end">
-          <Button type="button" variant="secondary" className="btn-sm" onClick={() => onEdit(transaction)} disabled={isMutating}>{t("transactions.edit")}</Button>
-          <Button type="button" variant="danger" className="btn-sm" onClick={() => onRemove(transaction.id)} disabled={isMutating}>{t("transactions.remove")}</Button>
-        </div>
-      </td>
-    </tr>
+        {installmentMeta ? (
+          <span>
+            {t("transactions.installmentRemaining", {
+              count: installmentMeta.remainingInstallments,
+              amount: formatCurrencyFromCents(installmentMeta.remainingAmountCents),
+            })}
+          </span>
+        ) : null}
+        {isRecentlyImported ? <span className="finova-badge-warning">{t("transactions.newInImport")}</span> : null}
+      </div>
+
+      <div className="finova-actions-row finova-transaction-list-actions">
+        <Button
+          type="button"
+          variant="secondary"
+          className="btn-sm"
+          onClick={() => onEdit(transaction)}
+          disabled={isMutating}
+        >
+          {t("transactions.edit")}
+        </Button>
+        <Button
+          type="button"
+          variant="danger"
+          className="btn-sm"
+          onClick={() => onRemove(transaction.id)}
+          disabled={isMutating}
+        >
+          {t("transactions.remove")}
+        </Button>
+      </div>
+    </li>
   );
 }

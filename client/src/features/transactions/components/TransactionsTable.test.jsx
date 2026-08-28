@@ -36,6 +36,8 @@ describe("TransactionsTable", () => {
     fireEvent.click(screen.getByRole("button", { name: "Editar" }));
     fireEvent.click(screen.getByRole("button", { name: "Remover" }));
 
+    expect(screen.getByRole("list", { name: "Histórico financeiro" })).toBeInTheDocument();
+    expect(screen.getByRole("listitem")).toHaveTextContent("Market");
     expect(onExportCsv).toHaveBeenCalledOnce();
     expect(onExportPdf).toHaveBeenCalledOnce();
     expect(onEdit).toHaveBeenCalledWith(transaction);

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Transactions from "./Transactions";
@@ -217,7 +217,9 @@ describe("Transactions page", () => {
     });
 
     expect(screen.getByText("Mercado")).toBeInTheDocument();
-    expect(screen.queryByRole("cell", { name: "Notebook" })).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole("list", { name: "Histórico financeiro" })).queryByText("Notebook")
+    ).not.toBeInTheDocument();
   });
 
   it("filters transactions by tag", () => {
@@ -228,7 +230,9 @@ describe("Transactions page", () => {
     });
 
     expect(screen.getAllByText("Notebook").length).toBeGreaterThan(0);
-    expect(screen.queryByRole("cell", { name: "Mercado" })).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole("list", { name: "Histórico financeiro" })).queryByText("Mercado")
+    ).not.toBeInTheDocument();
   });
 
   it("filters transactions by selected account", async () => {
@@ -239,7 +243,9 @@ describe("Transactions page", () => {
     });
 
     expect(screen.getByText("Mercado")).toBeInTheDocument();
-    expect(screen.queryByRole("cell", { name: "Notebook" })).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole("list", { name: "Histórico financeiro" })).queryByText("Notebook")
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Conta: Conta principal - final 1234")).toBeInTheDocument();
   });
 

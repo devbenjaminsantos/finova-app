@@ -55,36 +55,22 @@ export default function TransactionsTable({
           description={totalTransactionsCount === 0 ? t("transactions.emptyNoData") : t("transactions.emptyFiltered")}
         />
       ) : (
-        <div className="table-responsive finova-table-shell-responsive">
-          <table className="table finova-table align-middle mb-0">
-            <thead>
-              <tr>
-                <th>{t("common.date")}</th>
-                <th>{t("common.description")}</th>
-                <th>{t("common.category")}</th>
-                <th>{t("common.type")}</th>
-                <th className="text-end">{t("common.value")}</th>
-                <th className="text-end">{t("common.actions")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.map((transaction) => (
-                <TransactionRow
-                  key={transaction.id}
-                  transaction={transaction}
-                  highlightImportedSince={highlightImportedSince}
-                  isMutating={isMutating}
-                  onEdit={onEdit}
-                  onRemove={onRemove}
-                  t={t}
-                  formatCurrencyFromCents={formatCurrencyFromCents}
-                  formatDate={formatDate}
-                  formatDateTime={formatDateTime}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ul className="finova-transaction-list list-unstyled mb-0" aria-label={t("transactions.historyTitle")}>
+          {transactions.map((transaction) => (
+            <TransactionRow
+              key={transaction.id}
+              transaction={transaction}
+              highlightImportedSince={highlightImportedSince}
+              isMutating={isMutating}
+              onEdit={onEdit}
+              onRemove={onRemove}
+              t={t}
+              formatCurrencyFromCents={formatCurrencyFromCents}
+              formatDate={formatDate}
+              formatDateTime={formatDateTime}
+            />
+          ))}
+        </ul>
       )}
     </div>
   );

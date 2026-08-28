@@ -1096,6 +1096,107 @@ a {
   line-height: 1.45;
 }
 
+.finova-transaction-list {
+  border-top: 1px solid var(--divider);
+}
+
+.finova-transaction-list-item {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 164px;
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--divider);
+  transition: background-color var(--motion-fast) ease;
+}
+
+.finova-transaction-list-item:hover {
+  background: color-mix(in srgb, var(--brand-soft) 54%, transparent 46%);
+}
+
+.finova-transaction-list-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.finova-transaction-list-copy {
+  display: grid;
+  min-width: 0;
+  gap: 0.35rem;
+}
+
+.finova-transaction-list-date,
+.finova-transaction-list-meta {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.finova-transaction-list-description {
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.finova-transaction-list-badges,
+.finova-transaction-list-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.5rem;
+}
+
+.finova-transaction-list-meta > span:not(.finova-badge-warning)::after {
+  content: "·";
+  margin-left: 0.5rem;
+  color: var(--border);
+}
+
+.finova-transaction-list-meta > span:last-child::after {
+  content: none;
+}
+
+.finova-transaction-list-value {
+  display: grid;
+  justify-items: end;
+  flex: 0 0 auto;
+  gap: 0.4rem;
+  text-align: right;
+}
+
+.finova-transaction-amount-income,
+.finova-transaction-amount-expense {
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.finova-transaction-amount-income {
+  color: var(--success-dark);
+}
+
+.finova-transaction-amount-expense {
+  color: var(--danger);
+}
+
+.finova-transaction-list-actions {
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+@media (max-width: 575.98px) {
+  .finova-transaction-list-main {
+    gap: 0.75rem;
+  }
+
+  .finova-transaction-list-value {
+    max-width: 46%;
+  }
+
+  .finova-transaction-list-actions .btn {
+    flex: 1 1 0;
+  }
+}
+
 .finova-transaction-more-options {
   border-top: 1px solid var(--divider);
   padding-top: 1rem;
