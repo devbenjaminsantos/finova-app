@@ -1096,6 +1096,50 @@ a {
   line-height: 1.45;
 }
 
+.finova-transaction-more-options {
+  border-top: 1px solid var(--divider);
+  padding-top: 1rem;
+}
+
+.finova-transaction-more-options summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  color: var(--brand-deep);
+  font-size: 0.92rem;
+  font-weight: 700;
+  list-style: none;
+}
+
+.finova-transaction-more-options summary::-webkit-details-marker {
+  display: none;
+}
+
+.finova-transaction-more-options summary::after {
+  content: "+";
+  display: grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.finova-transaction-more-options[open] summary::after {
+  content: "−";
+}
+
+.finova-transaction-more-options summary:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
 .finova-goal-summary {
   min-width: 220px;
   padding: 0.85rem 1rem;

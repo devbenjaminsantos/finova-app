@@ -873,6 +873,7 @@ export const translations = {
       placeholderAmount: "150,00",
       placeholderTags: "Ex.: viagem, reembolsável, trabalho",
       tagsHelp: "Separe por vírgula para agrupar temas livres que fazem sentido para você.",
+      moreOptions: "Mais opções",
       installmentToggle: "Compra parcelada",
       installmentHelp:
         "Use para compras no crédito ou pagamentos divididos ao longo dos próximos meses.",
@@ -1845,6 +1846,7 @@ export const translations = {
       placeholderAmount: "150.00",
       placeholderTags: "Example: travel, reimbursable, work",
       tagsHelp: "Separate tags with commas to group free-form themes that matter to you.",
+      moreOptions: "More options",
       installmentToggle: "Installment purchase",
       installmentHelp:
         "Use this for credit purchases or payments split over the next few months.",

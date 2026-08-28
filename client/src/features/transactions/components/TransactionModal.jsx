@@ -376,21 +376,25 @@ export default function TransactionModal({
               </div>
 
               <div className="col-12">
-                <label className="form-label text-dark fw-medium" htmlFor="transaction-tags">
-                  {t("common.tags")}
-                </label>
-                <input
-                  id="transaction-tags"
-                  type="text"
-                  className="form-control finova-input"
-                  value={tagNamesInput}
-                  onChange={(event) => setTagNamesInput(event.target.value)}
-                  placeholder={t("transactions.placeholderTags")}
-                />
-                <p className="form-text mb-0">{t("transactions.tagsHelp")}</p>
-              </div>
+                <details className="finova-transaction-more-options">
+                  <summary>{t("transactions.moreOptions")}</summary>
+                  <div className="row g-3 pt-3">
+                    <div className="col-12">
+                      <label className="form-label text-dark fw-medium" htmlFor="transaction-tags">
+                        {t("common.tags")}
+                      </label>
+                      <input
+                        id="transaction-tags"
+                        type="text"
+                        className="form-control finova-input"
+                        value={tagNamesInput}
+                        onChange={(event) => setTagNamesInput(event.target.value)}
+                        placeholder={t("transactions.placeholderTags")}
+                      />
+                      <p className="form-text mb-0">{t("transactions.tagsHelp")}</p>
+                    </div>
 
-              {!isEdit ? (
+                    {!isEdit ? (
                 <>
                   {type === "expense" ? (
                     <div className="col-12 col-md-6">
@@ -493,8 +497,13 @@ export default function TransactionModal({
                       <p className="form-text mb-0">{t("transactions.recurrenceEndHelp")}</p>
                     </div>
                   ) : null}
-                </>
-              ) : initial?.isRecurring ? (
+                    </>
+                    ) : null}
+                  </div>
+                </details>
+              </div>
+
+              {isEdit && initial?.isRecurring ? (
                 <div className="col-12">
                   <div className="alert alert-info py-2 mb-0 finova-status-banner">
                     {t("transactions.editRecurringInfo")}

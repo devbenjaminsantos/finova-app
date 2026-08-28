@@ -2,8 +2,12 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import TransactionModal from "./TransactionModal";
 
+function openMoreOptions() {
+  fireEvent.click(screen.getByText("Mais opções"));
+}
+
 describe("TransactionModal", () => {
-  it("shows recurring fields when recurrence is enabled", () => {
+  it("keeps rare fields collapsed until more options is opened", () => {
     render(
       <TransactionModal
         mode="create"
@@ -14,8 +18,11 @@ describe("TransactionModal", () => {
       />
     );
 
-    expect(screen.queryByLabelText(/Repetir/i)).not.toBeInTheDocument();
+    const details = screen.getByText("Mais opções").closest("details");
+    expect(details).not.toHaveAttribute("open");
 
+    openMoreOptions();
+    expect(details).toHaveAttribute("open");
     fireEvent.click(screen.getByLabelText(/Recorr/i));
 
     expect(screen.getByLabelText(/Repetir/i)).toBeInTheDocument();
@@ -46,6 +53,7 @@ describe("TransactionModal", () => {
     fireEvent.change(screen.getByLabelText("Valor"), {
       target: { value: "450,00" },
     });
+    openMoreOptions();
     fireEvent.change(screen.getByLabelText("Tags"), {
       target: { value: "casa, fixa, casa" },
     });
@@ -93,6 +101,7 @@ describe("TransactionModal", () => {
     fireEvent.change(screen.getByLabelText("Valor"), {
       target: { value: "299,90" },
     });
+    openMoreOptions();
     fireEvent.click(screen.getByLabelText("Compra parcelada"));
     fireEvent.change(screen.getByLabelText("Quantidade de parcelas"), {
       target: { value: "10" },

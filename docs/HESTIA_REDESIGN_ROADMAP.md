@@ -322,6 +322,18 @@ erro quando aplicáveis, sem duplicar regras em cada página.
 - [ ] Limitar a quantidade de itens aceita por importação na API e manter o
   limite de tamanho do arquivo no frontend.
 
+**Evidência da fundação de Transações (2026-08-28):**
+
+- o modal mantém à vista data, descrição, tipo, categoria, conta e valor para
+  acelerar o lançamento comum; tags, parcelamento e recorrência passaram para
+  o disclosure nativo `Mais opções` / `More options`;
+- o payload, validações, edição, importação, filtros persistidos e atalho
+  `/transacoes?nova=1` foram preservados. Nenhuma chamada de API, regra de
+  banco ou configuração do Brevo foi alterada;
+- lint, 15 testes unitários focados em execução serial, build e verificação de
+  diff passaram. A lista densa, a confirmação de remoção de transações e a
+  revisão dos blocos recorrentes/parcelados permanecem como próximos cortes.
+
 **Gate:** CRUD, filtros, importação, exportação, recorrências, metas e escopo de
 conta devem manter o comportamento coberto pelos testes atuais.
 
