@@ -12,7 +12,7 @@ async function prepareAuthenticatedApp(page) {
         onboardingOptIn: false,
       })
     );
-    localStorage.setItem("finova:last-activity-at", String(Date.now()));
+    localStorage.setItem("hestia:last-activity-at", String(Date.now()));
     localStorage.setItem("hestia-language", "pt-BR");
   });
 
@@ -94,13 +94,13 @@ test.describe("authenticated app shell", () => {
     await page.goto("/");
 
     const sidebar = page.getByRole("complementary", { name: "Navegação principal" });
-    const chartsLink = sidebar.getByRole("link", { name: "Gráficos" });
-    await chartsLink.focus();
-    await expect(chartsLink).toBeFocused();
+    const analysesLink = sidebar.getByRole("link", { name: "Análises" });
+    await analysesLink.focus();
+    await expect(analysesLink).toBeFocused();
     await page.keyboard.press("Enter");
 
-    await expect(page).toHaveURL(/\/graficos$/);
-    await expect(chartsLink).toHaveClass(/app-nav-link-active/);
+    await expect(page).toHaveURL(/\/analises$/);
+    await expect(analysesLink).toHaveClass(/app-nav-link-active/);
   });
 
   test("renders the desktop sidebar and opens the existing transaction flow", async ({ page }) => {
@@ -122,7 +122,7 @@ test.describe("authenticated app shell", () => {
     await page.getByRole("link", { name: "Nova transação" }).click();
     await expect(page.getByRole("dialog")).toBeVisible({ timeout: 15_000 });
     await expect(page).toHaveURL(/\/transacoes$/, { timeout: 15_000 });
-    await expect(page.getByRole("heading", { name: "Nova transação" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Novo lançamento rápido" })).toBeVisible();
   });
 
   test("keeps mobile navigation, preferences and logout accessible", async ({ page }) => {

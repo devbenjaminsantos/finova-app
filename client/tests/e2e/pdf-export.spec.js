@@ -38,7 +38,7 @@ async function prepareAuthenticatedTransactionsPage(page) {
         onboardingOptIn: false,
       })
     );
-    localStorage.setItem("finova:last-activity-at", String(Date.now()));
+    localStorage.setItem("hestia:last-activity-at", String(Date.now()));
     localStorage.setItem("hestia-language", "pt-BR");
   });
 

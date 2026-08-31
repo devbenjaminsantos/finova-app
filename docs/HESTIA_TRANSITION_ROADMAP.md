@@ -43,14 +43,16 @@ cookies, eventos, pacotes e chaves locais usam `hestia` sem acento.
 - [x] Validar testes do frontend e API, build de produção e Docker.
 - [x] Publicar o commit no repositório atual.
 - [x] Renomear o repositório para `hestia-app` e atualizar o remote local.
-- [ ] Renomear Vercel, Railway e Neon sem recriar recursos.
-- [ ] Atualizar URLs públicas, CORS e base URL em ordem coordenada.
-- [ ] Validar frontend, API, autenticação, CSRF, demo e consulta ao Neon.
-- [ ] Registrar os identificadores finais e encerrar a janela de rollback.
+- [x] Renomear Vercel, Railway e Neon sem recriar recursos.
+- [x] Atualizar URLs públicas, CORS e base URL em ordem coordenada.
+- [x] Validar frontend, API, autenticação, CSRF, demo e consulta ao Neon.
+- [x] Registrar os identificadores finais e encerrar a janela de rollback.
 
-Se o smoke falhar, o rollback deve reapontar URLs e variáveis para os domínios
-anteriores e redeployar o commit `f9d2abd`. O banco não entra no rollback porque
-nenhuma alteração destrutiva ou de schema faz parte desta etapa.
+Durante o cutover, uma falha de smoke permitiria reapontar URLs e variáveis e
+redeployar o commit `f9d2abd`. Com a validação concluída e o alias Finova
+removido, um rollback futuro deve partir desse commit e recriar explicitamente
+os apontamentos necessários. O banco não entra no rollback porque nenhuma
+alteração destrutiva ou de schema fez parte desta etapa.
 
 ## E-mail
 
@@ -84,7 +86,19 @@ SPF, DKIM e DMARC.
   `2010289`, terminou em `SUCCESS`;
 - Neon preservou o projeto `quiet-band-28264410`, PostgreSQL 17, branch, banco,
   roles e connection strings, alterando somente o nome visível para `Hestia`;
-- `GET /health` no novo domínio Railway e a emissão de CSRF pela Vercel
-  responderam `200` antes da remoção dos aliases antigos;
-- o nome visível do serviço Railway e a promoção do alias Héstia a produção
-  pública ainda precisam ser concluídos antes do fechamento do cutover.
+- o deploy Railway `f55eaf33-10cf-40c1-9353-e967dec79606`, referente ao commit
+  `02aac74`, terminou em `SUCCESS` depois da atualização de CORS e
+  `Client__BaseUrl`; projeto e serviço aparecem como `Hestia` e `hestia-api`;
+- a produção Vercel usa `hestia-app-benjamin-santos.vercel.app`, com
+  autenticação da Vercel restrita aos previews; login e CSRF responderam `200`;
+- o alias `finova-app-six.vercel.app` foi removido e passou a responder `404`;
+- o link público do repositório GitHub aponta para a produção Héstia;
+- o preflight da API respondeu `204` para a nova origem, com credenciais e
+  cabeçalhos CSRF permitidos;
+- um smoke real criou uma sessão demo isolada, confirmou perfil e cinco
+  transações persistidas no Neon e encerrou a sessão com `204`;
+- o Neon confirmou o projeto `Hestia` (`quiet-band-28264410`) em PostgreSQL 17;
+  banco e roles internos permaneceram estáveis conforme a fronteira definida;
+- nove cenários Playwright de login, cadastro, rotas protegidas, desktop e
+  mobile passaram; o cenário de PDF também passou com dados e inspeção visual;
+- Brevo e notificações por e-mail continuam desativados até o domínio próprio.
