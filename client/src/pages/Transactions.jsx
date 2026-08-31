@@ -122,6 +122,7 @@ export default function Transactions() {
   const [isOpen, setIsOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [mode, setMode] = useState("create");
+  const [isQuickCreate, setIsQuickCreate] = useState(false);
   const [selected, setSelected] = useState(null);
   const [selectedInstallmentGroup, setSelectedInstallmentGroup] = useState(null);
   const [removalTarget, setRemovalTarget] = useState(null);
@@ -137,6 +138,7 @@ export default function Transactions() {
 
     setMode("create");
     setSelected(null);
+    setIsQuickCreate(true);
     setIsOpen(true);
 
     const nextParams = new URLSearchParams(searchParams);
@@ -330,6 +332,7 @@ export default function Transactions() {
 
     setMode("create");
     setSelected(null);
+    setIsQuickCreate(false);
     setIsOpen(true);
   }
 
@@ -340,6 +343,7 @@ export default function Transactions() {
 
     setMode("edit");
     setSelected(transaction);
+    setIsQuickCreate(false);
     setIsOpen(true);
   }
 
@@ -354,6 +358,7 @@ export default function Transactions() {
 
   function closeModal() {
     setIsOpen(false);
+    setIsQuickCreate(false);
   }
 
   function closeImport() {
@@ -571,6 +576,7 @@ export default function Transactions() {
 
       <TransactionModal
         mode={mode}
+        quickCreate={isQuickCreate}
         isOpen={isOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}

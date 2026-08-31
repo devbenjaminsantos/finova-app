@@ -60,9 +60,11 @@ export default function TransactionModal({
   onSubmit,
   initial,
   accounts = [],
+  quickCreate = false,
 }) {
   const { t } = useI18n();
   const isEdit = mode === "edit";
+  const isQuickCreate = quickCreate && !isEdit;
 
   const [date, setDate] = useState(todayISO());
   const [description, setDescription] = useState("");
@@ -79,7 +81,11 @@ export default function TransactionModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const descriptionInputRef = useRef(null);
 
-  const title = isEdit ? t("transactions.modalEditTitle") : t("transactions.modalCreateTitle");
+  const title = isEdit
+    ? t("transactions.modalEditTitle")
+    : isQuickCreate
+      ? t("transactions.quickCreateTitle")
+      : t("transactions.modalCreateTitle");
   const categories = useMemo(() => getTransactionCategories(type), [type]);
   const minimumRecurrenceEndDate = useMemo(() => addMonthsISO(date, 1), [date]);
 
@@ -231,6 +237,17 @@ export default function TransactionModal({
     }
   }
 
+  function handleTypeChange(nextType) {
+    const nextCategories = getTransactionCategories(nextType);
+    setType(nextType);
+    setCategory(nextCategories[0]);
+
+    if (nextType !== "expense") {
+      setIsInstallment(false);
+      setInstallmentCount("2");
+    }
+  }
+
   if (!isOpen) {
     return null;
   }
@@ -248,11 +265,19 @@ export default function TransactionModal({
       }}
     >
       <div className="modal-dialog modal-dialog-centered modal-lg">
-        <div className="modal-content border-0 finova-modal-surface">
+        <div
+          className={`modal-content border-0 finova-modal-surface${
+            isQuickCreate ? " finova-transaction-modal-quick" : ""
+          }`}
+        >
           <div className="modal-header border-0 pb-0 px-4 pt-4 finova-modal-header">
             <div>
               <h2 className="finova-title h4 mb-1">{title}</h2>
-              <p className="finova-subtitle small mb-0">{t("transactions.modalSubtitle")}</p>
+              <p className="finova-subtitle small mb-0">
+                {isQuickCreate
+                  ? t("transactions.quickCreateSubtitle")
+                  : t("transactions.modalSubtitle")}
+              </p>
             </div>
 
             <button
@@ -267,20 +292,22 @@ export default function TransactionModal({
 
           <div className="modal-body px-4 pb-4 pt-3">
             <form onSubmit={handleSubmit} className="row g-3">
-              <div className="col-12 col-md-4">
-                <label className="form-label text-dark fw-medium" htmlFor="transaction-date">
-                  {t("common.date")}
-                </label>
-                <input
-                  id="transaction-date"
-                  type="date"
-                  className="form-control finova-input"
-                  value={date}
-                  onChange={(event) => setDate(event.target.value)}
-                />
-              </div>
+              {isQuickCreate ? null : (
+                <div className="col-12 col-md-4">
+                  <label className="form-label text-dark fw-medium" htmlFor="transaction-date">
+                    {t("common.date")}
+                  </label>
+                  <input
+                    id="transaction-date"
+                    type="date"
+                    className="form-control finova-input"
+                    value={date}
+                    onChange={(event) => setDate(event.target.value)}
+                  />
+                </div>
+              )}
 
-              <div className="col-12 col-md-8">
+              <div className={`col-12${isQuickCreate ? "" : " col-md-8"}`}>
                 <label
                   className="form-label text-dark fw-medium"
                   htmlFor="transaction-description"
@@ -298,87 +325,197 @@ export default function TransactionModal({
                 />
               </div>
 
-              <div className="col-12 col-md-4">
-                <label className="form-label text-dark fw-medium" htmlFor="transaction-type">
-                  {t("common.type")}
-                </label>
-                <select
-                  id="transaction-type"
-                  className="form-select finova-select"
-                  value={type}
-                  onChange={(event) => {
-                    const nextType = event.target.value;
-                    const nextCategories = getTransactionCategories(nextType);
-                    setType(nextType);
-                    setCategory(nextCategories[0]);
+              {isQuickCreate ? (
+                <div className="col-12 col-md-6">
+                  <label className="form-label text-dark fw-medium" htmlFor="transaction-amount">
+                    {t("common.value")}
+                  </label>
+                  <input
+                    id="transaction-amount"
+                    type="text"
+                    className="form-control finova-input"
+                    value={amount}
+                    onChange={(event) => setAmount(event.target.value)}
+                    placeholder={t("transactions.placeholderAmount")}
+                    inputMode="decimal"
+                  />
+                </div>
+              ) : null}
 
-                    if (nextType !== "expense") {
-                      setIsInstallment(false);
-                      setInstallmentCount("2");
-                    }
-                  }}
-                >
-                  <option value="expense">{t("transactions.expense")}</option>
-                  <option value="income">{t("transactions.income")}</option>
-                </select>
+              <div className={`col-12${isQuickCreate ? " col-md-6" : " col-md-4"}`}>
+                {isQuickCreate ? (
+                  <span id="transaction-type-label" className="form-label text-dark fw-medium d-block">
+                    {t("common.type")}
+                  </span>
+                ) : (
+                  <label className="form-label text-dark fw-medium" htmlFor="transaction-type">
+                    {t("common.type")}
+                  </label>
+                )}
+                {isQuickCreate ? (
+                  <div
+                    className="finova-transaction-type-toggle"
+                    role="group"
+                    aria-labelledby="transaction-type-label"
+                  >
+                    <button
+                      type="button"
+                      className={`btn finova-transaction-type-option${
+                        type === "expense" ? " is-active" : ""
+                      }`}
+                      aria-pressed={type === "expense"}
+                      onClick={() => handleTypeChange("expense")}
+                    >
+                      {t("transactions.expense")}
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn finova-transaction-type-option${
+                        type === "income" ? " is-active" : ""
+                      }`}
+                      aria-pressed={type === "income"}
+                      onClick={() => handleTypeChange("income")}
+                    >
+                      {t("transactions.income")}
+                    </button>
+                  </div>
+                ) : (
+                  <select
+                    id="transaction-type"
+                    className="form-select finova-select"
+                    value={type}
+                    onChange={(event) => handleTypeChange(event.target.value)}
+                  >
+                    <option value="expense">{t("transactions.expense")}</option>
+                    <option value="income">{t("transactions.income")}</option>
+                  </select>
+                )}
               </div>
 
-              <div className="col-12 col-md-4">
-                <label className="form-label text-dark fw-medium" htmlFor="transaction-category">
-                  {t("common.category")}
-                </label>
-                <select
-                  id="transaction-category"
-                  className="form-select finova-select"
-                  value={category}
-                  onChange={(event) => setCategory(event.target.value)}
-                >
-                  {categories.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {isQuickCreate ? null : (
+                <div className="col-12 col-md-4">
+                  <label className="form-label text-dark fw-medium" htmlFor="transaction-category">
+                    {t("common.category")}
+                  </label>
+                  <select
+                    id="transaction-category"
+                    className="form-select finova-select"
+                    value={category}
+                    onChange={(event) => setCategory(event.target.value)}
+                  >
+                    {categories.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
-              <div className="col-12 col-md-4">
-                <label className="form-label text-dark fw-medium" htmlFor="transaction-account">
-                  {t("accounts.metaAccount")}
-                </label>
-                <select
-                  id="transaction-account"
-                  className="form-select finova-select"
-                  value={financialAccountId}
-                  onChange={(event) => setFinancialAccountId(event.target.value)}
-                >
-                  <option value="all">{t("transactions.unlinkedAccount")}</option>
-                  {accounts.map((account) => (
-                    <option key={account.id} value={String(account.id)}>
-                      {account.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {isQuickCreate ? null : (
+                <div className="col-12 col-md-4">
+                  <label className="form-label text-dark fw-medium" htmlFor="transaction-account">
+                    {t("accounts.metaAccount")}
+                  </label>
+                  <select
+                    id="transaction-account"
+                    className="form-select finova-select"
+                    value={financialAccountId}
+                    onChange={(event) => setFinancialAccountId(event.target.value)}
+                  >
+                    <option value="all">{t("transactions.unlinkedAccount")}</option>
+                    {accounts.map((account) => (
+                      <option key={account.id} value={String(account.id)}>
+                        {account.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
-              <div className="col-12 col-md-4">
-                <label className="form-label text-dark fw-medium" htmlFor="transaction-amount">
-                  {t("common.value")}
-                </label>
-                <input
-                  id="transaction-amount"
-                  type="text"
-                  className="form-control finova-input"
-                  value={amount}
-                  onChange={(event) => setAmount(event.target.value)}
-                  placeholder={t("transactions.placeholderAmount")}
-                  inputMode="decimal"
-                />
-              </div>
+              {isQuickCreate ? null : (
+                <div className="col-12 col-md-4">
+                  <label className="form-label text-dark fw-medium" htmlFor="transaction-amount">
+                    {t("common.value")}
+                  </label>
+                  <input
+                    id="transaction-amount"
+                    type="text"
+                    className="form-control finova-input"
+                    value={amount}
+                    onChange={(event) => setAmount(event.target.value)}
+                    placeholder={t("transactions.placeholderAmount")}
+                    inputMode="decimal"
+                  />
+                </div>
+              )}
 
               <div className="col-12">
                 <details className="finova-transaction-more-options">
                   <summary>{t("transactions.moreOptions")}</summary>
                   <div className="row g-3 pt-3">
+                    {isQuickCreate ? (
+                      <>
+                        <div className="col-12 col-md-4">
+                          <label
+                            className="form-label text-dark fw-medium"
+                            htmlFor="transaction-date"
+                          >
+                            {t("common.date")}
+                          </label>
+                          <input
+                            id="transaction-date"
+                            type="date"
+                            className="form-control finova-input"
+                            value={date}
+                            onChange={(event) => setDate(event.target.value)}
+                          />
+                        </div>
+
+                        <div className="col-12 col-md-4">
+                          <label
+                            className="form-label text-dark fw-medium"
+                            htmlFor="transaction-category"
+                          >
+                            {t("common.category")}
+                          </label>
+                          <select
+                            id="transaction-category"
+                            className="form-select finova-select"
+                            value={category}
+                            onChange={(event) => setCategory(event.target.value)}
+                          >
+                            {categories.map((item) => (
+                              <option key={item} value={item}>
+                                {item}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="col-12 col-md-4">
+                          <label
+                            className="form-label text-dark fw-medium"
+                            htmlFor="transaction-account"
+                          >
+                            {t("accounts.metaAccount")}
+                          </label>
+                          <select
+                            id="transaction-account"
+                            className="form-select finova-select"
+                            value={financialAccountId}
+                            onChange={(event) => setFinancialAccountId(event.target.value)}
+                          >
+                            <option value="all">{t("transactions.unlinkedAccount")}</option>
+                            {accounts.map((account) => (
+                              <option key={account.id} value={String(account.id)}>
+                                {account.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </>
+                    ) : null}
                     <div className="col-12">
                       <label className="form-label text-dark fw-medium" htmlFor="transaction-tags">
                         {t("common.tags")}

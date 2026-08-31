@@ -202,11 +202,11 @@ describe("Transactions page", () => {
     });
   });
 
-  it("opens the create modal from the app shell shortcut", async () => {
+  it("opens quick creation from the app shell shortcut", async () => {
     renderTransactions("/transacoes?nova=1");
 
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Nova transação" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Novo lançamento rápido" })).toBeInTheDocument();
   });
 
   it("filters transactions by search text", () => {

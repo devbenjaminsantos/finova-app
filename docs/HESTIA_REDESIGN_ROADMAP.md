@@ -453,7 +453,7 @@ conta devem manter o comportamento coberto pelos testes atuais.
 
 - [ ] Tratar a lista de transações como experiência principal.
 - [x] Abrir filtros avançados em sheet.
-- [ ] Implementar criação rápida sem formulário pesado.
+- [x] Implementar criação rápida sem formulário pesado.
 - [ ] Validar alvos de toque, safe áreas e teclado virtual.
 - [ ] Verificar ausência de overflow e sobreposições em larguras estreitas.
 
@@ -473,6 +473,17 @@ ocultos ou de um layout desktop comprimido.
 - dois testes do sheet, 11 testes existentes de Transações, lint e build de
   produção passaram. A validação visual automatizada continua pendente porque
   `agent-browser` não está disponível neste ambiente.
+
+**Evidência do segundo incremento mobile (2026-08-31):**
+
+- o atalho fixo de nova transação (`/transacoes?nova=1`) abre um modo rápido:
+  descrição, valor e tipo aparecem antes de qualquer detalhe, com botões de
+  toque para despesa ou receita;
+- data, categoria, conta, tags, recorrência e parcelamento permanecem no mesmo
+  formulário e no mesmo contrato de criação, mas dentro de `Mais opções`. A
+  criação comum e a edição preservam o formulário completo;
+- 15 testes focados de modal e página de Transações, lint e build de produção
+  passaram. A revisão visual em navegador continua pendente neste ambiente.
 
 ## Etapa 7 - camada Héstia e agentes
 

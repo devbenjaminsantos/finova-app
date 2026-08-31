@@ -28,6 +28,46 @@ describe("TransactionModal", () => {
     expect(screen.getByLabelText(/Repetir/i)).toBeInTheDocument();
   });
 
+  it("keeps quick creation focused on the essential fields and preserves its payload", async () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+
+    render(
+      <TransactionModal
+        mode="create"
+        quickCreate={true}
+        isOpen={true}
+        onClose={vi.fn()}
+        onSubmit={onSubmit}
+        initial={null}
+      />
+    );
+
+    expect(screen.getByRole("heading", { name: "Novo lançamento rápido" })).toBeInTheDocument();
+    expect(screen.getByText("Mais opções").closest("details")).not.toHaveAttribute("open");
+
+    fireEvent.change(screen.getByLabelText(/Descri/i), {
+      target: { value: "Freelance" },
+    });
+    fireEvent.change(screen.getByLabelText("Valor"), {
+      target: { value: "950,00" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Receita" }));
+
+    expect(screen.getByRole("button", { name: "Receita" })).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(screen.getByRole("button", { name: /Adicionar transa/i }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: "Freelance",
+          amountCents: 95000,
+          type: "income",
+          installmentCount: 1,
+        })
+      );
+    });
+  });
+
   it("sends recurrence data and tags on submit", async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
 
