@@ -454,7 +454,8 @@ conta devem manter o comportamento coberto pelos testes atuais.
 - [ ] Tratar a lista de transações como experiência principal.
 - [x] Abrir filtros avançados em sheet.
 - [x] Implementar criação rápida sem formulário pesado.
-- [ ] Validar alvos de toque, safe áreas e teclado virtual.
+- [x] Garantir alvos de toque, safe áreas e viewport dinâmico.
+- [ ] Validar teclado virtual em navegador real.
 - [ ] Verificar ausência de overflow e sobreposições em larguras estreitas.
 
 **Gate:** os fluxos principais devem ser concluídos sem depender de controles
@@ -484,6 +485,19 @@ ocultos ou de um layout desktop comprimido.
   criação comum e a edição preservam o formulário completo;
 - 15 testes focados de modal e página de Transações, lint e build de produção
   passaram. A revisão visual em navegador continua pendente neste ambiente.
+
+**Evidência de alvos e área segura (2026-08-31):**
+
+- o `viewport-fit=cover` habilita as variáveis de área segura em iOS; navegação,
+  sheet, menu e ações do modal respeitam `safe-area-inset-bottom` e usam altura
+  dinâmica (`dvh`) onde o teclado pode reduzir a área visível;
+- no fluxo de Transações, campos, fechar modal, filtros, ações de editar/remover
+  e o resumo de `Mais opções` têm pelo menos 44 px de alvo de toque; os
+  contêineres roláveis reservam espaço para que o foco não fique atrás da ação
+  fixa;
+- a validação automatizada em navegador não foi executada porque o binário
+  `agent-browser` não está instalado. O teste manual em iOS/Android com teclado
+  aberto continua necessário antes de concluir esse subitem.
 
 ## Etapa 7 - camada Héstia e agentes
 

@@ -1366,6 +1366,7 @@ a {
     max-height: min(68dvh, 560px);
     overflow-y: auto;
     overscroll-behavior: contain;
+    scroll-padding-block: 1rem calc(6rem + env(safe-area-inset-bottom));
   }
 
   .finova-transaction-modal-quick .finova-modal-actions {
@@ -1373,6 +1374,22 @@ a {
     bottom: -1.5rem;
     padding-bottom: calc(1rem + env(safe-area-inset-bottom));
     background: var(--surface);
+  }
+
+  .finova-modal-close,
+  .finova-transaction-more-options summary,
+  .finova-transaction-list-actions .btn,
+  .finova-filters-sheet-header .app-icon-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .finova-transaction-more-options summary {
+    padding-block: 0.5rem;
+  }
+
+  .finova-transaction-list-actions .btn {
+    padding-inline: 0.75rem;
   }
 }
 
@@ -2951,7 +2968,7 @@ hr {
     bottom: calc(76px + env(safe-area-inset-bottom));
     display: grid;
     gap: var(--space-3);
-    max-height: calc(100vh - 112px);
+    max-height: calc(100dvh - 112px);
     padding: var(--space-4);
     overflow-y: auto;
     border: 1px solid var(--border);
@@ -3072,6 +3089,8 @@ hr {
     margin: 0 !important;
     padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom)) !important;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: var(--space-3) calc(6rem + env(safe-area-inset-bottom));
     border-right: 0;
     border-bottom: 0;
     border-left: 0;
