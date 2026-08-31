@@ -641,37 +641,41 @@ export default function Transactions() {
         onReset={resetFilters}
       />
 
-      <TransactionCommitments
-        recurringRules={visibleRecurringRules}
-        recurringOverview={recurringOverview}
-        installmentGroups={installmentGroups}
-        installmentOverview={installmentOverview}
-        onEditInstallment={openInstallmentGroupEdit}
-        onRemoveInstallment={requestInstallmentGroupRemoval}
-        isMutating={isMutating}
-        t={t}
-        formatDate={formatDate}
-        formatCurrencyFromCents={formatCurrencyFromCents}
-      />
+      <div className="finova-transactions-workspace">
+        <div className="finova-transactions-history">
+          {importFeedback ? (
+            <div className="alert alert-success mb-4 finova-status-banner" role="status">
+              {importFeedback}
+            </div>
+          ) : null}
 
-      <div>
-        {importFeedback ? (
-          <div className="alert alert-success mb-4 finova-status-banner" role="status">
-            {importFeedback}
-          </div>
-        ) : null}
+          <TransactionsTable
+            transactions={filteredWithAccountLabels}
+            totalTransactionsCount={transactions.length}
+            onEdit={openEdit}
+            onRemove={requestTransactionRemoval}
+            onExportCsv={exportFilteredTransactionsCsv}
+            onExportPdf={exportFilteredTransactionsPdf}
+            highlightImportedSince={highlightImportedSince}
+            isLoading={isLoading}
+            isMutating={isMutating}
+          />
+        </div>
 
-        <TransactionsTable
-          transactions={filteredWithAccountLabels}
-          totalTransactionsCount={transactions.length}
-          onEdit={openEdit}
-          onRemove={requestTransactionRemoval}
-          onExportCsv={exportFilteredTransactionsCsv}
-          onExportPdf={exportFilteredTransactionsPdf}
-          highlightImportedSince={highlightImportedSince}
-          isLoading={isLoading}
-          isMutating={isMutating}
-        />
+        <div className="finova-transactions-commitments">
+          <TransactionCommitments
+            recurringRules={visibleRecurringRules}
+            recurringOverview={recurringOverview}
+            installmentGroups={installmentGroups}
+            installmentOverview={installmentOverview}
+            onEditInstallment={openInstallmentGroupEdit}
+            onRemoveInstallment={requestInstallmentGroupRemoval}
+            isMutating={isMutating}
+            t={t}
+            formatDate={formatDate}
+            formatCurrencyFromCents={formatCurrencyFromCents}
+          />
+        </div>
       </div>
     </section>
   );

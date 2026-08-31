@@ -209,6 +209,23 @@ describe("Transactions page", () => {
     expect(screen.getByRole("heading", { name: "Novo lançamento rápido" })).toBeInTheDocument();
   });
 
+  it("prioritizes financial history before commitments in the page flow", () => {
+    renderTransactions();
+
+    const historySection = screen
+      .getByRole("list", { name: "Histórico financeiro" })
+      .closest(".finova-transactions-history");
+    const commitmentsSection = screen
+      .getByRole("list", { name: "Regras recorrentes" })
+      .closest(".finova-transactions-commitments");
+
+    expect(historySection).not.toBeNull();
+    expect(commitmentsSection).not.toBeNull();
+    expect(
+      historySection.compareDocumentPosition(commitmentsSection) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
   it("filters transactions by search text", () => {
     renderTransactions();
 

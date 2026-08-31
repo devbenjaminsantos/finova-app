@@ -1190,6 +1190,15 @@ a {
   gap: 0.5rem;
 }
 
+.finova-transactions-workspace {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.finova-transactions-commitments:empty {
+  display: none;
+}
+
 .finova-commitments {
   display: grid;
   gap: 1.5rem;
@@ -1271,6 +1280,14 @@ a {
 }
 
 @media (max-width: 575.98px) {
+  .finova-transactions-history .finova-table-shell {
+    padding: 0 !important;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
   .finova-transaction-list-main {
     gap: 0.75rem;
   }

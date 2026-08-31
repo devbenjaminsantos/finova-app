@@ -451,7 +451,7 @@ conta devem manter o comportamento coberto pelos testes atuais.
 
 ## Etapa 6 - experiência mobile
 
-- [ ] Tratar a lista de transações como experiência principal.
+- [x] Tratar a lista de transações como experiência principal.
 - [x] Abrir filtros avançados em sheet.
 - [x] Implementar criação rápida sem formulário pesado.
 - [x] Garantir alvos de toque, safe áreas e viewport dinâmico.
@@ -498,6 +498,16 @@ ocultos ou de um layout desktop comprimido.
 - a validação automatizada em navegador não foi executada porque o binário
   `agent-browser` não está instalado. O teste manual em iOS/Android com teclado
   aberto continua necessário antes de concluir esse subitem.
+
+**Evidência de prioridade da lista (2026-08-31):**
+
+- o histórico financeiro passa a aparecer antes de compromissos recorrentes e
+  parcelados, preservando no fluxo de leitura a atividade que a pessoa acabou
+  de registrar ou filtrar;
+- em telas estreitas, o histórico perde o card decorativo sem perder seus
+  controles, reduzindo a distância até a lista densa. Compromissos continuam
+  disponíveis logo depois e não deixam espaço vazio quando inexistentes;
+- um teste de página garante a ordem semântica Histórico → Compromissos.
 
 ## Etapa 7 - camada Héstia e agentes
 
