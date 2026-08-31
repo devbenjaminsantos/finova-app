@@ -1060,6 +1060,13 @@ a {
   content: none;
 }
 
+.finova-mobile-filters-trigger,
+.finova-filters-sheet-header,
+.finova-filters-sheet-footer,
+.finova-filters-sheet-backdrop {
+  display: none;
+}
+
 .finova-table thead th {
   color: color-mix(in srgb, var(--text-muted) 84%, var(--text) 16%);
   font-size: 0.85rem;
@@ -2986,5 +2993,92 @@ hr {
 
   .app-mobile-more-links {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .finova-mobile-filters-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .finova-mobile-filters-trigger .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 46px;
+  }
+
+  .finova-filters-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 65;
+    width: 100%;
+    border: 0;
+    background: var(--overlay);
+  }
+
+  .finova-toolbar-surface {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 70;
+    max-height: min(82dvh, 720px);
+    margin: 0 !important;
+    padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom)) !important;
+    overflow-y: auto;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: 0 -8px 24px rgba(32, 36, 31, 0.16);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(calc(100% + var(--space-5)));
+    transition:
+      opacity var(--motion-fast) ease,
+      transform var(--motion-normal) ease,
+      visibility var(--motion-normal) ease;
+  }
+
+  .finova-toolbar-surface.finova-toolbar-sheet-open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .finova-filters-sheet-header,
+  .finova-filters-sheet-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .finova-filters-sheet-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .finova-filters-sheet-footer {
+    position: sticky;
+    bottom: calc(var(--space-4) * -1);
+    margin: var(--space-4) calc(var(--space-4) * -1) calc(var(--space-4) * -1);
+    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--divider);
+    background: var(--surface);
+  }
+
+  .finova-filters-sheet-footer .btn {
+    flex: 1 1 0;
+    min-height: 46px;
+  }
+
+  .finova-filters-desktop-actions {
+    display: none;
   }
 }

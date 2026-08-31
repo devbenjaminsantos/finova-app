@@ -452,13 +452,27 @@ conta devem manter o comportamento coberto pelos testes atuais.
 ## Etapa 6 - experiência mobile
 
 - [ ] Tratar a lista de transações como experiência principal.
-- [ ] Abrir filtros avançados em sheet.
+- [x] Abrir filtros avançados em sheet.
 - [ ] Implementar criação rápida sem formulário pesado.
 - [ ] Validar alvos de toque, safe áreas e teclado virtual.
 - [ ] Verificar ausência de overflow e sobreposições em larguras estreitas.
 
 **Gate:** os fluxos principais devem ser concluídos sem depender de controles
 ocultos ou de um layout desktop comprimido.
+
+**Evidência do primeiro incremento mobile (2026-08-28):**
+
+- em telas até 767 px, os filtros de Transações deixam de ocupar o canvas
+  inteiro e passam a abrir em um sheet inferior, com backdrop, Escape, foco
+  inicial na busca, bloqueio de scroll de fundo, área segura e ações fixas de
+  limpar ou voltar aos resultados;
+- os filtros continuam usando o mesmo estado persistido e a mesma lógica de
+  aplicação imediata. Desktop preserva o card original, sem duplicar campos ou
+  regras; o gatilho mobile informa a quantidade de filtros ativos em PT-BR e
+  inglês;
+- dois testes do sheet, 11 testes existentes de Transações, lint e build de
+  produção passaram. A validação visual automatizada continua pendente porque
+  `agent-browser` não está disponível neste ambiente.
 
 ## Etapa 7 - camada Héstia e agentes
 
