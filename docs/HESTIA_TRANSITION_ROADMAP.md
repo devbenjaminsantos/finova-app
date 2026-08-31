@@ -89,9 +89,11 @@ SPF, DKIM e DMARC.
 - o deploy Railway `f55eaf33-10cf-40c1-9353-e967dec79606`, referente ao commit
   `02aac74`, terminou em `SUCCESS` depois da atualização de CORS e
   `Client__BaseUrl`; projeto e serviço aparecem como `Hestia` e `hestia-api`;
-- a produção Vercel usa `hestia-app-benjamin-santos.vercel.app`, com
-  autenticação da Vercel restrita aos previews; login e CSRF responderam `200`;
+- a produção Vercel usa `hestia-app-benjamin-santos.vercel.app`; login e CSRF
+  responderam `200`, enquanto previews e URLs imutáveis de deploy exigem SSO;
 - o alias `finova-app-six.vercel.app` foi removido e passou a responder `404`;
+- URLs históricas de deploy com o nome Finova foram preservadas para auditoria
+  e rollback, mas deixaram de ser públicas e respondem com redirecionamento SSO;
 - o link público do repositório GitHub aponta para a produção Héstia;
 - o preflight da API respondeu `204` para a nova origem, com credenciais e
   cabeçalhos CSRF permitidos;
