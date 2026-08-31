@@ -49,7 +49,7 @@ describe("pdf export helpers", () => {
     const removeChildSpy = vi.spyOn(document.body, "removeChild");
     const createObjectURLSpy = vi
       .spyOn(URL, "createObjectURL")
-      .mockReturnValue("blob:finova");
+      .mockReturnValue("blob:hestia");
     const revokeObjectURLSpy = vi
       .spyOn(URL, "revokeObjectURL")
       .mockImplementation(() => {});
@@ -64,13 +64,13 @@ describe("pdf export helpers", () => {
       return originalCreateElement(tag);
     });
 
-    downloadPdf("finova.pdf", "%PDF-1.4\n...");
+    downloadPdf("hestia.pdf", "%PDF-1.4\n...");
 
     expect(createObjectURLSpy).toHaveBeenCalled();
     expect(clickSpy).toHaveBeenCalled();
     expect(appendChildSpy).toHaveBeenCalled();
     expect(removeChildSpy).toHaveBeenCalled();
-    expect(revokeObjectURLSpy).toHaveBeenCalledWith("blob:finova");
+    expect(revokeObjectURLSpy).toHaveBeenCalledWith("blob:hestia");
 
     createElementSpy.mockRestore();
   });

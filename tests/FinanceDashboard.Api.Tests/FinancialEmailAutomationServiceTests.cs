@@ -20,7 +20,7 @@ public class FinancialEmailAutomationServiceTests
         {
             Id = 6,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true,
             EmailGoalAlertsEnabled = true,
             GoalAlertThresholdPercent = 80
@@ -61,7 +61,7 @@ public class FinancialEmailAutomationServiceTests
         {
             Id = 7,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true,
             EmailGoalAlertsEnabled = true,
             GoalAlertThresholdPercent = 80
@@ -104,7 +104,7 @@ public class FinancialEmailAutomationServiceTests
         {
             Id = 8,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true,
             MonthlyReportEmailsEnabled = true,
             MonthlyReportDay = 1
@@ -216,7 +216,7 @@ public class FinancialEmailAutomationServiceTests
         {
             Id = 11,
             Name = "Conta Demo",
-            Email = "demo+isolada@finova.app",
+            Email = "demo+isolada@hestia.local",
             EmailConfirmed = true,
             IsDemoAccount = true,
             DemoExpiresAtUtc = DateTime.UtcNow.AddHours(1),
@@ -284,7 +284,7 @@ public class FinancialEmailAutomationServiceTests
         {
             Id = userId,
             Name = "Keller",
-            Email = $"keller-{userId}@finova.app",
+            Email = $"keller-{userId}@hestia.local",
             EmailConfirmed = true,
             EmailGoalAlertsEnabled = true,
             GoalAlertThresholdPercent = 80

@@ -18,7 +18,9 @@ namespace FinanceDashboard.Api.Services.Auth
             CancellationToken cancellationToken = default)
         {
             var userIdValue = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            var sessionVersionValue = principal.FindFirstValue(JwTokenService.SessionVersionClaimType);
+            var sessionVersionValue =
+                principal.FindFirstValue(JwTokenService.SessionVersionClaimType) ??
+                principal.FindFirstValue(JwTokenService.LegacySessionVersionClaimType);
 
             if (!int.TryParse(userIdValue, out var userId) ||
                 !int.TryParse(sessionVersionValue, out var sessionVersion))

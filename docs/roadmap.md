@@ -1,6 +1,6 @@
 # Roadmap
 
-Este roadmap organiza a evolução do Finova em frentes de produto e tecnologia. Ele não substitui issues ou tarefas operacionais; a intenção é preservar a lógica de evolução do projeto e explicar por que cada bloco importa.
+Este roadmap organiza a evolução do Héstia em frentes de produto e tecnologia. Ele não substitui issues ou tarefas operacionais; a intenção é preservar a lógica de evolução do projeto e explicar por que cada bloco importa.
 
 ## Base atual
 
@@ -22,7 +22,7 @@ O projeto já possui uma base funcional consolidada e uma arquitetura de deploy 
 
 ### 1. Gestão financeira mais estrutural
 
-O objetivo é evoluir o Finova de um dashboard de transações para um sistema que represente melhor a vida financeira real do usuário.
+O objetivo é evoluir o Héstia de um dashboard de transações para um sistema que represente melhor a vida financeira real do usuário.
 
 Prioridades:
 
@@ -34,7 +34,7 @@ Prioridades:
 
 ### 2. Previsão e decisão
 
-O Finova deve ajudar o usuário a decidir, não apenas registrar.
+O Héstia deve ajudar o usuário a decidir, não apenas registrar.
 
 Prioridades:
 

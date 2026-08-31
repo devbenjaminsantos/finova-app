@@ -58,28 +58,28 @@ const INITIAL_FORM = {
 function getStatusMeta(status, t) {
   switch ((status || "").toLowerCase()) {
     case "connected":
-      return { label: t("accounts.statusConnected"), className: "finova-badge-income" };
+      return { label: t("accounts.statusConnected"), className: "hestia-badge-income" };
     case "error":
-      return { label: t("accounts.statusError"), className: "finova-badge-danger" };
+      return { label: t("accounts.statusError"), className: "hestia-badge-danger" };
     case "disconnected":
-      return { label: t("accounts.statusDisconnected"), className: "finova-badge-neutral" };
+      return { label: t("accounts.statusDisconnected"), className: "hestia-badge-neutral" };
     case "pending":
     default:
-      return { label: t("accounts.statusPending"), className: "finova-badge-warning" };
+      return { label: t("accounts.statusPending"), className: "hestia-badge-warning" };
   }
 }
 
 function getAccountTypeMeta(accountType, t) {
   switch ((accountType || "").toLowerCase()) {
     case "wallet":
-      return { label: t("accounts.accountTypeWallet"), className: "finova-badge-primary" };
+      return { label: t("accounts.accountTypeWallet"), className: "hestia-badge-primary" };
     case "cash":
-      return { label: t("accounts.accountTypeCashBadge"), className: "finova-badge-warning" };
+      return { label: t("accounts.accountTypeCashBadge"), className: "hestia-badge-warning" };
     case "credit_card":
-      return { label: t("accounts.accountTypeCreditCard"), className: "finova-badge-danger" };
+      return { label: t("accounts.accountTypeCreditCard"), className: "hestia-badge-danger" };
     case "bank_account":
     default:
-      return { label: t("accounts.accountTypeBank"), className: "finova-badge-income" };
+      return { label: t("accounts.accountTypeBank"), className: "hestia-badge-income" };
   }
 }
 
@@ -104,18 +104,18 @@ function FinancialAccountRow({ account, formatDateTime, isRemoving, onEdit, onRe
   const accountTypeMeta = getAccountTypeMeta(account.accountType, t);
 
   return (
-    <li className="finova-account-list-item">
-      <div className="finova-account-list-main">
-        <div className="finova-account-list-copy">
-          <strong className="finova-transaction-list-description">{account.institutionName}</strong>
-          <div className="finova-transaction-list-badges">
+    <li className="hestia-account-list-item">
+      <div className="hestia-account-list-main">
+        <div className="hestia-account-list-copy">
+          <strong className="hestia-transaction-list-description">{account.institutionName}</strong>
+          <div className="hestia-transaction-list-badges">
             <span className={statusMeta.className}>{statusMeta.label}</span>
             <span className={accountTypeMeta.className}>{accountTypeMeta.label}</span>
-            <span className="finova-badge-neutral">{formatProviderLabel(account.provider, t)}</span>
+            <span className="hestia-badge-neutral">{formatProviderLabel(account.provider, t)}</span>
           </div>
         </div>
 
-        <div className="finova-actions-row finova-transaction-list-actions">
+        <div className="hestia-actions-row hestia-transaction-list-actions">
           <Button variant="secondary" className="btn-sm" onClick={() => onEdit(account)} disabled={isRemoving}>
             {t("accounts.editButton")}
           </Button>
@@ -125,14 +125,14 @@ function FinancialAccountRow({ account, formatDateTime, isRemoving, onEdit, onRe
         </div>
       </div>
 
-      <div className="finova-account-list-label">
+      <div className="hestia-account-list-label">
         {formatFinancialAccountLabel(account, {
           fallbackName: t("accounts.fallbackAccountName"),
           endingLabel: t("accounts.endingLabel"),
         })}
       </div>
 
-      <div className="finova-financial-account-meta">
+      <div className="hestia-financial-account-meta">
         <span>{t("accounts.metaAccount")}: {account.accountName}</span>
         <span>{t("accounts.metaType")}: {accountTypeMeta.label}</span>
         {account.accountMask ? <span>{t("accounts.metaEnding")}: {account.accountMask}</span> : null}
@@ -145,7 +145,7 @@ function FinancialAccountRow({ account, formatDateTime, isRemoving, onEdit, onRe
       </div>
 
       {account.linkedTransactionsCount > 0 ? (
-        <p className="finova-account-list-warning mb-0">
+        <p className="hestia-account-list-warning mb-0">
           {t("accounts.linkedTransactionsWarning", { count: account.linkedTransactionsCount })}
         </p>
       ) : null}
@@ -323,15 +323,15 @@ export default function FinancialAccounts() {
   }
 
   return (
-    <section className="finova-section-space">
+    <section className="hestia-section-space">
       <PageHeader title={t("pages.accountsTitle")} subtitle={t("pages.accountsSubtitle")} />
 
       <div className="d-grid gap-4">
-        <div className="finova-page-note">
+        <div className="hestia-page-note">
           {t("pages.accountsPageNote")}
         </div>
 
-        <div className="finova-account-metrics">
+        <div className="hestia-account-metrics">
           <Metric label={t("accounts.summaryRegistered")} value={summary.total} />
           <Metric label={t("accounts.summaryConnected")} value={summary.connected} tone="income" />
           <Metric label={t("accounts.summaryPending")} value={summary.pending} tone="warning" />
@@ -341,12 +341,12 @@ export default function FinancialAccounts() {
 
         <div className="row g-4">
           <div className="col-12 col-xxl-5">
-            <div className="finova-card p-4 h-100">
+            <div className="hestia-card p-4 h-100">
               <div className="mb-3">
-                <h2 className="finova-title h5 mb-1">
+                <h2 className="hestia-title h5 mb-1">
                   {editingAccountId ? t("accounts.editTitle") : t("accounts.addTitle")}
                 </h2>
-                <p className="finova-subtitle mb-0">
+                <p className="hestia-subtitle mb-0">
                   {editingAccountId
                     ? t("accounts.editSubtitle")
                     : t("accounts.addSubtitle")}
@@ -360,7 +360,7 @@ export default function FinancialAccounts() {
                   </label>
                   <select
                     id="financial-account-type"
-                    className="form-select finova-select"
+                    className="form-select hestia-select"
                     value={form.accountType}
                     onChange={(event) => updateField("accountType", event.target.value)}
                     disabled={isSubmitting}
@@ -385,7 +385,7 @@ export default function FinancialAccounts() {
                   </label>
                   <select
                     id="financial-provider"
-                    className="form-select finova-select"
+                    className="form-select hestia-select"
                     value={form.provider}
                     onChange={(event) => updateField("provider", event.target.value)}
                     disabled={isSubmitting}
@@ -414,7 +414,7 @@ export default function FinancialAccounts() {
                   <input
                     id="financial-institution-name"
                     type="text"
-                    className="form-control finova-input"
+                    className="form-control hestia-input"
                     value={form.institutionName}
                     onChange={(event) => updateField("institutionName", event.target.value)}
                     placeholder={t("accounts.placeholderInstitution")}
@@ -432,7 +432,7 @@ export default function FinancialAccounts() {
                   <input
                     id="financial-institution-code"
                     type="text"
-                    className="form-control finova-input"
+                    className="form-control hestia-input"
                     value={form.institutionCode}
                     onChange={(event) => updateField("institutionCode", event.target.value)}
                     placeholder={t("accounts.placeholderOptional")}
@@ -447,7 +447,7 @@ export default function FinancialAccounts() {
                   <input
                     id="financial-account-name"
                     type="text"
-                    className="form-control finova-input"
+                    className="form-control hestia-input"
                     value={form.accountName}
                     onChange={(event) => updateField("accountName", event.target.value)}
                     placeholder={t("accounts.placeholderAccountName")}
@@ -462,7 +462,7 @@ export default function FinancialAccounts() {
                   <input
                     id="financial-account-mask"
                     type="text"
-                    className="form-control finova-input"
+                    className="form-control hestia-input"
                     value={form.accountMask}
                     onChange={(event) => updateField("accountMask", event.target.value)}
                     placeholder={t("accounts.placeholderMask")}
@@ -480,7 +480,7 @@ export default function FinancialAccounts() {
                   <input
                     id="financial-account-external-id"
                     type="text"
-                    className="form-control finova-input"
+                    className="form-control hestia-input"
                     value={form.externalAccountId}
                     onChange={(event) => updateField("externalAccountId", event.target.value)}
                     placeholder={t("accounts.placeholderOptional")}
@@ -505,7 +505,7 @@ export default function FinancialAccounts() {
                 ) : null}
 
                 <div className="col-12">
-                  <div className="finova-actions-row finova-actions-row-end pt-2">
+                  <div className="hestia-actions-row hestia-actions-row-end pt-2">
                     {editingAccountId ? (
                       <Button
                         variant="secondary"
@@ -531,11 +531,11 @@ export default function FinancialAccounts() {
           </div>
 
           <div className="col-12 col-xxl-7">
-            <div className="finova-card p-4 h-100">
+            <div className="hestia-card p-4 h-100">
               <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
                 <div>
-                  <h2 className="finova-title h5 mb-1">{t("accounts.listTitle")}</h2>
-                  <p className="finova-subtitle mb-0">{t("accounts.listSubtitle")}</p>
+                  <h2 className="hestia-title h5 mb-1">{t("accounts.listTitle")}</h2>
+                  <p className="hestia-subtitle mb-0">{t("accounts.listSubtitle")}</p>
                 </div>
 
                 <Button variant="secondary" onClick={loadAccounts} loading={isLoading}>
@@ -543,27 +543,27 @@ export default function FinancialAccounts() {
                 </Button>
               </div>
 
-              <div className="finova-card-soft p-3 mb-3">
+              <div className="hestia-card-soft p-3 mb-3">
                 <div className="d-flex flex-column flex-lg-row justify-content-between gap-3">
                   <div>
-                    <div className="finova-title h6 mb-1">{t("accounts.openFinanceTitle")}</div>
-                    <p className="finova-subtitle mb-0">{t("accounts.openFinanceSubtitle")}</p>
+                    <div className="hestia-title h6 mb-1">{t("accounts.openFinanceTitle")}</div>
+                    <p className="hestia-subtitle mb-0">{t("accounts.openFinanceSubtitle")}</p>
                   </div>
-                  <span className="finova-badge-warning align-self-start">{t("accounts.manualBadge")}</span>
+                  <span className="hestia-badge-warning align-self-start">{t("accounts.manualBadge")}</span>
                 </div>
               </div>
 
-              <div className="finova-page-note mb-3">{t("accounts.removeNote")}</div>
+              <div className="hestia-page-note mb-3">{t("accounts.removeNote")}</div>
 
               {isLoading ? (
-                <div className="finova-loading-state">
+                <div className="hestia-loading-state">
                   <div className="spinner-border spinner-border-sm text-primary" />
-                  <p className="finova-subtitle mb-0">{t("accounts.loading")}</p>
+                  <p className="hestia-subtitle mb-0">{t("accounts.loading")}</p>
                 </div>
               ) : accounts.length === 0 ? (
                 <EmptyState titleAs="h3" title={t("accounts.emptyTitle")} description={t("accounts.emptySubtitle")} />
               ) : (
-                <ul className="finova-account-list list-unstyled mb-0" aria-label={t("accounts.listTitle")}>
+                <ul className="hestia-account-list list-unstyled mb-0" aria-label={t("accounts.listTitle")}>
                   {accounts.map((account) => {
                     return (
                       <FinancialAccountRow

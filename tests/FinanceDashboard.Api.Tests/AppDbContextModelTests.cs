@@ -181,7 +181,7 @@ public class AppDbContextModelTests
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseSqlServer(
-                "Server=localhost;Database=finova-model-test;" +
+                "Server=localhost;Database=hestia-model-test;" +
                 "User Id=sa;Password=ModelTest123!;TrustServerCertificate=True")
             .Options;
         return new AppDbContext(options);
@@ -191,8 +191,8 @@ public class AppDbContextModelTests
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql(
-                "Host=localhost;Database=finova_model_test;" +
-                "Username=finova;Password=ModelTest123!")
+                "Host=localhost;Database=hestia_model_test;" +
+                "Username=hestia;Password=ModelTest123!")
             .Options;
         return new AppDbContext(options);
     }

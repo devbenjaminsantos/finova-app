@@ -16,8 +16,8 @@ export default function AppShell() {
       setUser(getStoredUser());
     }
 
-    window.addEventListener("finova-session-change", syncUser);
-    return () => window.removeEventListener("finova-session-change", syncUser);
+    window.addEventListener("hestia-session-change", syncUser);
+    return () => window.removeEventListener("hestia-session-change", syncUser);
   }, []);
 
   async function handleLogout() {

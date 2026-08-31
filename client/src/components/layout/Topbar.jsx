@@ -28,7 +28,7 @@ export default function Topbar() {
         <strong>{t(titleKey)}</strong>
       </div>
 
-      <Link className="btn finova-btn-primary app-topbar-action" to="/transacoes?nova=1">
+      <Link className="btn hestia-btn-primary app-topbar-action" to="/transacoes?nova=1">
         <Plus size={18} aria-hidden="true" />
         <span>{t("pages.newTransaction")}</span>
       </Link>

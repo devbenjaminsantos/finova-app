@@ -551,18 +551,18 @@ export default function Transactions() {
   }
 
   return (
-    <section className="finova-section-space">
+    <section className="hestia-section-space">
       <PageHeader
         title={t("pages.transactionsTitle")}
         subtitle={t("pages.transactionsSubtitle")}
         actions={
           <>
-          <button className="btn finova-btn-light px-4" onClick={openImport} disabled={isMutating}>
+          <button className="btn hestia-btn-light px-4" onClick={openImport} disabled={isMutating}>
             {t("pages.importFile")}
           </button>
 
           <button
-            className="btn finova-btn-primary px-4"
+            className="btn hestia-btn-primary px-4"
             onClick={openCreate}
             disabled={isMutating}
           >
@@ -572,7 +572,7 @@ export default function Transactions() {
         }
       />
 
-      <div className="finova-page-note mb-4">{t("pages.transactionsPageNote")}</div>
+      <div className="hestia-page-note mb-4">{t("pages.transactionsPageNote")}</div>
 
       <TransactionModal
         mode={mode}
@@ -641,10 +641,10 @@ export default function Transactions() {
         onReset={resetFilters}
       />
 
-      <div className="finova-transactions-workspace">
-        <div className="finova-transactions-history">
+      <div className="hestia-transactions-workspace">
+        <div className="hestia-transactions-history">
           {importFeedback ? (
-            <div className="alert alert-success mb-4 finova-status-banner" role="status">
+            <div className="alert alert-success mb-4 hestia-status-banner" role="status">
               {importFeedback}
             </div>
           ) : null}
@@ -662,7 +662,7 @@ export default function Transactions() {
           />
         </div>
 
-        <div className="finova-transactions-commitments">
+        <div className="hestia-transactions-commitments">
           <TransactionCommitments
             recurringRules={visibleRecurringRules}
             recurringOverview={recurringOverview}

@@ -2,10 +2,17 @@ import { apiRequest, resetCsrfToken } from "./http";
 
 const LEGACY_TOKEN_KEY = "token";
 const USER_KEY = "user";
-const LAST_ACTIVITY_KEY = "finova:last-activity-at";
-const LOGOUT_REASON_KEY = "finova:logout-reason";
-const POST_LOGIN_REDIRECT_KEY = "finova:post-login-redirect";
+const LAST_ACTIVITY_KEY = "hestia:last-activity-at";
+const LOGOUT_REASON_KEY = "hestia:logout-reason";
+const POST_LOGIN_REDIRECT_KEY = "hestia:post-login-redirect";
+const LEGACY_STORAGE_KEYS = new Map([
+  [LAST_ACTIVITY_KEY, "finova:last-activity-at"],
+  [LOGOUT_REASON_KEY, "finova:logout-reason"],
+  [POST_LOGIN_REDIRECT_KEY, "finova:post-login-redirect"],
+]);
 const SESSION_IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+
+migrateLegacyStorage();
 
 export async function loginRequest(email, password) {
   const data = await apiRequest("/auth/login", {
@@ -71,6 +78,7 @@ export function clearStoredSession(reason = "") {
   localStorage.removeItem(LEGACY_TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem(LAST_ACTIVITY_KEY);
+  localStorage.removeItem(LEGACY_STORAGE_KEYS.get(LAST_ACTIVITY_KEY));
 
   if (reason) {
     localStorage.setItem(LOGOUT_REASON_KEY, reason);
@@ -236,10 +244,27 @@ export function syncSessionFromStorageEvent(event) {
     event.key === LEGACY_TOKEN_KEY ||
     event.key === USER_KEY ||
     event.key === LAST_ACTIVITY_KEY ||
-    event.key === LOGOUT_REASON_KEY
+    event.key === LOGOUT_REASON_KEY ||
+    [...LEGACY_STORAGE_KEYS.values()].includes(event.key)
   ) {
     dispatchSessionChange();
   }
+}
+
+function migrateLegacyStorage() {
+  if (typeof localStorage === "undefined") {
+    return;
+  }
+
+  LEGACY_STORAGE_KEYS.forEach((legacyKey, currentKey) => {
+    const legacyValue = localStorage.getItem(legacyKey);
+
+    if (localStorage.getItem(currentKey) === null && legacyValue !== null) {
+      localStorage.setItem(currentKey, legacyValue);
+    }
+
+    localStorage.removeItem(legacyKey);
+  });
 }
 
 function clearStoredLogoutReason() {
@@ -247,5 +272,5 @@ function clearStoredLogoutReason() {
 }
 
 function dispatchSessionChange() {
-  window.dispatchEvent(new Event("finova-session-change"));
+  window.dispatchEvent(new Event("hestia-session-change"));
 }

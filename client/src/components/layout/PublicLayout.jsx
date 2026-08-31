@@ -9,7 +9,7 @@ export default function PublicLayout() {
   const { t } = useI18n();
 
   return (
-    <div className="finova-page app-public-layout">
+    <div className="hestia-page app-public-layout">
       <header className="app-public-header">
         <Link className="app-public-brand" to="/login" aria-label={t("common.brandName")}>
           <BrandMark size="navbar" />

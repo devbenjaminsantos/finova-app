@@ -22,27 +22,27 @@ export default function TransactionsTable({
 
   if (isLoading) {
     return (
-      <div className="finova-card p-4">
-        <div className="finova-loading-state">
+      <div className="hestia-card p-4">
+        <div className="hestia-loading-state">
           <div className="spinner-border spinner-border-sm text-primary" />
-          <p className="finova-subtitle mb-0">{t("transactions.loading")}</p>
+          <p className="hestia-subtitle mb-0">{t("transactions.loading")}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="finova-card p-4 finova-table-shell">
+    <div className="hestia-card p-4 hestia-table-shell">
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
         <div>
-          <h2 className="finova-title h5 mb-1">{t("transactions.historyTitle")}</h2>
-          <p className="finova-subtitle small mb-0">
+          <h2 className="hestia-title h5 mb-1">{t("transactions.historyTitle")}</h2>
+          <p className="hestia-subtitle small mb-0">
             {transactions.length !== totalTransactionsCount
               ? t("transactions.summaryWithTotal", { visible: transactions.length, total: totalTransactionsCount })
               : summaryLabel}
           </p>
         </div>
-        <div className="finova-actions-row">
+        <div className="hestia-actions-row">
           <Button type="button" variant="secondary" onClick={onExportCsv} disabled={transactions.length === 0}>{t("transactions.exportCsv")}</Button>
           <Button type="button" variant="secondary" onClick={onExportPdf} disabled={transactions.length === 0}>{t("transactions.exportPdf")}</Button>
         </div>
@@ -55,7 +55,7 @@ export default function TransactionsTable({
           description={totalTransactionsCount === 0 ? t("transactions.emptyNoData") : t("transactions.emptyFiltered")}
         />
       ) : (
-        <ul className="finova-transaction-list list-unstyled mb-0" aria-label={t("transactions.historyTitle")}>
+        <ul className="hestia-transaction-list list-unstyled mb-0" aria-label={t("transactions.historyTitle")}>
           {transactions.map((transaction) => (
             <TransactionRow
               key={transaction.id}

@@ -5,9 +5,9 @@ export default function RouteLoading() {
 
   return (
     <div className="py-5" role="status" aria-live="polite">
-      <div className="finova-loading-state">
+      <div className="hestia-loading-state">
         <div className="spinner-border spinner-border-sm text-primary" aria-hidden="true" />
-        <p className="finova-subtitle mb-0">{t("common.loading")}</p>
+        <p className="hestia-subtitle mb-0">{t("common.loading")}</p>
       </div>
     </div>
   );

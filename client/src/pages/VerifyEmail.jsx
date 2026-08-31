@@ -50,17 +50,17 @@ export default function VerifyEmail() {
   }, [token, t]);
 
   return (
-    <div className="finova-page finova-auth-layout d-flex align-items-center justify-content-center px-3 py-4">
-      <div className="finova-auth-shell finova-auth-shell-md">
-        <div className="text-center mb-4 finova-auth-hero">
+    <div className="hestia-page hestia-auth-layout d-flex align-items-center justify-content-center px-3 py-4">
+      <div className="hestia-auth-shell hestia-auth-shell-md">
+        <div className="text-center mb-4 hestia-auth-hero">
           <BrandMark className="mb-2" size="hero" centered />
-          <p className="finova-subtitle mb-0">{t("auth.verifySubtitle")}</p>
+          <p className="hestia-subtitle mb-0">{t("auth.verifySubtitle")}</p>
         </div>
 
-        <div className="finova-card finova-auth-card p-4 p-md-5 text-center">
-          <div className="finova-auth-card-header mb-4">
-            <h2 className="finova-title h4 mb-2">{t("auth.verifyTitle")}</h2>
-            <p className="finova-subtitle mb-0">{t("auth.verifySubtitle")}</p>
+        <div className="hestia-card hestia-auth-card p-4 p-md-5 text-center">
+          <div className="hestia-auth-card-header mb-4">
+            <h2 className="hestia-title h4 mb-2">{t("auth.verifyTitle")}</h2>
+            <p className="hestia-subtitle mb-0">{t("auth.verifySubtitle")}</p>
           </div>
 
           {isSubmitting ? (
@@ -81,8 +81,8 @@ export default function VerifyEmail() {
             </div>
           ) : null}
 
-          <div className="text-center mt-4 finova-auth-footer">
-            <Link to="/login" className="text-decoration-none fw-semibold finova-auth-link">
+          <div className="text-center mt-4 hestia-auth-footer">
+            <Link to="/login" className="text-decoration-none fw-semibold hestia-auth-link">
               {t("auth.goToLogin")}
             </Link>
           </div>

@@ -42,6 +42,6 @@ describe("TransactionsTable", () => {
     expect(onExportPdf).toHaveBeenCalledOnce();
     expect(onEdit).toHaveBeenCalledWith(transaction);
     expect(onRemove).toHaveBeenCalledWith(17);
-    expect(screen.getByRole("button", { name: "Remover" })).toHaveClass("finova-button-danger");
+    expect(screen.getByRole("button", { name: "Remover" })).toHaveClass("hestia-button-danger");
   });
 });

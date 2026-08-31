@@ -100,7 +100,7 @@ export default function InstallmentGroupModal({
 
   return (
     <div
-      className="modal d-block finova-modal-backdrop"
+      className="modal d-block hestia-modal-backdrop"
       tabIndex="-1"
       role="dialog"
       aria-modal="true"
@@ -111,18 +111,18 @@ export default function InstallmentGroupModal({
       }}
     >
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content border-0 finova-modal-surface">
-          <div className="modal-header border-0 pb-0 px-4 pt-4 finova-modal-header">
+        <div className="modal-content border-0 hestia-modal-surface">
+          <div className="modal-header border-0 pb-0 px-4 pt-4 hestia-modal-header">
             <div>
-              <h2 className="finova-title h4 mb-1">{t("transactions.installmentGroupTitle")}</h2>
-              <p className="finova-subtitle small mb-0">
+              <h2 className="hestia-title h4 mb-1">{t("transactions.installmentGroupTitle")}</h2>
+              <p className="hestia-subtitle small mb-0">
                 {t("transactions.installmentGroupSubtitle")}
               </p>
             </div>
 
             <button
               type="button"
-              className="btn-close finova-modal-close finova-icon-tooltip"
+              className="btn-close hestia-modal-close hestia-icon-tooltip"
               aria-label={t("transactions.close")}
               title={t("transactions.close")}
               data-tooltip={t("transactions.close")}
@@ -140,7 +140,7 @@ export default function InstallmentGroupModal({
                   id="installment-group-description"
                   ref={descriptionInputRef}
                   type="text"
-                  className="form-control finova-input"
+                  className="form-control hestia-input"
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
                 />
@@ -152,7 +152,7 @@ export default function InstallmentGroupModal({
                 </label>
                 <select
                   id="installment-group-category"
-                  className="form-select finova-select"
+                  className="form-select hestia-select"
                   value={category}
                   onChange={(event) => setCategory(event.target.value)}
                 >
@@ -171,7 +171,7 @@ export default function InstallmentGroupModal({
                 <input
                   id="installment-group-tags"
                   type="text"
-                  className="form-control finova-input"
+                  className="form-control hestia-input"
                   value={tagNamesInput}
                   onChange={(event) => setTagNamesInput(event.target.value)}
                   placeholder={t("transactions.installmentGroupTagsPlaceholder")}
@@ -180,15 +180,15 @@ export default function InstallmentGroupModal({
 
               {error ? (
                 <div className="col-12">
-                  <div className="alert alert-danger py-2 mb-0 finova-status-banner">{error}</div>
+                  <div className="alert alert-danger py-2 mb-0 hestia-status-banner">{error}</div>
                 </div>
               ) : null}
 
               <div className="col-12">
-                <div className="finova-actions-row finova-actions-row-end finova-modal-actions pt-2">
+                <div className="hestia-actions-row hestia-actions-row-end hestia-modal-actions pt-2">
                   <button
                     type="button"
-                    className="btn finova-btn-light px-4"
+                    className="btn hestia-btn-light px-4"
                     onClick={onClose}
                     disabled={isSubmitting}
                   >
@@ -197,7 +197,7 @@ export default function InstallmentGroupModal({
 
                   <button
                     type="submit"
-                    className="btn finova-btn-primary px-4"
+                    className="btn hestia-btn-primary px-4"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? t("transactions.saving") : t("transactions.installmentGroupSave")}

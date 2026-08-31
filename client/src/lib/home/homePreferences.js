@@ -17,11 +17,24 @@ export const DEFAULT_HOME_WIDGETS = HOME_WIDGET_OPTIONS.reduce((accumulator, opt
 
 function getStorageKey(user) {
   const userScope = user?.id || user?.email || "anonymous";
+  return `hestia:home-widgets:${userScope}`;
+}
+
+function getLegacyStorageKey(user) {
+  const userScope = user?.id || user?.email || "anonymous";
   return `finova:home-widgets:${userScope}`;
 }
 
 export function loadHomeWidgets(user) {
-  const stored = loadJSON(getStorageKey(user), DEFAULT_HOME_WIDGETS);
+  const storageKey = getStorageKey(user);
+  const legacyStorageKey = getLegacyStorageKey(user);
+  const legacyStored = loadJSON(legacyStorageKey, null);
+  const stored = loadJSON(storageKey, legacyStored ?? DEFAULT_HOME_WIDGETS);
+
+  if (localStorage.getItem(storageKey) === null && legacyStored !== null) {
+    saveJSON(storageKey, legacyStored);
+  }
+  localStorage.removeItem(legacyStorageKey);
 
   return HOME_WIDGET_OPTIONS.reduce((accumulator, option) => {
     accumulator[option.key] =

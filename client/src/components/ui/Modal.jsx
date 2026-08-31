@@ -80,7 +80,7 @@ export default function Modal({
 
   return (
     <div
-      className="modal d-block finova-modal-backdrop"
+      className="modal d-block hestia-modal-backdrop"
       role="presentation"
       onMouseDown={(event) => {
         if (dismissible && event.target === event.currentTarget) {
@@ -91,22 +91,22 @@ export default function Modal({
       <div className={`modal-dialog modal-dialog-centered modal-${size} ${className}`.trim()}>
         <div
           ref={dialogRef}
-          className="modal-content border-0 finova-modal-surface"
+          className="modal-content border-0 hestia-modal-surface"
           role="dialog"
           aria-modal="true"
           aria-labelledby={generatedTitleId}
           tabIndex="-1"
         >
-          <div className="modal-header border-0 pb-0 px-4 pt-4 finova-modal-header">
+          <div className="modal-header border-0 pb-0 px-4 pt-4 hestia-modal-header">
             <div>
-              <h2 id={generatedTitleId} className="finova-title h4 mb-1">{title}</h2>
-              {subtitle ? <p className="finova-subtitle small mb-0">{subtitle}</p> : null}
+              <h2 id={generatedTitleId} className="hestia-title h4 mb-1">{title}</h2>
+              {subtitle ? <p className="hestia-subtitle small mb-0">{subtitle}</p> : null}
             </div>
 
             {dismissible ? (
               <button
                 type="button"
-                className="btn-close finova-modal-close finova-icon-tooltip"
+                className="btn-close hestia-modal-close hestia-icon-tooltip"
                 aria-label={closeLabel}
                 title={closeLabel}
                 data-tooltip={closeLabel}

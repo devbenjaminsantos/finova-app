@@ -122,7 +122,7 @@ namespace FinanceDashboard.Api.Services.Demo
             };
             var resource = new SqlParameter(
                 "@resource",
-                $"Finova:DemoAccount:{options.Email}");
+                $"Hestia:DemoAccount:{options.Email}");
             var timeout = new SqlParameter(
                 "@timeout",
                 checked((int)options.LockTimeout.TotalMilliseconds));
@@ -146,7 +146,7 @@ namespace FinanceDashboard.Api.Services.Demo
             DemoAccountOptions options,
             CancellationToken cancellationToken)
         {
-            var resource = $"Finova:DemoAccount:{options.Email}";
+            var resource = $"Hestia:DemoAccount:{options.Email}";
             var lockKey = CreatePostgreSqlLockKey(resource);
             var elapsed = Stopwatch.StartNew();
 

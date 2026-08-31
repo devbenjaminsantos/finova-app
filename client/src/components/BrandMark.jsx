@@ -10,9 +10,9 @@ export default function BrandMark({
 }) {
   const { t } = useI18n();
   const classes = [
-    "finova-brand-mark",
-    size ? `finova-brand-mark-${size}` : "",
-    centered ? "finova-brand-mark-centered" : "",
+    "hestia-brand-mark",
+    size ? `hestia-brand-mark-${size}` : "",
+    centered ? "hestia-brand-mark-centered" : "",
     className,
   ]
     .filter(Boolean)
@@ -20,14 +20,14 @@ export default function BrandMark({
 
   return (
     <div className={classes} role="img" aria-label={t("common.brandLogoAlt")}>
-      <span className="finova-brand-logo" aria-hidden="true">
+      <span className="hestia-brand-logo" aria-hidden="true">
         <img src={logo} alt="" />
       </span>
 
       {showWordmark ? (
-        <div className="finova-brand-copy">
-          <span className="finova-brand-wordmark">{t("common.brandName")}</span>
-          {subtitle ? <span className="finova-brand-caption">{subtitle}</span> : null}
+        <div className="hestia-brand-copy">
+          <span className="hestia-brand-wordmark">{t("common.brandName")}</span>
+          {subtitle ? <span className="hestia-brand-caption">{subtitle}</span> : null}
         </div>
       ) : null}
     </div>

@@ -49,7 +49,7 @@ export default function PasswordToggleButton({ isVisible, onToggle, disabled = f
     <Button
       type="button"
       variant="secondary"
-      className="finova-password-toggle finova-icon-tooltip"
+      className="hestia-password-toggle hestia-icon-tooltip"
       onClick={onToggle}
       disabled={disabled}
       aria-label={tooltip}

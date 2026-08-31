@@ -1,6 +1,6 @@
 # Changelog
 
-Este changelog registra os principais marcos de entrega do Finova. Ele é escrito em linguagem de produto para facilitar a leitura por pessoas técnicas e não técnicas.
+Este changelog registra os principais marcos de entrega do Héstia. Ele é escrito em linguagem de produto para facilitar a leitura por pessoas técnicas e não técnicas.
 
 ## Base atual de entrega
 

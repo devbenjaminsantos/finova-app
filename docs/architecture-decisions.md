@@ -1,6 +1,6 @@
 # Decisões de Arquitetura
 
-Este documento registra decisões importantes do Finova. A ideia é manter o contexto vivo: não apenas o que foi feito, mas também por que foi feito desse jeito.
+Este documento registra decisões importantes do Héstia. A ideia é manter o contexto vivo: não apenas o que foi feito, mas também por que foi feito desse jeito.
 
 ## README como porta de entrada
 

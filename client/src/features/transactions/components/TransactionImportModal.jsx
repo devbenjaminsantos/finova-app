@@ -299,29 +299,29 @@ export default function TransactionImportModal({
 
   function renderDuplicateStatus(transaction) {
     if (!transaction.isPossibleDuplicate) {
-      return <span className="finova-badge-primary">{t("transactions.importStatusNew")}</span>;
+      return <span className="hestia-badge-primary">{t("transactions.importStatusNew")}</span>;
     }
 
     if (transaction.duplicateSource === "existing") {
       return (
-        <span className="finova-badge-neutral">{t("transactions.importStatusExisting")}</span>
+        <span className="hestia-badge-neutral">{t("transactions.importStatusExisting")}</span>
       );
     }
 
     if (transaction.duplicateSource === "import") {
-      return <span className="finova-badge-neutral">{t("transactions.importStatusInFile")}</span>;
+      return <span className="hestia-badge-neutral">{t("transactions.importStatusInFile")}</span>;
     }
 
     if (transaction.duplicateSource === "existing_and_import") {
       return (
-        <span className="finova-badge-neutral">
+        <span className="hestia-badge-neutral">
           {t("transactions.importStatusExistingAndFile")}
         </span>
       );
     }
 
     return (
-      <span className="finova-badge-neutral">
+      <span className="hestia-badge-neutral">
         {t("transactions.importStatusPossibleDuplicate")}
       </span>
     );
@@ -529,7 +529,7 @@ export default function TransactionImportModal({
 
   return (
     <div
-      className="modal d-block finova-modal-backdrop"
+      className="modal d-block hestia-modal-backdrop"
       tabIndex="-1"
       role="dialog"
       aria-modal="true"
@@ -540,16 +540,16 @@ export default function TransactionImportModal({
       }}
     >
       <div className="modal-dialog modal-dialog-centered modal-xl">
-        <div className="modal-content border-0 finova-modal-surface">
-          <div className="modal-header border-0 pb-0 px-4 pt-4 finova-modal-header">
+        <div className="modal-content border-0 hestia-modal-surface">
+          <div className="modal-header border-0 pb-0 px-4 pt-4 hestia-modal-header">
             <div>
-              <h2 className="finova-title h4 mb-1">{t("transactions.importTitle")}</h2>
-              <p className="finova-subtitle small mb-0">{t("transactions.importSubtitle")}</p>
+              <h2 className="hestia-title h4 mb-1">{t("transactions.importTitle")}</h2>
+              <p className="hestia-subtitle small mb-0">{t("transactions.importSubtitle")}</p>
             </div>
 
             <button
               type="button"
-              className="btn-close finova-modal-close finova-icon-tooltip"
+              className="btn-close hestia-modal-close hestia-icon-tooltip"
               aria-label={t("transactions.close")}
               title={t("transactions.close")}
               data-tooltip={t("transactions.close")}
@@ -558,7 +558,7 @@ export default function TransactionImportModal({
           </div>
 
           <div className="modal-body px-4 pb-4 pt-3">
-            <div className="finova-card-soft p-3 mb-4">
+            <div className="hestia-card-soft p-3 mb-4">
               <div className="row g-3 align-items-end">
                 <div className="col-12 col-lg-8">
                   <label
@@ -569,7 +569,7 @@ export default function TransactionImportModal({
                   </label>
                   <select
                     id="transaction-import-account"
-                    className="form-select finova-select"
+                    className="form-select hestia-select"
                     value={financialAccountId}
                     onChange={(event) => setFinancialAccountId(event.target.value)}
                     disabled={isSubmitting}
@@ -596,18 +596,18 @@ export default function TransactionImportModal({
               </div>
             </div>
 
-            <div className="finova-card-soft p-3 mb-4">
+            <div className="hestia-card-soft p-3 mb-4">
               <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
                 <div>
-                  <div className="finova-title h6 mb-1">{t("transactions.importFileTitle")}</div>
-                  <p className="finova-subtitle mb-0">{t("transactions.importFileSubtitle")}</p>
+                  <div className="hestia-title h6 mb-1">{t("transactions.importFileTitle")}</div>
+                  <p className="hestia-subtitle mb-0">{t("transactions.importFileSubtitle")}</p>
                 </div>
 
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept=".csv,.ofx,text/csv,application/x-ofx"
-                  className="form-control finova-input"
+                  className="form-control hestia-input"
                   onChange={handleFileSelection}
                 />
               </div>
@@ -615,22 +615,22 @@ export default function TransactionImportModal({
 
             {fileName ? (
               <div className="mb-3 d-flex flex-wrap gap-2">
-                <span className="finova-badge-neutral">{fileName}</span>
+                <span className="hestia-badge-neutral">{fileName}</span>
                 {importFormat ? (
-                  <span className="finova-badge-primary text-uppercase">{importFormat}</span>
+                  <span className="hestia-badge-primary text-uppercase">{importFormat}</span>
                 ) : null}
               </div>
             ) : null}
 
-            {error ? <div className="alert alert-danger py-2 finova-status-banner">{error}</div> : null}
-            {feedback ? <div className="alert alert-success py-2 finova-status-banner">{feedback}</div> : null}
+            {error ? <div className="alert alert-danger py-2 hestia-status-banner">{error}</div> : null}
+            {feedback ? <div className="alert alert-success py-2 hestia-status-banner">{feedback}</div> : null}
 
             {reconciledPreview.length > 0 ? (
               <>
                 <div className="d-flex justify-content-between align-items-center gap-3 mb-3">
                   <div>
-                    <h3 className="finova-title h5 mb-1">{t("transactions.importPreviewTitle")}</h3>
-                    <p className="finova-subtitle mb-0">{t("transactions.importPreviewSubtitle")}</p>
+                    <h3 className="hestia-title h5 mb-1">{t("transactions.importPreviewTitle")}</h3>
+                    <p className="hestia-subtitle mb-0">{t("transactions.importPreviewSubtitle")}</p>
                     {summary.lowConfidenceCount > 0 ? (
                       <div className="small text-muted mt-2">
                         {t("transactions.importLowConfidenceSummary", {
@@ -641,10 +641,10 @@ export default function TransactionImportModal({
                   </div>
 
                   <div className="d-flex flex-column align-items-end gap-2">
-                    <span className="finova-badge-primary">
+                    <span className="hestia-badge-primary">
                       {t("transactions.importSelectedCount", { count: summary.selectedCount })}
                     </span>
-                    <span className="finova-badge-neutral">
+                    <span className="hestia-badge-neutral">
                       {t("transactions.importSelectedTotal", {
                         amount: formatBRLFromCents(summary.selectedAmount),
                       })}
@@ -654,43 +654,43 @@ export default function TransactionImportModal({
 
                 <div className="row g-3 mb-3">
                   <div className="col-12 col-md-3">
-                    <div className="finova-card-soft p-3 h-100">
-                      <div className="finova-subtitle small mb-1">
+                    <div className="hestia-card-soft p-3 h-100">
+                      <div className="hestia-subtitle small mb-1">
                         {t("transactions.importIncomeCount")}
                       </div>
-                      <div className="finova-title h5 mb-0">{summary.incomeCount}</div>
+                      <div className="hestia-title h5 mb-0">{summary.incomeCount}</div>
                     </div>
                   </div>
                   <div className="col-12 col-md-3">
-                    <div className="finova-card-soft p-3 h-100">
-                      <div className="finova-subtitle small mb-1">
+                    <div className="hestia-card-soft p-3 h-100">
+                      <div className="hestia-subtitle small mb-1">
                         {t("transactions.importExpenseCount")}
                       </div>
-                      <div className="finova-title h5 mb-0">{summary.expenseCount}</div>
+                      <div className="hestia-title h5 mb-0">{summary.expenseCount}</div>
                     </div>
                   </div>
                   <div className="col-12 col-md-3">
-                    <div className="finova-card-soft p-3 h-100">
-                      <div className="finova-subtitle small mb-1">
+                    <div className="hestia-card-soft p-3 h-100">
+                      <div className="hestia-subtitle small mb-1">
                         {t("transactions.importExistingDuplicates")}
                       </div>
-                      <div className="finova-title h5 mb-0">{summary.existingDuplicateCount}</div>
+                      <div className="hestia-title h5 mb-0">{summary.existingDuplicateCount}</div>
                     </div>
                   </div>
                   <div className="col-12 col-md-3">
-                    <div className="finova-card-soft p-3 h-100">
-                      <div className="finova-subtitle small mb-1">
+                    <div className="hestia-card-soft p-3 h-100">
+                      <div className="hestia-subtitle small mb-1">
                         {t("transactions.importFileDuplicates")}
                       </div>
-                      <div className="finova-title h5 mb-0">{summary.importDuplicateCount}</div>
+                      <div className="hestia-title h5 mb-0">{summary.importDuplicateCount}</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="finova-actions-row mb-3">
+                <div className="hestia-actions-row mb-3">
                   <button
                     type="button"
-                    className="btn finova-btn-light"
+                    className="btn hestia-btn-light"
                     onClick={selectOnlyNewRows}
                     disabled={isSubmitting || reconciledPreview.length === 0}
                   >
@@ -698,7 +698,7 @@ export default function TransactionImportModal({
                   </button>
                   <button
                     type="button"
-                    className="btn finova-btn-light"
+                    className="btn hestia-btn-light"
                     onClick={deselectSuggestedDuplicates}
                     disabled={isSubmitting || summary.duplicateCount === 0}
                   >
@@ -706,7 +706,7 @@ export default function TransactionImportModal({
                   </button>
                   <button
                     type="button"
-                    className="btn finova-btn-light"
+                    className="btn hestia-btn-light"
                     onClick={selectAllRows}
                     disabled={isSubmitting || reconciledPreview.length === 0}
                   >
@@ -714,7 +714,7 @@ export default function TransactionImportModal({
                   </button>
                   <button
                     type="button"
-                    className="btn finova-btn-light"
+                    className="btn hestia-btn-light"
                     onClick={removeSelectedRows}
                     disabled={isSubmitting || summary.selectedCount === 0}
                   >
@@ -722,7 +722,7 @@ export default function TransactionImportModal({
                   </button>
                 </div>
 
-                <div className="finova-card-soft p-3 mb-3">
+                <div className="hestia-card-soft p-3 mb-3">
                   <div className="row g-3 align-items-end">
                     <div className="col-12 col-xl-4">
                       <label
@@ -734,7 +734,7 @@ export default function TransactionImportModal({
                       <input
                         id="import-preview-search"
                         type="text"
-                        className="form-control finova-input"
+                        className="form-control hestia-input"
                         placeholder={t("transactions.importSearchPlaceholder")}
                         value={previewSearch}
                         onChange={(event) => setPreviewSearch(event.target.value)}
@@ -746,15 +746,15 @@ export default function TransactionImportModal({
                       <label className="form-label text-dark fw-medium">
                         {t("transactions.importFilterRows")}
                       </label>
-                      <div className="finova-segmented-actions">
+                      <div className="hestia-segmented-actions">
                         {previewFilters.map((filter) => (
                           <button
                             key={filter.key}
                             type="button"
                             className={
                               previewFilter === filter.key
-                                ? "btn finova-btn-primary"
-                                : "btn finova-btn-light"
+                                ? "btn hestia-btn-primary"
+                                : "btn hestia-btn-light"
                             }
                             onClick={() => setPreviewFilter(filter.key)}
                             disabled={isSubmitting}
@@ -767,11 +767,11 @@ export default function TransactionImportModal({
                   </div>
                 </div>
 
-                <div className="finova-card-soft p-3 mb-3">
+                <div className="hestia-card-soft p-3 mb-3">
                   <div className="d-flex flex-column gap-3">
                     <div>
-                      <div className="finova-title h6 mb-1">{t("transactions.importBulkTitle")}</div>
-                      <p className="finova-subtitle mb-0">{t("transactions.importBulkSubtitle")}</p>
+                      <div className="hestia-title h6 mb-1">{t("transactions.importBulkTitle")}</div>
+                      <p className="hestia-subtitle mb-0">{t("transactions.importBulkSubtitle")}</p>
                       {summary.lowConfidenceSelectedCount > 0 ? (
                         <div className="small text-muted mt-2">
                           {t("transactions.importBulkLowConfidence", {
@@ -792,7 +792,7 @@ export default function TransactionImportModal({
                         <input
                           id="bulk-import-description-prefix"
                           type="text"
-                          className="form-control finova-input"
+                          className="form-control hestia-input"
                           placeholder={t("transactions.importBulkPrefixPlaceholder")}
                           value={bulkDescriptionPrefix}
                           onChange={(event) => setBulkDescriptionPrefix(event.target.value)}
@@ -803,7 +803,7 @@ export default function TransactionImportModal({
                       <div className="col-12 col-lg-2">
                         <button
                           type="button"
-                          className="btn finova-btn-light w-100"
+                          className="btn hestia-btn-light w-100"
                           onClick={applyBulkDescriptionPrefix}
                           disabled={
                             isSubmitting ||
@@ -825,7 +825,7 @@ export default function TransactionImportModal({
                         <input
                           id="bulk-import-description-replace"
                           type="text"
-                          className="form-control finova-input"
+                          className="form-control hestia-input"
                           placeholder={t("transactions.importBulkReplacePlaceholder")}
                           value={bulkDescriptionReplace}
                           onChange={(event) => setBulkDescriptionReplace(event.target.value)}
@@ -836,7 +836,7 @@ export default function TransactionImportModal({
                       <div className="col-12 col-lg-2">
                         <button
                           type="button"
-                          className="btn finova-btn-light w-100"
+                          className="btn hestia-btn-light w-100"
                           onClick={applyBulkDescriptionReplace}
                           disabled={
                             isSubmitting ||
@@ -854,7 +854,7 @@ export default function TransactionImportModal({
                         </label>
                         <select
                           id="bulk-import-type"
-                          className="form-select finova-select"
+                          className="form-select hestia-select"
                           value={bulkType}
                           onChange={(event) => setBulkType(event.target.value)}
                           disabled={isSubmitting}
@@ -868,7 +868,7 @@ export default function TransactionImportModal({
                       <div className="col-12 col-lg-2">
                         <button
                           type="button"
-                          className="btn finova-btn-light w-100"
+                          className="btn hestia-btn-light w-100"
                           onClick={applyBulkType}
                           disabled={isSubmitting || !bulkType || summary.selectedCount === 0}
                         >
@@ -885,7 +885,7 @@ export default function TransactionImportModal({
                         </label>
                         <select
                           id="bulk-import-category"
-                          className="form-select finova-select"
+                          className="form-select hestia-select"
                           value={bulkCategory}
                           onChange={(event) => setBulkCategory(event.target.value)}
                           disabled={isSubmitting || summary.selectedCount === 0 || !selectedType}
@@ -906,7 +906,7 @@ export default function TransactionImportModal({
                       <div className="col-12 col-lg-2">
                         <button
                           type="button"
-                          className="btn finova-btn-light w-100"
+                          className="btn hestia-btn-light w-100"
                           onClick={applyBulkCategory}
                           disabled={
                             isSubmitting ||
@@ -922,8 +922,8 @@ export default function TransactionImportModal({
                   </div>
                 </div>
 
-                <div className="table-responsive finova-table-shell-responsive">
-                  <table className="table finova-table align-middle mb-0">
+                <div className="table-responsive hestia-table-shell-responsive">
+                  <table className="table hestia-table align-middle mb-0">
                     <thead>
                       <tr>
                         <th style={{ width: "72px" }}>{t("transactions.importTableImport")}</th>
@@ -945,7 +945,7 @@ export default function TransactionImportModal({
                             <td>
                               <input
                                 type="checkbox"
-                                className="form-check-input finova-check-input"
+                                className="form-check-input hestia-check-input"
                                 checked={isSelected}
                                 onChange={() => toggleSelection(originalIndex)}
                                 aria-label={t("transactions.importSelectRow", {
@@ -958,7 +958,7 @@ export default function TransactionImportModal({
                               <div>{transaction.description}</div>
                               <div className="mt-1 d-flex flex-wrap gap-2">
                                 {transaction.categoryConfidence === "low" ? (
-                                  <span className="finova-badge-warning">
+                                  <span className="hestia-badge-warning">
                                     {t("transactions.importReviewCategory")}
                                   </span>
                                 ) : null}
@@ -969,7 +969,7 @@ export default function TransactionImportModal({
                             </td>
                             <td>
                               <select
-                                className="form-select form-select-sm finova-select"
+                                className="form-select form-select-sm hestia-select"
                                 value={transaction.category}
                                 onChange={(event) =>
                                   updateTransactionCategory(originalIndex, event.target.value)
@@ -985,7 +985,7 @@ export default function TransactionImportModal({
                             </td>
                             <td>
                               <select
-                                className="form-select form-select-sm finova-select"
+                                className="form-select form-select-sm hestia-select"
                                 value={transaction.type}
                                 onChange={(event) =>
                                   updateTransactionType(originalIndex, event.target.value)
@@ -1003,7 +1003,7 @@ export default function TransactionImportModal({
                             <td className="text-end">
                               <button
                                 type="button"
-                                className="btn btn-sm finova-btn-light"
+                                className="btn btn-sm hestia-btn-light"
                                 onClick={() => removePreviewRow(originalIndex)}
                                 disabled={isSubmitting}
                               >
@@ -1018,20 +1018,20 @@ export default function TransactionImportModal({
                 </div>
 
                 {previewRows.length === 0 ? (
-                  <div className="finova-page-note mt-3">{t("transactions.importNoRowsForFilter")}</div>
+                  <div className="hestia-page-note mt-3">{t("transactions.importNoRowsForFilter")}</div>
                 ) : null}
               </>
             ) : (
-              <div className="finova-card-soft p-4">
-                <h3 className="finova-title h6 mb-2">{t("transactions.importNoRowsTitle")}</h3>
-                <p className="finova-subtitle mb-0">{t("transactions.importNoRowsSubtitle")}</p>
+              <div className="hestia-card-soft p-4">
+                <h3 className="hestia-title h6 mb-2">{t("transactions.importNoRowsTitle")}</h3>
+                <p className="hestia-subtitle mb-0">{t("transactions.importNoRowsSubtitle")}</p>
               </div>
             )}
 
-            <div className="finova-actions-row finova-actions-row-end finova-modal-actions pt-4">
+            <div className="hestia-actions-row hestia-actions-row-end hestia-modal-actions pt-4">
               <button
                 type="button"
-                className="btn finova-btn-light px-4"
+                className="btn hestia-btn-light px-4"
                 onClick={onClose}
                 disabled={isSubmitting}
               >
@@ -1039,7 +1039,7 @@ export default function TransactionImportModal({
               </button>
               <button
                 type="button"
-                className="btn finova-btn-primary px-4"
+                className="btn hestia-btn-primary px-4"
                 onClick={handleImportAction}
                 disabled={isSubmitting || selectedTransactions.length === 0}
               >

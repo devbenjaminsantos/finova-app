@@ -6,8 +6,8 @@ namespace FinanceDashboard.Api.Data;
 public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
     private const string LocalDesignTimeConnection =
-        "Host=localhost;Port=54329;Database=finova_migrations;" +
-        "Username=finova;Password=finova_local_migrations";
+        "Host=localhost;Port=54329;Database=hestia_migrations;" +
+        "Username=hestia;Password=hestia_local_migrations";
 
     public AppDbContext CreateDbContext(string[] args)
     {

@@ -34,7 +34,7 @@ describe("Profile page", () => {
     getProfile.mockResolvedValue({
       id: 7,
       name: "Keller",
-      email: "keller@finova.app",
+      email: "keller@hestia.local",
       emailGoalAlertsEnabled: true,
       goalAlertThresholdPercent: 90,
       monthlyReportEmailsEnabled: true,
@@ -51,7 +51,7 @@ describe("Profile page", () => {
     getPublicDashboardSettings.mockResolvedValue({
       enabled: true,
       hasActiveToken: true,
-      publicUrl: "https://finova.app/compartilhado/teste",
+      publicUrl: "https://hestia.example/compartilhado/teste",
     });
   });
 
@@ -66,14 +66,14 @@ describe("Profile page", () => {
     expect(screen.getByText("Histórico de notificações")).toBeInTheDocument();
     expect(screen.getByText("Alerta de meta mensal - orcamento geral")).toBeInTheDocument();
     expect(screen.getByText("Painel público")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("https://finova.app/compartilhado/teste")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("https://hestia.example/compartilhado/teste")).toBeInTheDocument();
   });
 
   it("submits updated email alert preferences", async () => {
     updateProfileRequest.mockResolvedValue({
       id: 7,
       name: "Keller",
-      email: "keller@finova.app",
+      email: "keller@hestia.local",
       emailGoalAlertsEnabled: false,
       goalAlertThresholdPercent: 60,
       monthlyReportEmailsEnabled: true,
@@ -148,14 +148,14 @@ describe("Profile page", () => {
     rotatePublicDashboardToken.mockResolvedValue({
       enabled: true,
       hasActiveToken: true,
-      publicUrl: "https://finova.app/compartilhado/novo",
+      publicUrl: "https://hestia.example/compartilhado/novo",
     });
 
     render(<Profile />);
     fireEvent.click(await screen.findByRole("button", { name: "Gerar novo link" }));
 
     expect(
-      await screen.findByDisplayValue("https://finova.app/compartilhado/novo")
+      await screen.findByDisplayValue("https://hestia.example/compartilhado/novo")
     ).toBeInTheDocument();
     expect(rotatePublicDashboardToken).toHaveBeenCalledOnce();
   });

@@ -54,17 +54,17 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="finova-page finova-auth-layout d-flex align-items-center justify-content-center px-3 py-4">
-      <div className="finova-auth-shell finova-auth-shell-md">
-        <div className="text-center mb-4 finova-auth-hero">
+    <div className="hestia-page hestia-auth-layout d-flex align-items-center justify-content-center px-3 py-4">
+      <div className="hestia-auth-shell hestia-auth-shell-md">
+        <div className="text-center mb-4 hestia-auth-hero">
           <BrandMark className="mb-2" size="hero" centered />
-          <p className="finova-subtitle mb-0">{t("auth.resetPageSubtitle")}</p>
+          <p className="hestia-subtitle mb-0">{t("auth.resetPageSubtitle")}</p>
         </div>
 
-        <div className="finova-card finova-auth-card p-4 p-md-5">
-          <div className="mb-4 text-center finova-auth-card-header">
-            <h2 className="finova-title h4 mb-2">{t("auth.resetTitle")}</h2>
-            <p className="finova-subtitle mb-0">{t("auth.resetSubtitle")}</p>
+        <div className="hestia-card hestia-auth-card p-4 p-md-5">
+          <div className="mb-4 text-center hestia-auth-card-header">
+            <h2 className="hestia-title h4 mb-2">{t("auth.resetTitle")}</h2>
+            <p className="hestia-subtitle mb-0">{t("auth.resetSubtitle")}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="d-grid gap-3">
@@ -76,7 +76,7 @@ export default function ResetPassword() {
                 <input
                   id="reset-new-password"
                   type={isNewPasswordVisible ? "text" : "password"}
-                  className="form-control finova-input"
+                  className="form-control hestia-input"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   disabled={isSubmitting || !!success}
@@ -99,7 +99,7 @@ export default function ResetPassword() {
                 <input
                   id="reset-confirm-password"
                   type={isConfirmPasswordVisible ? "text" : "password"}
-                  className="form-control finova-input"
+                  className="form-control hestia-input"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={isSubmitting || !!success}
@@ -134,8 +134,8 @@ export default function ResetPassword() {
             </Button>
           </form>
 
-          <div className="text-center mt-4 finova-auth-footer">
-            <Link to="/login" className="text-decoration-none fw-semibold finova-auth-link">
+          <div className="text-center mt-4 hestia-auth-footer">
+            <Link to="/login" className="text-decoration-none fw-semibold hestia-auth-link">
               {t("common.backToLogin")}
             </Link>
           </div>

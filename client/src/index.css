@@ -115,12 +115,12 @@ a {
   text-decoration: none;
 }
 
-.finova-page {
+.hestia-page {
   min-height: 100vh;
   background: var(--bg);
 }
 
-.finova-card {
+.hestia-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -132,7 +132,7 @@ a {
     background 160ms ease;
 }
 
-.finova-card-soft {
+.hestia-card-soft {
   background: var(--surface-soft);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -144,18 +144,18 @@ a {
     background 160ms ease;
 }
 
-.finova-title {
+.hestia-title {
   color: var(--text);
   font-weight: 700;
   letter-spacing: 0;
 }
 
-.finova-subtitle {
+.hestia-subtitle {
   color: var(--text-muted);
 }
 
-.finova-input,
-.finova-select {
+.hestia-input,
+.hestia-select {
   background: var(--surface-elevated);
   color: var(--text) !important;
   border: 1px solid var(--border);
@@ -164,8 +164,8 @@ a {
   box-shadow: none;
 }
 
-.finova-select,
-.form-select.finova-input {
+.hestia-select,
+.form-select.hestia-input {
   appearance: none;
   -webkit-appearance: none;
   background-image:
@@ -181,8 +181,8 @@ a {
   padding-right: 2.35rem;
 }
 
-.finova-input:focus,
-.finova-select:focus {
+.hestia-input:focus,
+.hestia-select:focus {
   border-color: var(--focus);
   box-shadow: 0 0 0 3px var(--focus-ring);
   color: var(--text) !important;
@@ -190,45 +190,45 @@ a {
   -webkit-text-fill-color: var(--text);
 }
 
-.finova-input:disabled,
-.finova-input[readonly],
-.finova-select:disabled {
+.hestia-input:disabled,
+.hestia-input[readonly],
+.hestia-select:disabled {
   color: var(--text) !important;
   -webkit-text-fill-color: var(--text);
   background: color-mix(in srgb, var(--surface-soft) 82%, white 18%);
   opacity: 1;
 }
 
-.finova-field {
+.hestia-field {
   display: grid;
   gap: 0.42rem;
 }
 
-.finova-field-label {
+.hestia-field-label {
   color: var(--text);
   font-size: 0.92rem;
   font-weight: 600;
 }
 
-.finova-field-help,
-.finova-field-error {
+.hestia-field-help,
+.hestia-field-error {
   font-size: 0.82rem;
   line-height: 1.4;
 }
 
-.finova-field-help {
+.hestia-field-help {
   color: var(--text-muted);
 }
 
-.finova-field-error {
+.hestia-field-error {
   color: var(--danger);
 }
 
-.finova-icon-tooltip {
+.hestia-icon-tooltip {
   position: relative;
 }
 
-.finova-icon-tooltip::after {
+.hestia-icon-tooltip::after {
   content: attr(data-tooltip);
   position: absolute;
   left: 50%;
@@ -249,19 +249,19 @@ a {
   z-index: 5;
 }
 
-.finova-icon-tooltip:hover::after,
-.finova-icon-tooltip:focus-visible::after {
+.hestia-icon-tooltip:hover::after,
+.hestia-icon-tooltip:focus-visible::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 
 @media (max-width: 575.98px) {
-  .finova-icon-tooltip::after {
+  .hestia-icon-tooltip::after {
     content: none;
   }
 }
 
-.finova-password-toggle {
+.hestia-password-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -272,12 +272,12 @@ a {
   padding-right: 0.75rem;
 }
 
-.btn-close.finova-icon-tooltip::after {
+.btn-close.hestia-icon-tooltip::after {
   bottom: calc(100% + 0.35rem);
 }
 
-.finova-btn-primary,
-.finova-button-primary {
+.hestia-btn-primary,
+.hestia-button-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -291,17 +291,17 @@ a {
   box-shadow: none;
 }
 
-.finova-btn-primary:hover,
-.finova-btn-primary:focus,
-.finova-button-primary:hover,
-.finova-button-primary:focus {
+.hestia-btn-primary:hover,
+.hestia-btn-primary:focus,
+.hestia-button-primary:hover,
+.hestia-button-primary:focus {
   background: var(--primary-hover);
   border-color: var(--primary-hover);
   color: var(--primary-contrast);
 }
 
-.finova-btn-light,
-.finova-button-secondary {
+.hestia-btn-light,
+.hestia-button-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -314,13 +314,13 @@ a {
   font-weight: 500;
 }
 
-.finova-btn-light:hover,
-.finova-button-secondary:hover {
+.hestia-btn-light:hover,
+.hestia-button-secondary:hover {
   background: var(--brand-soft);
   border-color: var(--brand);
 }
 
-.finova-button-danger {
+.hestia-button-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -333,14 +333,14 @@ a {
   font-weight: 600;
 }
 
-.finova-button-danger:hover,
-.finova-button-danger:focus {
+.hestia-button-danger:hover,
+.hestia-button-danger:focus {
   border-color: var(--danger);
   background: color-mix(in srgb, var(--danger) 10%, var(--surface) 90%);
   color: var(--danger);
 }
 
-.finova-button-link {
+.hestia-button-link {
   display: inline-flex;
   align-items: center;
   min-height: 0;
@@ -352,18 +352,18 @@ a {
   text-decoration: none;
 }
 
-.finova-button-link:hover,
-.finova-button-link:focus {
+.hestia-button-link:hover,
+.hestia-button-link:focus {
   color: var(--brand-deep);
   text-decoration: underline;
 }
 
-.finova-btn-primary:disabled,
-.finova-btn-light:disabled,
-.finova-button-primary:disabled,
-.finova-button-secondary:disabled,
-.finova-button-danger:disabled,
-.finova-button-link:disabled,
+.hestia-btn-primary:disabled,
+.hestia-btn-light:disabled,
+.hestia-button-primary:disabled,
+.hestia-button-secondary:disabled,
+.hestia-button-danger:disabled,
+.hestia-button-link:disabled,
 .btn-outline-danger:disabled {
   cursor: not-allowed;
   opacity: 0.62;
@@ -371,12 +371,12 @@ a {
   box-shadow: none;
 }
 
-.finova-btn-light:focus,
-.finova-btn-primary:focus,
-.finova-button-secondary:focus,
-.finova-button-primary:focus,
-.finova-button-danger:focus,
-.finova-button-link:focus,
+.hestia-btn-light:focus,
+.hestia-btn-primary:focus,
+.hestia-button-secondary:focus,
+.hestia-button-primary:focus,
+.hestia-button-danger:focus,
+.hestia-button-link:focus,
 .btn-outline-danger:focus,
 .btn-link:focus {
   box-shadow: 0 0 0 3px var(--focus-ring);
@@ -387,7 +387,7 @@ a {
   outline-offset: 2px;
 }
 
-.finova-theme-toggle {
+.hestia-theme-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -400,27 +400,27 @@ a {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.finova-theme-toggle-icon {
+.hestia-theme-toggle-icon {
   font-size: 1rem;
   line-height: 1;
 }
 
-.finova-theme-toggle:hover,
-.finova-theme-toggle:focus {
+.hestia-theme-toggle:hover,
+.hestia-theme-toggle:focus {
   color: #fff;
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.32);
 }
 
-.finova-navbar-actions {
+.hestia-navbar-actions {
   gap: 0.55rem;
 }
 
-.finova-navbar-links {
+.hestia-navbar-links {
   gap: 0.28rem;
 }
 
-.finova-navbar-user {
+.hestia-navbar-user {
   display: inline-flex;
   align-items: center;
   min-height: 36px;
@@ -434,7 +434,7 @@ a {
   white-space: nowrap;
 }
 
-.finova-navbar-account-area {
+.hestia-navbar-account-area {
   display: inline-flex;
   align-items: center;
   gap: 0.85rem;
@@ -443,7 +443,7 @@ a {
   border-left: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.finova-navbar-link {
+.hestia-navbar-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -462,7 +462,7 @@ a {
   box-shadow: none;
 }
 
-.finova-language-select {
+.hestia-language-select {
   min-height: 40px;
   min-width: 58px;
   width: 58px;
@@ -475,13 +475,13 @@ a {
   color: #fff;
 }
 
-.finova-language-select:focus {
+.hestia-language-select:focus {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.28);
   color: #fff;
 }
 
-.finova-language-select option {
+.hestia-language-select option {
   background: var(--surface);
   color: var(--text);
 }
@@ -505,7 +505,7 @@ a {
   box-shadow: none;
 }
 
-.finova-navbar-link::after {
+.hestia-navbar-link::after {
   content: "";
   position: absolute;
   left: 0.9rem;
@@ -520,27 +520,27 @@ a {
   transition: opacity 160ms ease, transform 160ms ease;
 }
 
-.finova-navbar-link:hover::after,
-.finova-navbar-link:focus-visible::after,
-.finova-navbar-link-active::after {
+.hestia-navbar-link:hover::after,
+.hestia-navbar-link:focus-visible::after,
+.hestia-navbar-link-active::after {
   opacity: 1;
   transform: scaleX(1);
 }
 
-.finova-navbar-toggler {
+.hestia-navbar-toggler {
   border-color: rgba(255, 255, 255, 0.18);
 }
 
-.finova-navbar-toggler .navbar-toggler-icon {
+.hestia-navbar-toggler .navbar-toggler-icon {
   filter: invert(1);
 }
 
 @media (max-width: 1199.98px) {
-  .finova-navbar .container {
+  .hestia-navbar .container {
     row-gap: 0.75rem;
   }
 
-  .finova-navbar .navbar-collapse {
+  .hestia-navbar .navbar-collapse {
     width: 100%;
     margin-top: 0.5rem;
     padding: 0.75rem;
@@ -552,30 +552,30 @@ a {
     overflow-y: auto;
   }
 
-  .finova-navbar-actions {
+  .hestia-navbar-actions {
     gap: 0.5rem;
   }
 
-  .finova-navbar-links {
+  .hestia-navbar-links {
     align-items: stretch !important;
     gap: 0.45rem;
     padding-top: 1rem;
   }
 
-  .finova-navbar-user {
+  .hestia-navbar-user {
     margin-top: 0.85rem;
     justify-content: center;
     max-width: none;
   }
 
-  .finova-navbar-link {
+  .hestia-navbar-link {
     min-height: 42px;
     padding-left: 0.95rem !important;
     padding-right: 0.95rem !important;
     justify-content: flex-start;
   }
 
-  .finova-navbar-account-area {
+  .hestia-navbar-account-area {
     display: grid;
     gap: 0.45rem;
     margin-left: 0;
@@ -583,17 +583,17 @@ a {
     border-left: 0;
   }
 
-  .finova-navbar-user,
-  .finova-navbar-logout {
+  .hestia-navbar-user,
+  .hestia-navbar-logout {
     width: 100%;
   }
 
-  .finova-navbar-logout {
+  .hestia-navbar-logout {
     margin-top: 0.1rem !important;
   }
 }
 
-.finova-badge-income {
+.hestia-badge-income {
   background: var(--success-bg);
   color: var(--success-dark);
   border: 1px solid color-mix(in srgb, var(--success) 34%, var(--border) 66%);
@@ -603,7 +603,7 @@ a {
   font-size: 0.8rem;
 }
 
-.finova-badge-expense {
+.hestia-badge-expense {
   background: var(--danger-bg);
   color: var(--danger);
   border: 1px solid color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
@@ -613,10 +613,10 @@ a {
   font-size: 0.8rem;
 }
 
-.finova-badge-primary,
-.finova-badge-neutral,
-.finova-badge-warning,
-.finova-badge-danger {
+.hestia-badge-primary,
+.hestia-badge-neutral,
+.hestia-badge-warning,
+.hestia-badge-danger {
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
@@ -625,45 +625,45 @@ a {
   font-weight: 700;
 }
 
-.finova-badge-primary {
+.hestia-badge-primary {
   background: var(--info-bg);
   color: var(--brand-strong);
   border: 1px solid color-mix(in srgb, var(--brand) 34%, var(--border) 66%);
 }
 
-.finova-badge-neutral {
+.hestia-badge-neutral {
   background: color-mix(in srgb, var(--surface-soft) 82%, var(--surface) 18%);
   color: var(--text);
   border: 1px solid var(--border);
 }
 
-.finova-badge-warning {
+.hestia-badge-warning {
   color: var(--warning);
   background: var(--warning-bg);
   border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--border) 66%);
 }
 
-.finova-badge-danger {
+.hestia-badge-danger {
   background: var(--danger-bg);
   color: var(--danger);
   border: 1px solid color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
 }
 
-.finova-section-space {
+.hestia-section-space {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
 
-.finova-page-stack {
+.hestia-page-stack {
   display: grid;
   gap: 1.5rem;
 }
 
-.finova-page-stack-narrow {
+.hestia-page-stack-narrow {
   max-width: 820px;
 }
 
-.finova-page-header {
+.hestia-page-header {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -673,208 +673,208 @@ a {
   position: relative;
 }
 
-.finova-page-header-copy {
+.hestia-page-header-copy {
   flex: 1 1 360px;
   max-width: 720px;
 }
 
-.finova-page-header-copy .finova-title {
+.hestia-page-header-copy .hestia-title {
   margin-bottom: 0.35rem !important;
   text-wrap: balance;
 }
 
-.finova-page-header-copy .finova-subtitle {
+.hestia-page-header-copy .hestia-subtitle {
   max-width: 62ch;
   color: color-mix(in srgb, var(--text-muted) 88%, var(--text) 12%);
 }
 
-.finova-page-header-side {
+.hestia-page-header-side {
   flex: 0 1 240px;
   width: min(100%, 240px);
 }
 
-.finova-page-header-side .form-label {
+.hestia-page-header-side .form-label {
   margin-bottom: 0.45rem;
   color: color-mix(in srgb, var(--text-muted) 76%, var(--text) 24%);
 }
 
-.finova-page-header-actions {
+.hestia-page-header-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.75rem;
 }
 
-.finova-page-header-actions .btn {
+.hestia-page-header-actions .btn {
   min-width: 156px;
 }
 
 @media (max-width: 767.98px) {
-  .finova-section-space {
+  .hestia-section-space {
     padding-top: 1.5rem;
     padding-bottom: 1.75rem;
   }
 
-  .finova-page-stack {
+  .hestia-page-stack {
     gap: 1.25rem;
   }
 
-  .finova-page-header {
+  .hestia-page-header {
     margin-bottom: 1.25rem;
   }
 
-  .finova-page-header-copy {
+  .hestia-page-header-copy {
     flex-basis: 100%;
   }
 
-  .finova-page-header-copy .finova-title {
+  .hestia-page-header-copy .hestia-title {
     font-size: clamp(1.55rem, 7vw, 1.95rem);
   }
 
-  .finova-page-header-side {
+  .hestia-page-header-side {
     width: 100%;
   }
 
-  .finova-page-header-actions {
+  .hestia-page-header-actions {
     width: 100%;
     justify-content: stretch;
   }
 
-  .finova-page-header-actions .btn {
+  .hestia-page-header-actions .btn {
     flex: 1 1 180px;
   }
 
-  .finova-page-note {
+  .hestia-page-note {
     padding: 0.8rem 0.9rem;
     font-size: 0.95rem;
     line-height: 1.45;
   }
 
-  .finova-actions-row {
+  .hestia-actions-row {
     width: 100%;
   }
 
-  .finova-actions-row .btn {
+  .hestia-actions-row .btn {
     flex: 1 1 180px;
   }
 
-  .finova-table .finova-actions-row .btn,
-  .finova-modal-actions .btn {
+  .hestia-table .hestia-actions-row .btn,
+  .hestia-modal-actions .btn {
     flex: 1 1 140px;
   }
 
-  .finova-navbar-actions {
+  .hestia-navbar-actions {
     gap: 0.4rem;
   }
 
-  .finova-theme-toggle,
-  .finova-language-select,
-  .finova-navbar-toggler {
+  .hestia-theme-toggle,
+  .hestia-language-select,
+  .hestia-navbar-toggler {
     min-height: 38px;
   }
 
-  .finova-theme-toggle {
+  .hestia-theme-toggle {
     min-width: 38px;
   }
 
-  .finova-language-select {
+  .hestia-language-select {
     min-width: 54px;
     width: 54px;
     padding-left: 0.55rem;
     padding-right: 1.45rem;
   }
 
-  .finova-navbar .navbar-brand {
+  .hestia-navbar .navbar-brand {
     min-width: 0;
     margin-right: 0.6rem;
   }
 
-  .finova-navbar .navbar-collapse {
+  .hestia-navbar .navbar-collapse {
     padding: 0.8rem;
   }
 
-  .finova-navbar-links {
+  .hestia-navbar-links {
     padding-top: 0.35rem;
   }
 
-  .finova-card,
-  .finova-card-soft {
+  .hestia-card,
+  .hestia-card-soft {
     border-radius: var(--radius-lg);
   }
 }
 
-.finova-auth-shell {
+.hestia-auth-shell {
   width: 100%;
 }
 
-.finova-auth-shell-sm {
+.hestia-auth-shell-sm {
   max-width: 460px;
 }
 
-.finova-auth-shell-md {
+.hestia-auth-shell-md {
   max-width: 500px;
 }
 
-.finova-auth-shell-lg {
+.hestia-auth-shell-lg {
   max-width: 540px;
 }
 
-.finova-auth-layout {
+.hestia-auth-layout {
   position: relative;
 }
 
-.finova-auth-layout::before {
+.hestia-auth-layout::before {
   content: none;
 }
 
-.finova-auth-hero {
+.hestia-auth-hero {
   position: relative;
   z-index: 1;
   padding-top: 0.4rem;
 }
 
-.finova-auth-card {
+.hestia-auth-card {
   position: relative;
   overflow: hidden;
 }
 
-.finova-auth-card::before {
+.hestia-auth-card::before {
   content: none;
 }
 
-.finova-auth-card-header {
+.hestia-auth-card-header {
   padding-bottom: 0.15rem;
 }
 
-.finova-auth-hero .finova-brand-mark {
+.hestia-auth-hero .hestia-brand-mark {
   transform: translateY(0);
 }
 
-.finova-auth-hero .finova-brand-logo {
+.hestia-auth-hero .hestia-brand-logo {
   filter: none;
 }
 
-.finova-auth-hero .finova-brand-wordmark {
+.hestia-auth-hero .hestia-brand-wordmark {
   color: var(--text);
 }
 
-.finova-demo-panel {
+.hestia-demo-panel {
   background: var(--brand-soft);
   border: 1px solid color-mix(in srgb, var(--brand) 28%, var(--border) 72%);
   border-radius: var(--radius-lg);
   box-shadow: none;
 }
 
-.finova-auth-highlight-list {
+.hestia-auth-highlight-list {
   color: var(--text-muted);
 }
 
-.finova-auth-highlight-item {
+.hestia-auth-highlight-item {
   position: relative;
   padding-left: 1rem;
 }
 
-.finova-auth-highlight-item::before {
+.hestia-auth-highlight-item::before {
   content: "";
   position: absolute;
   left: 0;
@@ -886,33 +886,33 @@ a {
   box-shadow: none;
 }
 
-:root[data-theme="dark"] .finova-demo-panel {
+:root[data-theme="dark"] .hestia-demo-panel {
   background: var(--brand-soft);
   border-color: var(--border);
 }
 
-.finova-auth-link {
+.hestia-auth-link {
   color: var(--brand-strong);
   transition: color 160ms ease;
 }
 
-.finova-auth-link:hover,
-.finova-auth-link:focus {
+.hestia-auth-link:hover,
+.hestia-auth-link:focus {
   color: var(--brand);
 }
 
-.finova-auth-footer {
+.hestia-auth-footer {
   border-top: 1px solid var(--divider);
   padding-top: 1rem;
 }
 
-.finova-divider {
+.hestia-divider {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-.finova-divider hr {
+.hestia-divider hr {
   flex: 1;
   margin: 0;
   border: 0;
@@ -920,31 +920,31 @@ a {
   opacity: 1;
 }
 
-.finova-brand {
+.hestia-brand {
   letter-spacing: 0;
   font-weight: 800;
 }
 
-.finova-brand-link {
+.hestia-brand-link {
   display: inline-flex;
   align-items: center;
   padding-top: 0;
   padding-bottom: 0;
 }
 
-.finova-brand-mark {
+.hestia-brand-mark {
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
   min-width: 0;
 }
 
-.finova-brand-mark-centered {
+.hestia-brand-mark-centered {
   justify-content: center;
   width: 100%;
 }
 
-.finova-brand-logo {
+.hestia-brand-logo {
   position: relative;
   display: block;
   width: 44px;
@@ -955,7 +955,7 @@ a {
   background: transparent;
 }
 
-.finova-brand-logo img {
+.hestia-brand-logo img {
   position: absolute;
   top: -19.5%;
   left: -27.5%;
@@ -965,13 +965,13 @@ a {
   max-width: none;
 }
 
-.finova-brand-copy {
+.hestia-brand-copy {
   display: inline-flex;
   flex-direction: column;
   min-width: 0;
 }
 
-.finova-brand-wordmark {
+.hestia-brand-wordmark {
   color: var(--brand-deep);
   letter-spacing: 0;
   font-weight: 800;
@@ -979,95 +979,95 @@ a {
   line-height: 1.05;
 }
 
-.finova-brand-caption {
+.hestia-brand-caption {
   color: var(--text-muted);
   font-size: 0.82rem;
   line-height: 1.25;
 }
 
-.finova-brand-mark-navbar .finova-brand-logo {
+.hestia-brand-mark-navbar .hestia-brand-logo {
   width: 34px;
   height: 34px;
 }
 
-.finova-brand-mark-navbar .finova-brand-wordmark {
+.hestia-brand-mark-navbar .hestia-brand-wordmark {
   color: #fff;
   font-size: 1.05rem;
 }
 
-.finova-brand-mark-navbar .finova-brand-caption {
+.hestia-brand-mark-navbar .hestia-brand-caption {
   color: rgba(255, 255, 255, 0.72);
 }
 
 @media (max-width: 575.98px) {
-  .finova-brand-mark-navbar {
+  .hestia-brand-mark-navbar {
     gap: 0.6rem;
   }
 
-  .finova-brand-mark-navbar .finova-brand-logo {
+  .hestia-brand-mark-navbar .hestia-brand-logo {
     width: 30px;
     height: 30px;
   }
 
-  .finova-brand-mark-navbar .finova-brand-wordmark {
+  .hestia-brand-mark-navbar .hestia-brand-wordmark {
     font-size: 0.98rem;
   }
 }
 
-.finova-brand-mark-hero {
+.hestia-brand-mark-hero {
   gap: 1rem;
 }
 
-.finova-brand-mark-hero .finova-brand-logo {
+.hestia-brand-mark-hero .hestia-brand-logo {
   width: 72px;
   height: 72px;
 }
 
-.finova-brand-mark-hero .finova-brand-copy {
+.hestia-brand-mark-hero .hestia-brand-copy {
   align-items: center;
 }
 
-.finova-brand-mark-hero .finova-brand-wordmark {
+.hestia-brand-mark-hero .hestia-brand-wordmark {
   font-size: clamp(1.75rem, 3vw, 2.15rem);
 }
 
-.finova-brand-mark-hero .finova-brand-caption {
+.hestia-brand-mark-hero .hestia-brand-caption {
   font-size: 0.92rem;
 }
 
 @media (max-width: 575.98px) {
-  .finova-brand-mark-hero {
+  .hestia-brand-mark-hero {
     gap: 0.8rem;
   }
 
-  .finova-brand-mark-hero .finova-brand-logo {
+  .hestia-brand-mark-hero .hestia-brand-logo {
     width: 56px;
     height: 56px;
   }
 }
 
-.finova-table {
+.hestia-table {
   margin-bottom: 0;
 }
 
-.finova-toolbar-surface {
+.hestia-toolbar-surface {
   position: relative;
   overflow: hidden;
 }
 
-.finova-toolbar-surface::before,
-.finova-table-shell::before {
+.hestia-toolbar-surface::before,
+.hestia-table-shell::before {
   content: none;
 }
 
-.finova-mobile-filters-trigger,
-.finova-filters-sheet-header,
-.finova-filters-sheet-footer,
-.finova-filters-sheet-backdrop {
+.hestia-mobile-filters-trigger,
+.hestia-filters-sheet-header,
+.hestia-filters-sheet-footer,
+.hestia-filters-sheet-backdrop {
   display: none;
 }
 
-.finova-table thead th {
+.hestia-table thead th {
   color: color-mix(in srgb, var(--text-muted) 84%, var(--text) 16%);
   font-size: 0.85rem;
   font-weight: 600;
@@ -1078,7 +1078,7 @@ a {
   background: color-mix(in srgb, var(--surface-soft) 74%, var(--surface) 26%);
 }
 
-.finova-table tbody td {
+.hestia-table tbody td {
   vertical-align: middle;
   border-color: var(--border);
   padding-top: 1rem;
@@ -1086,28 +1086,28 @@ a {
   background: transparent;
 }
 
-.finova-table tbody tr:hover {
+.hestia-table tbody tr:hover {
   background: color-mix(in srgb, var(--brand-soft) 62%, transparent 38%);
 }
 
-.finova-table-shell {
+.hestia-table-shell {
   position: relative;
   overflow: hidden;
 }
 
-.finova-table-shell-responsive {
+.hestia-table-shell-responsive {
   box-shadow: none;
 }
 
-.finova-transaction-meta-line {
+.hestia-transaction-meta-line {
   line-height: 1.45;
 }
 
-.finova-transaction-list {
+.hestia-transaction-list {
   border-top: 1px solid var(--divider);
 }
 
-.finova-transaction-list-item {
+.hestia-transaction-list-item {
   content-visibility: auto;
   contain-intrinsic-size: auto 164px;
   display: grid;
@@ -1117,53 +1117,53 @@ a {
   transition: background-color var(--motion-fast) ease;
 }
 
-.finova-transaction-list-item:hover {
+.hestia-transaction-list-item:hover {
   background: color-mix(in srgb, var(--brand-soft) 54%, transparent 46%);
 }
 
-.finova-transaction-list-main {
+.hestia-transaction-list-main {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
 }
 
-.finova-transaction-list-copy {
+.hestia-transaction-list-copy {
   display: grid;
   min-width: 0;
   gap: 0.35rem;
 }
 
-.finova-transaction-list-date,
-.finova-transaction-list-meta {
+.hestia-transaction-list-date,
+.hestia-transaction-list-meta {
   color: var(--text-muted);
   font-size: 0.82rem;
 }
 
-.finova-transaction-list-description {
+.hestia-transaction-list-description {
   color: var(--text);
   overflow-wrap: anywhere;
 }
 
-.finova-transaction-list-badges,
-.finova-transaction-list-meta {
+.hestia-transaction-list-badges,
+.hestia-transaction-list-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.4rem 0.5rem;
 }
 
-.finova-transaction-list-meta > span:not(.finova-badge-warning)::after {
+.hestia-transaction-list-meta > span:not(.hestia-badge-warning)::after {
   content: "·";
   margin-left: 0.5rem;
   color: var(--border);
 }
 
-.finova-transaction-list-meta > span:last-child::after {
+.hestia-transaction-list-meta > span:last-child::after {
   content: none;
 }
 
-.finova-transaction-list-value {
+.hestia-transaction-list-value {
   display: grid;
   justify-items: end;
   flex: 0 0 auto;
@@ -1171,66 +1171,66 @@ a {
   text-align: right;
 }
 
-.finova-transaction-amount-income,
-.finova-transaction-amount-expense {
+.hestia-transaction-amount-income,
+.hestia-transaction-amount-expense {
   font-size: 1rem;
   white-space: nowrap;
 }
 
-.finova-transaction-amount-income {
+.hestia-transaction-amount-income {
   color: var(--success-dark);
 }
 
-.finova-transaction-amount-expense {
+.hestia-transaction-amount-expense {
   color: var(--danger);
 }
 
-.finova-transaction-list-actions {
+.hestia-transaction-list-actions {
   justify-content: flex-end;
   gap: 0.5rem;
 }
 
-.finova-transactions-workspace {
+.hestia-transactions-workspace {
   display: grid;
   gap: 1.5rem;
 }
 
-.finova-transactions-commitments:empty {
+.hestia-transactions-commitments:empty {
   display: none;
 }
 
-.finova-commitments {
+.hestia-commitments {
   display: grid;
   gap: 1.5rem;
 }
 
-.finova-commitment-section {
+.hestia-commitment-section {
   display: grid;
   gap: 1rem;
 }
 
-.finova-commitment-heading {
+.hestia-commitment-heading {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
 }
 
-.finova-commitment-metrics {
+.hestia-commitment-metrics {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
-.finova-commitment-metrics-three {
+.hestia-commitment-metrics-three {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.finova-commitment-list {
+.hestia-commitment-list {
   border-top: 1px solid var(--divider);
 }
 
-.finova-commitment-item {
+.hestia-commitment-item {
   content-visibility: auto;
   contain-intrinsic-size: auto 246px;
   display: grid;
@@ -1239,48 +1239,48 @@ a {
   border-bottom: 1px solid var(--divider);
 }
 
-.finova-commitment-item-main {
+.hestia-commitment-item-main {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
 }
 
-.finova-commitment-item-copy {
+.hestia-commitment-item-copy {
   display: grid;
   min-width: 0;
   gap: 0.35rem;
 }
 
-.finova-commitment-details {
+.hestia-commitment-details {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem 1rem;
 }
 
-.finova-commitment-detail {
+.hestia-commitment-detail {
   display: grid;
   gap: 0.2rem;
 }
 
-.finova-commitment-detail > span {
+.hestia-commitment-detail > span {
   color: var(--text-muted);
   font-size: 0.78rem;
 }
 
-.finova-commitment-detail > strong {
+.hestia-commitment-detail > strong {
   color: var(--text);
   font-size: 0.88rem;
   overflow-wrap: anywhere;
 }
 
-.finova-commitment-progress {
+.hestia-commitment-progress {
   display: grid;
   gap: 0.45rem;
 }
 
 @media (max-width: 575.98px) {
-  .finova-transactions-history .finova-table-shell {
+  .hestia-transactions-history .hestia-table-shell {
     padding: 0 !important;
     border: 0;
     border-radius: 0;
@@ -1288,31 +1288,31 @@ a {
     box-shadow: none;
   }
 
-  .finova-transaction-list-main {
+  .hestia-transaction-list-main {
     gap: 0.75rem;
   }
 
-  .finova-transaction-list-value {
+  .hestia-transaction-list-value {
     max-width: 46%;
   }
 
-  .finova-transaction-list-actions .btn {
+  .hestia-transaction-list-actions .btn {
     flex: 1 1 0;
   }
 
-  .finova-commitment-metrics,
-  .finova-commitment-metrics-three,
-  .finova-commitment-details {
+  .hestia-commitment-metrics,
+  .hestia-commitment-metrics-three,
+  .hestia-commitment-details {
     grid-template-columns: 1fr;
   }
 }
 
-.finova-transaction-more-options {
+.hestia-transaction-more-options {
   border-top: 1px solid var(--divider);
   padding-top: 1rem;
 }
 
-.finova-transaction-more-options summary {
+.hestia-transaction-more-options summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1324,11 +1324,11 @@ a {
   list-style: none;
 }
 
-.finova-transaction-more-options summary::-webkit-details-marker {
+.hestia-transaction-more-options summary::-webkit-details-marker {
   display: none;
 }
 
-.finova-transaction-more-options summary::after {
+.hestia-transaction-more-options summary::after {
   content: "+";
   display: grid;
   place-items: center;
@@ -1341,23 +1341,23 @@ a {
   line-height: 1;
 }
 
-.finova-transaction-more-options[open] summary::after {
+.hestia-transaction-more-options[open] summary::after {
   content: "−";
 }
 
-.finova-transaction-more-options summary:focus-visible {
+.hestia-transaction-more-options summary:focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 4px;
   border-radius: var(--radius-sm);
 }
 
-.finova-transaction-type-toggle {
+.hestia-transaction-type-toggle {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
 }
 
-.finova-transaction-type-option {
+.hestia-transaction-type-option {
   min-height: 2.75rem;
   border: 1px solid var(--border);
   background: var(--surface);
@@ -1365,52 +1365,52 @@ a {
   font-weight: 700;
 }
 
-.finova-transaction-type-option:hover,
-.finova-transaction-type-option:focus-visible {
+.hestia-transaction-type-option:hover,
+.hestia-transaction-type-option:focus-visible {
   border-color: var(--brand);
   background: var(--brand-soft);
   color: var(--brand-deep);
 }
 
-.finova-transaction-type-option.is-active {
+.hestia-transaction-type-option.is-active {
   border-color: var(--brand);
   background: var(--brand);
   color: var(--on-brand);
 }
 
 @media (max-width: 767.98px) {
-  .finova-transaction-modal-quick .modal-body {
+  .hestia-transaction-modal-quick .modal-body {
     max-height: min(68dvh, 560px);
     overflow-y: auto;
     overscroll-behavior: contain;
     scroll-padding-block: 1rem calc(6rem + env(safe-area-inset-bottom));
   }
 
-  .finova-transaction-modal-quick .finova-modal-actions {
+  .hestia-transaction-modal-quick .hestia-modal-actions {
     position: sticky;
     bottom: -1.5rem;
     padding-bottom: calc(1rem + env(safe-area-inset-bottom));
     background: var(--surface);
   }
 
-  .finova-modal-close,
-  .finova-transaction-more-options summary,
-  .finova-transaction-list-actions .btn,
-  .finova-filters-sheet-header .app-icon-button {
+  .hestia-modal-close,
+  .hestia-transaction-more-options summary,
+  .hestia-transaction-list-actions .btn,
+  .hestia-filters-sheet-header .app-icon-button {
     min-width: 44px;
     min-height: 44px;
   }
 
-  .finova-transaction-more-options summary {
+  .hestia-transaction-more-options summary {
     padding-block: 0.5rem;
   }
 
-  .finova-transaction-list-actions .btn {
+  .hestia-transaction-list-actions .btn {
     padding-inline: 0.75rem;
   }
 }
 
-.finova-goal-summary {
+.hestia-goal-summary {
   min-width: 220px;
   padding: 0.85rem 1rem;
   border-radius: var(--radius-md);
@@ -1420,13 +1420,13 @@ a {
   box-shadow: none;
 }
 
-.finova-suggestion-list {
+.hestia-suggestion-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
 }
 
-.finova-goal-suggestion {
+.hestia-goal-suggestion {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -1441,8 +1441,8 @@ a {
   box-shadow: none;
 }
 
-.finova-goal-suggestion:hover,
-.finova-goal-suggestion:focus {
+.hestia-goal-suggestion:hover,
+.hestia-goal-suggestion:focus {
   background: var(--brand-soft);
   color: var(--text);
   border-color: var(--brand);
@@ -1450,7 +1450,7 @@ a {
   box-shadow: none;
 }
 
-.finova-goal-pill {
+.hestia-goal-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -1460,25 +1460,25 @@ a {
   font-weight: 700;
 }
 
-.finova-goal-pill-safe {
+.hestia-goal-pill-safe {
   color: var(--success-dark);
   background: var(--success-bg);
   border: 1px solid color-mix(in srgb, var(--success) 34%, var(--border) 66%);
 }
 
-.finova-goal-pill-warning {
+.hestia-goal-pill-warning {
   color: var(--warning);
   background: var(--warning-bg);
   border: 1px solid color-mix(in srgb, var(--warning) 34%, var(--border) 66%);
 }
 
-.finova-goal-pill-danger {
+.hestia-goal-pill-danger {
   color: var(--danger);
   background: var(--danger-bg);
   border: 1px solid color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
 }
 
-.finova-goal-progress {
+.hestia-goal-progress {
   width: 100%;
   height: 10px;
   border-radius: 999px;
@@ -1486,46 +1486,46 @@ a {
   overflow: hidden;
 }
 
-.finova-goal-progress-bar {
+.hestia-goal-progress-bar {
   height: 100%;
   border-radius: inherit;
   transition: width 180ms ease;
 }
 
-.finova-goal-progress-bar-safe {
+.hestia-goal-progress-bar-safe {
   background: var(--brand);
 }
 
-.finova-goal-progress-bar-warning {
+.hestia-goal-progress-bar-warning {
   background: var(--warning);
 }
 
-.finova-goal-progress-bar-danger {
+.hestia-goal-progress-bar-danger {
   background: var(--danger);
 }
 
-.finova-chart-shell {
+.hestia-chart-shell {
   width: 100%;
   min-width: 0;
   height: 320px;
 }
 
-.finova-actions-row {
+.hestia-actions-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
 }
 
-.finova-actions-row .btn {
+.hestia-actions-row .btn {
   white-space: nowrap;
 }
 
-.finova-actions-row.finova-actions-row-end {
+.hestia-actions-row.hestia-actions-row-end {
   justify-content: flex-end;
 }
 
-.finova-page-note {
+.hestia-page-note {
   padding: 0.85rem 1rem;
   border-radius: var(--radius-md);
   background: var(--surface-soft);
@@ -1535,8 +1535,8 @@ a {
   line-height: 1.55;
 }
 
-.finova-loading-state,
-.finova-empty-state {
+.hestia-loading-state,
+.hestia-empty-state {
   display: grid;
   place-items: center;
   gap: 0.75rem;
@@ -1545,16 +1545,16 @@ a {
   text-align: center;
 }
 
-.finova-loading-state {
+.hestia-loading-state {
   color: var(--text-muted);
 }
 
-.finova-loading-state .spinner-border {
+.hestia-loading-state .spinner-border {
   width: 1.35rem;
   height: 1.35rem;
 }
 
-.finova-empty-state {
+.hestia-empty-state {
   position: relative;
   overflow: hidden;
   border: 1px dashed color-mix(in srgb, var(--border) 78%, var(--brand) 22%);
@@ -1562,7 +1562,7 @@ a {
   background: var(--surface-soft);
 }
 
-.finova-empty-state::before {
+.hestia-empty-state::before {
   content: "";
   width: 42px;
   height: 42px;
@@ -1572,51 +1572,51 @@ a {
   box-shadow: none;
 }
 
-.finova-empty-state-action {
+.hestia-empty-state-action {
   margin-top: 0.25rem;
 }
 
-.finova-metric {
+.hestia-metric {
   display: grid;
   align-content: start;
   gap: 0.25rem;
 }
 
-.finova-metric-label,
-.finova-metric-helper {
+.hestia-metric-label,
+.hestia-metric-helper {
   color: var(--text-muted);
   font-size: 0.82rem;
 }
 
-.finova-metric-label {
+.hestia-metric-label {
   font-weight: 600;
 }
 
-.finova-metric-value {
+.hestia-metric-value {
   color: var(--text);
   font-size: 1.75rem;
   line-height: 1.2;
 }
 
-.finova-metric-income .finova-metric-value {
+.hestia-metric-income .hestia-metric-value {
   color: var(--success-dark);
 }
 
-.finova-metric-income {
+.hestia-metric-income {
   background: color-mix(in srgb, var(--success-bg) 84%, var(--surface) 16%);
   border-color: color-mix(in srgb, var(--success) 24%, var(--border) 76%);
 }
 
-.finova-metric-expense .finova-metric-value {
+.hestia-metric-expense .hestia-metric-value {
   color: var(--danger);
 }
 
-.finova-metric-expense {
+.hestia-metric-expense {
   background: color-mix(in srgb, var(--danger-bg) 78%, var(--surface) 22%);
   border-color: color-mix(in srgb, var(--danger) 22%, var(--border) 78%);
 }
 
-.finova-money-delta {
+.hestia-money-delta {
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--border);
@@ -1627,24 +1627,24 @@ a {
   white-space: nowrap;
 }
 
-.finova-money-delta-positive {
+.hestia-money-delta-positive {
   color: var(--success-dark);
   background: var(--success-bg);
   border-color: color-mix(in srgb, var(--success) 34%, var(--border) 66%);
 }
 
-.finova-money-delta-negative {
+.hestia-money-delta-negative {
   color: var(--danger);
   background: var(--danger-bg);
   border-color: color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
 }
 
-.finova-money-delta-neutral {
+.hestia-money-delta-neutral {
   color: var(--info);
   background: var(--info-bg);
 }
 
-.finova-toast {
+.hestia-toast {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1659,19 +1659,19 @@ a {
   font-weight: 600;
 }
 
-.finova-toast-success {
+.hestia-toast-success {
   color: var(--success-dark);
   background: var(--success-bg);
   border-color: color-mix(in srgb, var(--success) 34%, var(--border) 66%);
 }
 
-.finova-toast-danger {
+.hestia-toast-danger {
   color: var(--danger);
   background: var(--danger-bg);
   border-color: color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
 }
 
-.finova-toast-dismiss {
+.hestia-toast-dismiss {
   display: inline-grid;
   place-items: center;
   width: 1.75rem;
@@ -1685,20 +1685,20 @@ a {
   line-height: 1;
 }
 
-.finova-toast-dismiss:hover,
-.finova-toast-dismiss:focus-visible {
+.hestia-toast-dismiss:hover,
+.hestia-toast-dismiss:focus-visible {
   border-color: currentColor;
   background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
-.finova-chart-container {
+.hestia-chart-container {
   display: flex;
   min-width: 0;
   flex-direction: column;
   gap: 0.85rem;
 }
 
-.finova-chart-container-heading {
+.hestia-chart-container-heading {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -1706,17 +1706,17 @@ a {
   flex-wrap: wrap;
 }
 
-.finova-chart-container-footer {
+.hestia-chart-container-footer {
   color: var(--text-muted);
   font-size: 0.82rem;
 }
 
-.finova-status-banner {
+.hestia-status-banner {
   box-shadow: var(--shadow-sm);
   font-weight: 600;
 }
 
-.finova-progress {
+.hestia-progress {
   width: 100%;
   height: 10px;
   border-radius: 999px;
@@ -1725,12 +1725,12 @@ a {
   box-shadow: none;
 }
 
-.finova-progress-bar {
+.hestia-progress-bar {
   height: 100%;
   border-radius: inherit;
 }
 
-.finova-public-dashboard-meta {
+.hestia-public-dashboard-meta {
   min-width: 220px;
   padding: 0.9rem 1rem;
   border-radius: var(--radius-md);
@@ -1740,30 +1740,30 @@ a {
   box-shadow: none;
 }
 
-.finova-page-stack .finova-card,
-.finova-page-stack .finova-page-note {
+.hestia-page-stack .hestia-card,
+.hestia-page-stack .hestia-page-note {
   width: 100%;
 }
 
-.finova-profile-section-heading {
+.hestia-profile-section-heading {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   margin-bottom: 0.25rem;
 }
 
-.finova-profile-section-heading-divider {
+.hestia-profile-section-heading-divider {
   padding-top: 1rem;
   border-top: 1px solid var(--divider);
 }
 
-.finova-profile-subsection {
+.hestia-profile-subsection {
   background: var(--surface-soft);
   border: 1px solid var(--border);
   box-shadow: none;
 }
 
-.finova-modal-backdrop {
+.hestia-modal-backdrop {
   background: var(--overlay);
 }
 
@@ -1798,7 +1798,7 @@ a {
   border-color: var(--border);
 }
 
-.finova-modal-surface {
+.hestia-modal-surface {
   border-radius: var(--radius-lg) !important;
   overflow: hidden;
   border: 1px solid var(--border) !important;
@@ -1806,16 +1806,16 @@ a {
   box-shadow: var(--shadow-md);
 }
 
-.finova-modal-header {
+.hestia-modal-header {
   position: relative;
   background: var(--surface-soft);
 }
 
-.finova-modal-header::after {
+.hestia-modal-header::after {
   content: none;
 }
 
-.finova-modal-actions {
+.hestia-modal-actions {
   margin-top: 0.5rem;
   padding-top: 1rem !important;
   border-top: 1px solid var(--divider);
@@ -1835,7 +1835,7 @@ a {
   background: var(--surface);
 }
 
-.finova-table .finova-actions-row {
+.hestia-table .hestia-actions-row {
   justify-content: flex-end;
   gap: 0.5rem;
 }
@@ -1893,10 +1893,10 @@ a {
 }
 
 .btn-close {
-  filter: var(--finova-close-filter, none);
+  filter: var(--hestia-close-filter, none);
 }
 
-.finova-modal-close {
+.hestia-modal-close {
   border-radius: 999px;
   border: 1px solid transparent;
   background-color: var(--surface-soft);
@@ -1907,8 +1907,8 @@ a {
     box-shadow 160ms ease;
 }
 
-.finova-modal-close:hover,
-.finova-modal-close:focus {
+.hestia-modal-close:hover,
+.hestia-modal-close:focus {
   background-color: var(--brand-soft);
   border-color: var(--brand);
   transform: none;
@@ -1916,7 +1916,7 @@ a {
 }
 
 :root[data-theme="dark"] .btn-close {
-  --finova-close-filter: invert(1) grayscale(1) brightness(200%);
+  --hestia-close-filter: invert(1) grayscale(1) brightness(200%);
 }
 
 input::placeholder,
@@ -1933,7 +1933,7 @@ hr {
   color: var(--text-muted);
 }
 
-.finova-check {
+.hestia-check {
   display: flex;
   align-items: flex-start;
   gap: 0.7rem;
@@ -1943,16 +1943,16 @@ hr {
   background: var(--surface-soft);
 }
 
-.finova-check .form-check-input {
+.hestia-check .form-check-input {
   margin-top: 0.2rem;
   flex-shrink: 0;
 }
 
-.finova-check .form-check-label {
+.hestia-check .form-check-label {
   line-height: 1.45;
 }
 
-.finova-check-input,
+.hestia-check-input,
 .form-check-input {
   width: 1.1rem;
   height: 1.1rem;
@@ -1966,7 +1966,7 @@ hr {
     box-shadow 160ms ease;
 }
 
-.finova-check-input:checked,
+.hestia-check-input:checked,
 .form-check-input:checked {
   background-color: var(--brand);
   border-color: var(--brand);
@@ -1984,7 +1984,7 @@ hr {
   border-color: var(--brand);
 }
 
-.finova-check-input:focus,
+.hestia-check-input:focus,
 .form-check-input:focus {
   border-color: var(--focus);
   box-shadow: 0 0 0 3px var(--focus-ring);
@@ -1994,7 +1994,7 @@ hr {
   color: var(--info) !important;
 }
 
-.finova-widget-toggle {
+.hestia-widget-toggle {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -2012,32 +2012,32 @@ hr {
     background 160ms ease;
 }
 
-.finova-widget-toggle:hover,
-.finova-widget-toggle:focus-within {
+.hestia-widget-toggle:hover,
+.hestia-widget-toggle:focus-within {
   border-color: var(--brand);
   box-shadow: none;
   transform: none;
 }
 
-.finova-widget-toggle input {
+.hestia-widget-toggle input {
   width: 1rem;
   height: 1rem;
   accent-color: var(--primary);
   flex-shrink: 0;
 }
 
-.finova-home-shortcut {
+.hestia-home-shortcut {
   color: inherit;
   display: block;
 }
 
-.finova-home-shortcut:hover .finova-card-soft,
-.finova-home-shortcut:focus-visible .finova-card-soft {
+.hestia-home-shortcut:hover .hestia-card-soft,
+.hestia-home-shortcut:focus-visible .hestia-card-soft {
   border-color: var(--brand);
   transform: none;
 }
 
-.finova-home-hero {
+.hestia-home-hero {
   display: grid;
   gap: var(--space-5);
   margin-bottom: var(--space-6);
@@ -2048,18 +2048,18 @@ hr {
   box-shadow: var(--shadow-sm);
 }
 
-.finova-home-hero-main {
+.hestia-home-hero-main {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-5);
 }
 
-.finova-home-hero-copy {
+.hestia-home-hero-copy {
   max-width: 680px;
 }
 
-.finova-home-eyebrow {
+.hestia-home-eyebrow {
   display: block;
   margin-bottom: 0.35rem;
   color: var(--brand-strong);
@@ -2068,20 +2068,20 @@ hr {
   text-transform: uppercase;
 }
 
-.finova-home-hero-copy h1 {
+.hestia-home-hero-copy h1 {
   margin-bottom: 0.55rem;
   font-size: clamp(1.8rem, 3vw, 2.55rem);
   text-wrap: balance;
 }
 
-.finova-home-hero-scope {
+.hestia-home-hero-scope {
   margin-top: var(--space-3);
   color: var(--text-muted);
   font-size: 0.86rem;
   font-weight: 600;
 }
 
-.finova-home-hero-controls {
+.hestia-home-hero-controls {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
@@ -2089,38 +2089,38 @@ hr {
   flex: 0 1 430px;
 }
 
-.finova-home-hero-controls .form-label {
+.hestia-home-hero-controls .form-label {
   margin-bottom: 0.4rem;
   color: var(--text-muted);
   font-size: 0.82rem;
   font-weight: 700;
 }
 
-.finova-home-metrics {
+.hestia-home-metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
 
-.finova-home-metric {
+.hestia-home-metric {
   display: grid;
   gap: 0.35rem;
   min-width: 0;
   padding: var(--space-4);
 }
 
-.finova-home-metric + .finova-home-metric {
+.hestia-home-metric + .hestia-home-metric {
   border-left: 1px solid var(--border);
 }
 
-.finova-home-metric span {
+.hestia-home-metric span {
   color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 600;
 }
 
-.finova-home-metric strong {
+.hestia-home-metric strong {
   overflow: hidden;
   color: var(--text);
   font-size: clamp(1.08rem, 1.8vw, 1.45rem);
@@ -2129,23 +2129,23 @@ hr {
   white-space: nowrap;
 }
 
-.finova-home-metric-income strong {
+.hestia-home-metric-income strong {
   color: var(--success-dark);
 }
 
-.finova-home-metric-expense strong {
+.hestia-home-metric-expense strong {
   color: var(--danger);
 }
 
-.finova-home-metric-result strong {
+.hestia-home-metric-result strong {
   color: var(--brand-strong);
 }
 
-.finova-home-trend {
+.hestia-home-trend {
   min-width: 0;
 }
 
-.finova-home-trend-heading {
+.hestia-home-trend-heading {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -2153,19 +2153,19 @@ hr {
   margin-bottom: var(--space-3);
 }
 
-.finova-home-trend-chart {
+.hestia-home-trend-chart {
   display: block;
   width: 100%;
   height: clamp(132px, 18vw, 176px);
   overflow: visible;
 }
 
-.finova-home-trend-baseline {
+.hestia-home-trend-baseline {
   stroke: var(--border);
   stroke-dasharray: 4 5;
 }
 
-.finova-home-trend-line {
+.hestia-home-trend-line {
   fill: none;
   stroke: var(--brand-strong);
   stroke-linecap: round;
@@ -2173,13 +2173,13 @@ hr {
   stroke-width: 3;
 }
 
-.finova-home-trend-point {
+.hestia-home-trend-point {
   fill: var(--surface);
   stroke: var(--brand-strong);
   stroke-width: 2.5;
 }
 
-.finova-home-trend-labels {
+.hestia-home-trend-labels {
   display: flex;
   justify-content: space-between;
   padding: 0 0.3rem;
@@ -2188,7 +2188,7 @@ hr {
   font-variant-numeric: tabular-nums;
 }
 
-.finova-home-reading-panel {
+.hestia-home-reading-panel {
   height: 100%;
   padding: clamp(1.25rem, 2.5vw, 1.75rem);
   border: 1px solid var(--border);
@@ -2197,11 +2197,11 @@ hr {
   box-shadow: var(--shadow-sm);
 }
 
-.finova-home-reading-panel > .finova-home-eyebrow {
+.hestia-home-reading-panel > .hestia-home-eyebrow {
   margin-bottom: 0.45rem;
 }
 
-.finova-home-spending-list {
+.hestia-home-spending-list {
   display: grid;
   gap: var(--space-4);
   margin: 0;
@@ -2209,38 +2209,38 @@ hr {
   list-style: none;
 }
 
-.finova-home-spending-row {
+.hestia-home-spending-row {
   display: grid;
   gap: 0.45rem;
 }
 
-.finova-home-spending-row-copy {
+.hestia-home-spending-row-copy {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-3);
 }
 
-.finova-home-spending-row-copy strong {
+.hestia-home-spending-row-copy strong {
   color: var(--text);
   font-size: 0.95rem;
 }
 
-.finova-home-spending-row-copy span {
+.hestia-home-spending-row-copy span {
   flex: 0 0 auto;
   color: var(--text-muted);
   font-size: 0.86rem;
   font-variant-numeric: tabular-nums;
 }
 
-.finova-home-spending-track {
+.hestia-home-spending-track {
   height: 6px;
   overflow: hidden;
   border-radius: 999px;
   background: var(--surface-soft);
 }
 
-.finova-home-spending-track span {
+.hestia-home-spending-track span {
   display: block;
   height: 100%;
   min-width: 6px;
@@ -2248,44 +2248,44 @@ hr {
   background: var(--brand);
 }
 
-.finova-home-spending-row small {
+.hestia-home-spending-row small {
   color: var(--text-muted);
   font-size: 0.75rem;
 }
 
-.finova-home-planning-activity {
+.hestia-home-planning-activity {
   padding-top: var(--space-2);
   border-top: 1px solid var(--border);
 }
 
-.finova-home-planning-activity-heading {
+.hestia-home-planning-activity-heading {
   margin-bottom: var(--space-4);
 }
 
-.finova-home-summary-panel {
+.hestia-home-summary-panel {
   height: 100%;
   padding: var(--space-4) 0;
 }
 
-.finova-home-stat-list {
+.hestia-home-stat-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
   margin: 0 0 var(--space-4);
 }
 
-.finova-home-stat-list > div {
+.hestia-home-stat-list > div {
   min-width: 0;
 }
 
-.finova-home-stat-list dt {
+.hestia-home-stat-list dt {
   margin-bottom: 0.35rem;
   color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 600;
 }
 
-.finova-home-stat-list dd {
+.hestia-home-stat-list dd {
   margin: 0 0 0.35rem;
   color: var(--text);
   font-size: 1.55rem;
@@ -2293,19 +2293,19 @@ hr {
   font-variant-numeric: tabular-nums;
 }
 
-.finova-home-stat-list p,
-.finova-home-status {
+.hestia-home-stat-list p,
+.hestia-home-status {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.82rem;
   line-height: 1.45;
 }
 
-.finova-home-status-error {
+.hestia-home-status-error {
   color: var(--danger);
 }
 
-.finova-home-activity-list {
+.hestia-home-activity-list {
   display: grid;
   gap: var(--space-3);
   margin: 0;
@@ -2313,64 +2313,64 @@ hr {
   list-style: none;
 }
 
-.finova-home-activity-list li {
+.hestia-home-activity-list li {
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--border);
 }
 
-.finova-home-activity-list li:last-child {
+.hestia-home-activity-list li:last-child {
   padding-bottom: 0;
   border-bottom: 0;
 }
 
 @media (max-width: 991.98px) {
-  .finova-home-hero-main {
+  .hestia-home-hero-main {
     display: grid;
   }
 
-  .finova-home-hero-controls {
+  .hestia-home-hero-controls {
     width: min(100%, 560px);
     flex-basis: auto;
   }
 }
 
 @media (max-width: 767.98px) {
-  .finova-home-hero {
+  .hestia-home-hero {
     gap: var(--space-4);
     margin-bottom: var(--space-5);
   }
 
-  .finova-home-hero-controls,
-  .finova-home-metrics {
+  .hestia-home-hero-controls,
+  .hestia-home-metrics {
     grid-template-columns: 1fr 1fr;
   }
 
-  .finova-home-metric:nth-child(3) {
+  .hestia-home-metric:nth-child(3) {
     border-left: 0;
     border-top: 1px solid var(--border);
   }
 
-  .finova-home-metric:nth-child(4) {
+  .hestia-home-metric:nth-child(4) {
     border-top: 1px solid var(--border);
   }
 
-  .finova-home-trend-heading {
+  .hestia-home-trend-heading {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .finova-home-summary-panel {
+  .hestia-home-summary-panel {
     padding: var(--space-4) 0 0;
   }
 }
 
 @media (max-width: 420px) {
-  .finova-home-hero-controls {
+  .hestia-home-hero-controls {
     grid-template-columns: 1fr;
   }
 }
 
-.finova-financial-account-meta {
+.hestia-financial-account-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.65rem 1rem;
@@ -2378,17 +2378,17 @@ hr {
   font-size: 0.95rem;
 }
 
-.finova-account-metrics {
+.hestia-account-metrics {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
-.finova-account-list {
+.hestia-account-list {
   border-top: 1px solid var(--divider);
 }
 
-.finova-account-list-item {
+.hestia-account-list-item {
   content-visibility: auto;
   contain-intrinsic-size: auto 196px;
   display: grid;
@@ -2397,74 +2397,74 @@ hr {
   border-bottom: 1px solid var(--divider);
 }
 
-.finova-account-list-main {
+.hestia-account-list-main {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
 }
 
-.finova-account-list-copy {
+.hestia-account-list-copy {
   display: grid;
   min-width: 0;
   gap: 0.35rem;
 }
 
-.finova-account-list-label {
+.hestia-account-list-label {
   color: var(--text-muted);
   font-size: 0.9rem;
 }
 
-.finova-account-list-warning {
+.hestia-account-list-warning {
   color: var(--text-muted);
   font-size: 0.88rem;
 }
 
 @media (max-width: 991.98px) {
-  .finova-account-metrics {
+  .hestia-account-metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 575.98px) {
-  .finova-account-metrics {
+  .hestia-account-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .finova-account-list-main {
+  .hestia-account-list-main {
     gap: 0.75rem;
   }
 }
 
-.finova-segmented-actions {
+.hestia-segmented-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
 }
 
-.finova-segmented-actions .btn {
+.hestia-segmented-actions .btn {
   min-width: 110px;
 }
 
-.finova-segmented-actions .finova-btn-primary {
+.hestia-segmented-actions .hestia-btn-primary {
   box-shadow: none;
 }
 
-.finova-row-highlight {
+.hestia-row-highlight {
   background: var(--warning-bg);
 }
 
-:root[data-theme="dark"] .finova-card,
-:root[data-theme="dark"] .finova-card-soft,
-:root[data-theme="dark"] .finova-page-note,
-:root[data-theme="dark"] .finova-profile-subsection,
-:root[data-theme="dark"] .finova-goal-summary,
-:root[data-theme="dark"] .finova-widget-toggle,
-:root[data-theme="dark"] .finova-empty-state {
+:root[data-theme="dark"] .hestia-card,
+:root[data-theme="dark"] .hestia-card-soft,
+:root[data-theme="dark"] .hestia-page-note,
+:root[data-theme="dark"] .hestia-profile-subsection,
+:root[data-theme="dark"] .hestia-goal-summary,
+:root[data-theme="dark"] .hestia-widget-toggle,
+:root[data-theme="dark"] .hestia-empty-state {
   box-shadow: var(--shadow-sm);
 }
 
-:root[data-theme="dark"] .finova-modal-surface {
+:root[data-theme="dark"] .hestia-modal-surface {
   box-shadow: var(--shadow-md);
 }
 
@@ -2478,12 +2478,12 @@ hr {
   box-shadow: none;
 }
 
-:root[data-theme="dark"] .finova-table thead th {
+:root[data-theme="dark"] .hestia-table thead th {
   background: var(--surface-soft);
   color: var(--text-muted);
 }
 
-:root[data-theme="dark"] .finova-table tbody tr:hover {
+:root[data-theme="dark"] .hestia-table tbody tr:hover {
   background: var(--brand-soft);
 }
 
@@ -2491,42 +2491,42 @@ hr {
   background: var(--surface);
 }
 
-:root[data-theme="dark"] .finova-empty-state {
+:root[data-theme="dark"] .hestia-empty-state {
   background: var(--surface-soft);
   border-color: var(--border);
 }
 
-:root[data-theme="dark"] .finova-goal-suggestion {
+:root[data-theme="dark"] .hestia-goal-suggestion {
   box-shadow: none;
 }
 
-:root[data-theme="dark"] .finova-goal-suggestion:hover,
-:root[data-theme="dark"] .finova-goal-suggestion:focus {
+:root[data-theme="dark"] .hestia-goal-suggestion:hover,
+:root[data-theme="dark"] .hestia-goal-suggestion:focus {
   box-shadow: none;
 }
 
-:root[data-theme="dark"] .finova-badge-primary {
+:root[data-theme="dark"] .hestia-badge-primary {
   color: var(--brand-strong);
   border-color: var(--border);
 }
 
-:root[data-theme="dark"] .finova-badge-neutral {
+:root[data-theme="dark"] .hestia-badge-neutral {
   color: var(--text);
   background: rgba(255, 255, 255, 0.05);
 }
 
-:root[data-theme="dark"] .finova-badge-expense {
+:root[data-theme="dark"] .hestia-badge-expense {
   color: var(--danger);
   border-color: color-mix(in srgb, var(--danger) 34%, var(--border) 66%);
 }
 
-:root[data-theme="dark"] .finova-badge-income {
+:root[data-theme="dark"] .hestia-badge-income {
   color: var(--success-dark);
   border-color: color-mix(in srgb, var(--success) 34%, var(--border) 66%);
 }
 
-:root[data-theme="dark"] .finova-input,
-:root[data-theme="dark"] .finova-select,
+:root[data-theme="dark"] .hestia-input,
+:root[data-theme="dark"] .hestia-select,
 :root[data-theme="dark"] .modal-content,
 :root[data-theme="dark"] .table,
 :root[data-theme="dark"] .table > :not(caption) > * > *,
@@ -2534,19 +2534,19 @@ hr {
   background-color: var(--surface-elevated);
 }
 
-:root[data-theme="dark"] .finova-input,
-:root[data-theme="dark"] .finova-select {
+:root[data-theme="dark"] .hestia-input,
+:root[data-theme="dark"] .hestia-select {
   color: var(--text) !important;
   -webkit-text-fill-color: var(--text);
 }
 
-:root[data-theme="dark"] .finova-select option,
-:root[data-theme="dark"] .form-select.finova-input option {
+:root[data-theme="dark"] .hestia-select option,
+:root[data-theme="dark"] .form-select.hestia-input option {
   background: var(--surface);
   color: var(--text);
 }
 
-:root[data-theme="dark"] .finova-input::placeholder,
+:root[data-theme="dark"] .hestia-input::placeholder,
 :root[data-theme="dark"] textarea::placeholder {
   color: var(--text-muted) !important;
 }
@@ -2557,16 +2557,16 @@ hr {
   color: var(--text) !important;
 }
 
-:root[data-theme="dark"] .finova-auth-link {
+:root[data-theme="dark"] .hestia-auth-link {
   color: var(--brand-strong);
 }
 
-:root[data-theme="dark"] .finova-auth-link:hover,
-:root[data-theme="dark"] .finova-auth-link:focus {
+:root[data-theme="dark"] .hestia-auth-link:hover,
+:root[data-theme="dark"] .hestia-auth-link:focus {
   color: #ffffff;
 }
 
-.finova-row-highlight td {
+.hestia-row-highlight td {
   background: transparent !important;
 }
 
@@ -2619,8 +2619,8 @@ hr {
   padding: 0 var(--space-2) var(--space-5);
 }
 
-.app-sidebar .finova-brand-mark-navbar .finova-brand-wordmark,
-.app-public-header .finova-brand-mark-navbar .finova-brand-wordmark {
+.app-sidebar .hestia-brand-mark-navbar .hestia-brand-wordmark,
+.app-public-header .hestia-brand-mark-navbar .hestia-brand-wordmark {
   color: #ffffff;
 }
 
@@ -2865,7 +2865,7 @@ hr {
   flex: 0 0 62px;
 }
 
-.app-public-main > .finova-page {
+.app-public-main > .hestia-page {
   min-height: calc(100vh - 104px);
 }
 
@@ -2888,17 +2888,17 @@ hr {
     min-width: 0;
   }
 
-  .app-topbar-brand .finova-brand-mark {
+  .app-topbar-brand .hestia-brand-mark {
     gap: var(--space-2);
   }
 
-  .app-topbar-brand .finova-brand-logo,
-  .app-topbar-brand .finova-brand-symbol {
+  .app-topbar-brand .hestia-brand-logo,
+  .app-topbar-brand .hestia-brand-symbol {
     width: 28px;
     height: 28px;
   }
 
-  .app-topbar-brand .finova-brand-wordmark {
+  .app-topbar-brand .hestia-brand-wordmark {
     color: var(--text);
     font-size: 0.95rem;
   }
@@ -3053,7 +3053,7 @@ hr {
     padding-right: var(--space-3);
   }
 
-  .app-topbar-brand .finova-brand-symbol {
+  .app-topbar-brand .hestia-brand-symbol {
     display: none;
   }
 
@@ -3073,21 +3073,21 @@ hr {
 }
 
 @media (max-width: 767.98px) {
-  .finova-mobile-filters-trigger {
+  .hestia-mobile-filters-trigger {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-3);
   }
 
-  .finova-mobile-filters-trigger .btn {
+  .hestia-mobile-filters-trigger .btn {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
     min-height: 46px;
   }
 
-  .finova-filters-sheet-backdrop {
+  .hestia-filters-sheet-backdrop {
     position: fixed;
     inset: 0;
     z-index: 65;
@@ -3096,7 +3096,7 @@ hr {
     background: var(--overlay);
   }
 
-  .finova-toolbar-surface {
+  .hestia-toolbar-surface {
     position: fixed;
     right: 0;
     bottom: 0;
@@ -3123,26 +3123,26 @@ hr {
       visibility var(--motion-normal) ease;
   }
 
-  .finova-toolbar-surface.finova-toolbar-sheet-open {
+  .hestia-toolbar-surface.hestia-toolbar-sheet-open {
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
   }
 
-  .finova-filters-sheet-header,
-  .finova-filters-sheet-footer {
+  .hestia-filters-sheet-header,
+  .hestia-filters-sheet-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-3);
   }
 
-  .finova-filters-sheet-header {
+  .hestia-filters-sheet-header {
     margin-bottom: var(--space-4);
   }
 
-  .finova-filters-sheet-footer {
+  .hestia-filters-sheet-footer {
     position: sticky;
     bottom: calc(var(--space-4) * -1);
     margin: var(--space-4) calc(var(--space-4) * -1) calc(var(--space-4) * -1);
@@ -3151,12 +3151,12 @@ hr {
     background: var(--surface);
   }
 
-  .finova-filters-sheet-footer .btn {
+  .hestia-filters-sheet-footer .btn {
     flex: 1 1 0;
     min-height: 46px;
   }
 
-  .finova-filters-desktop-actions {
+  .hestia-filters-desktop-actions {
     display: none;
   }
 }

@@ -1,12 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-const STORAGE_KEY = "finova-theme";
+const STORAGE_KEY = "hestia-theme";
+const LEGACY_STORAGE_KEY = "finova-theme";
 const ThemeContext = createContext(null);
 
 function getInitialTheme() {
-  const savedTheme = localStorage.getItem(STORAGE_KEY);
+  const savedTheme =
+    localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
 
   if (savedTheme === "light" || savedTheme === "dark") {
+    localStorage.setItem(STORAGE_KEY, savedTheme);
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
     return savedTheme;
   }
 

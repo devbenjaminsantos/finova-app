@@ -50,9 +50,9 @@ function DemoInfoCard() {
   const { t } = useI18n();
 
   return (
-    <div className="finova-card p-4 finova-demo-panel">
-      <h2 className="finova-title h5 mb-2">{t("home.demoTitle")}</h2>
-      <p className="finova-subtitle mb-0">{t("home.demoDescription")}</p>
+    <div className="hestia-card p-4 hestia-demo-panel">
+      <h2 className="hestia-title h5 mb-2">{t("home.demoTitle")}</h2>
+      <p className="hestia-subtitle mb-0">{t("home.demoDescription")}</p>
     </div>
   );
 }
@@ -61,14 +61,14 @@ function OnboardingPromptCard({ isSaving, onChoose }) {
   const { t } = useI18n();
 
   return (
-    <div className="finova-card p-4">
+    <div className="hestia-card p-4">
       <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
         <div>
-          <h2 className="finova-title h5 mb-2">{t("home.onboardingPromptTitle")}</h2>
-          <p className="finova-subtitle mb-0">{t("home.onboardingPromptDescription")}</p>
+          <h2 className="hestia-title h5 mb-2">{t("home.onboardingPromptTitle")}</h2>
+          <p className="hestia-subtitle mb-0">{t("home.onboardingPromptDescription")}</p>
         </div>
 
-        <div className="finova-actions-row">
+        <div className="hestia-actions-row">
           <Button
             type="button"
             loading={isSaving}
@@ -130,11 +130,11 @@ function OnboardingChecklistCard({
 
   if (!isVisible) {
     return (
-      <div className="finova-card p-4">
+      <div className="hestia-card p-4">
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
           <div>
-            <h2 className="finova-title h6 mb-1">{t("home.onboardingHiddenTitle")}</h2>
-            <p className="finova-subtitle mb-0">{t("home.onboardingHiddenDescription")}</p>
+            <h2 className="hestia-title h6 mb-1">{t("home.onboardingHiddenTitle")}</h2>
+            <p className="hestia-subtitle mb-0">{t("home.onboardingHiddenDescription")}</p>
           </div>
 
           <Button
@@ -151,19 +151,19 @@ function OnboardingChecklistCard({
   }
 
   return (
-    <div className="finova-card p-4">
+    <div className="hestia-card p-4">
       <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-4">
         <div>
-          <h2 className="finova-title h5 mb-2">{t("home.onboardingTitle")}</h2>
-          <p className="finova-subtitle mb-0">
+          <h2 className="hestia-title h5 mb-2">{t("home.onboardingTitle")}</h2>
+          <p className="hestia-subtitle mb-0">
             {completedCount === items.length
               ? t("home.onboardingCompletedDescription")
               : t("home.onboardingDescription")}
           </p>
         </div>
 
-        <div className="finova-actions-row">
-          <span className="finova-badge-primary">
+        <div className="hestia-actions-row">
+          <span className="hestia-badge-primary">
             {t("home.onboardingProgress", {
               current: completedCount,
               total: items.length,
@@ -183,14 +183,14 @@ function OnboardingChecklistCard({
       <div className="row g-3">
         {items.map((item) => (
           <div className="col-12 col-lg-4" key={item.key}>
-            <div className="finova-card-soft h-100 p-3">
+            <div className="hestia-card-soft h-100 p-3">
               <div className="d-flex justify-content-between align-items-start gap-3 mb-2">
-                <h3 className="finova-title h6 mb-0">{item.label}</h3>
-                <span className={item.done ? "finova-badge-income" : "finova-badge-neutral"}>
+                <h3 className="hestia-title h6 mb-0">{item.label}</h3>
+                <span className={item.done ? "hestia-badge-income" : "hestia-badge-neutral"}>
                   {item.done ? t("home.onboardingDone") : t("home.onboardingPending")}
                 </span>
               </div>
-              <p className="finova-subtitle small mb-0">{item.description}</p>
+              <p className="hestia-subtitle small mb-0">{item.description}</p>
             </div>
           </div>
         ))}
@@ -201,10 +201,10 @@ function OnboardingChecklistCard({
 
 function HomeWidgetCard({ title, description, children }) {
   return (
-    <div className="finova-card p-4 h-100">
+    <div className="hestia-card p-4 h-100">
       <div className="mb-3">
-        <h2 className="finova-title h5 mb-1">{title}</h2>
-        {description ? <p className="finova-subtitle mb-0">{description}</p> : null}
+        <h2 className="hestia-title h5 mb-1">{title}</h2>
+        {description ? <p className="hestia-subtitle mb-0">{description}</p> : null}
       </div>
       {children}
     </div>
@@ -214,10 +214,10 @@ function HomeWidgetCard({ title, description, children }) {
 function ShortcutTile({ title, description, to }) {
   return (
     <div className="col-12 col-md-6 col-xl-3">
-      <Link to={to} className="finova-home-shortcut text-decoration-none">
-        <div className="finova-card-soft h-100 p-3">
-          <div className="finova-title h6 mb-2">{title}</div>
-          <p className="finova-subtitle mb-0">{description}</p>
+      <Link to={to} className="hestia-home-shortcut text-decoration-none">
+        <div className="hestia-card-soft h-100 p-3">
+          <div className="hestia-title h6 mb-2">{title}</div>
+          <p className="hestia-subtitle mb-0">{description}</p>
         </div>
       </Link>
     </div>
@@ -228,22 +228,22 @@ function GoalsPreview({ error, goalsCount, goalsRiskCount, isLoading }) {
   const { t } = useI18n();
 
   return (
-    <section className="finova-home-summary-panel" aria-labelledby="home-planning-title">
-      <span className="finova-home-eyebrow">{t("home.planningEyebrow")}</span>
-      <h3 id="home-planning-title" className="finova-title h5 mb-2">
+    <section className="hestia-home-summary-panel" aria-labelledby="home-planning-title">
+      <span className="hestia-home-eyebrow">{t("home.planningEyebrow")}</span>
+      <h3 id="home-planning-title" className="hestia-title h5 mb-2">
         {t("home.goalsTitle")}
       </h3>
-      <p className="finova-subtitle mb-4">{t("home.goalsDescription")}</p>
+      <p className="hestia-subtitle mb-4">{t("home.goalsDescription")}</p>
 
       {isLoading ? (
-        <p className="finova-subtitle mb-0">{t("home.goalsLoading")}</p>
+        <p className="hestia-subtitle mb-0">{t("home.goalsLoading")}</p>
       ) : error ? (
-        <p className="finova-home-status finova-home-status-error" role="alert">
+        <p className="hestia-home-status hestia-home-status-error" role="alert">
           {t("home.goalsError")}
         </p>
       ) : (
         <>
-          <dl className="finova-home-stat-list">
+          <dl className="hestia-home-stat-list">
             <div>
               <dt>{t("home.goalsConfiguredLabel")}</dt>
               <dd>{goalsCount}</dd>
@@ -256,7 +256,7 @@ function GoalsPreview({ error, goalsCount, goalsRiskCount, isLoading }) {
             </div>
           </dl>
 
-          <Link to="/analises" className="btn finova-btn-light">
+          <Link to="/analises" className="btn hestia-btn-light">
             {t("home.openAnalyses")}
           </Link>
         </>
@@ -269,30 +269,30 @@ function HistoryPreview({ error, logs, isLoading }) {
   const { t, formatDateTime } = useI18n();
 
   return (
-    <section className="finova-home-summary-panel" aria-labelledby="home-activity-title">
-      <span className="finova-home-eyebrow">{t("home.activityEyebrow")}</span>
-      <h3 id="home-activity-title" className="finova-title h5 mb-2">
+    <section className="hestia-home-summary-panel" aria-labelledby="home-activity-title">
+      <span className="hestia-home-eyebrow">{t("home.activityEyebrow")}</span>
+      <h3 id="home-activity-title" className="hestia-title h5 mb-2">
         {t("home.historyTitle")}
       </h3>
-      <p className="finova-subtitle mb-4">{t("home.historyDescription")}</p>
+      <p className="hestia-subtitle mb-4">{t("home.historyDescription")}</p>
 
       {isLoading ? (
-        <p className="finova-subtitle mb-0">{t("history.loading")}</p>
+        <p className="hestia-subtitle mb-0">{t("history.loading")}</p>
       ) : error ? (
-        <p className="finova-home-status finova-home-status-error" role="alert">
+        <p className="hestia-home-status hestia-home-status-error" role="alert">
           {t("home.historyError")}
         </p>
       ) : logs.length === 0 ? (
-        <p className="finova-subtitle mb-0">{t("home.historyEmpty")}</p>
+        <p className="hestia-subtitle mb-0">{t("home.historyEmpty")}</p>
       ) : (
-        <ol className="finova-home-activity-list">
+        <ol className="hestia-home-activity-list">
           {logs.map((log) => (
             <li key={log.id}>
               <div className="d-flex justify-content-between align-items-start gap-3 mb-2">
                 <span className={getActionToneClass(log.action)}>
                   {formatActionLabel(log.action, t)}
                 </span>
-                <span className="finova-subtitle small">
+                <span className="hestia-subtitle small">
                   {formatAuditDate(log.createdAtUtc, formatDateTime)}
                 </span>
               </div>
@@ -303,7 +303,7 @@ function HistoryPreview({ error, logs, isLoading }) {
       )}
 
       <div className="mt-3">
-        <Link to="/historico" className="btn finova-btn-light">
+        <Link to="/historico" className="btn hestia-btn-light">
           {t("home.openHistory")}
         </Link>
       </div>
@@ -346,21 +346,21 @@ function HomeTrend({ isLoading, series }) {
   const trend = useMemo(() => getTrendPath(series), [series]);
 
   return (
-    <div className="finova-home-trend">
-      <div className="finova-home-trend-heading">
+    <div className="hestia-home-trend">
+      <div className="hestia-home-trend-heading">
         <div>
-          <span className="finova-home-eyebrow">{t("home.heroTrendEyebrow")}</span>
-          <h2 className="finova-title h5 mb-0">{t("home.heroTrendTitle")}</h2>
+          <span className="hestia-home-eyebrow">{t("home.heroTrendEyebrow")}</span>
+          <h2 className="hestia-title h5 mb-0">{t("home.heroTrendTitle")}</h2>
         </div>
-        <span className="finova-subtitle small">{t("home.heroTrendRange")}</span>
+        <span className="hestia-subtitle small">{t("home.heroTrendRange")}</span>
       </div>
 
       {isLoading ? (
-        <p className="finova-subtitle mb-0">{t("home.summaryLoading")}</p>
+        <p className="hestia-subtitle mb-0">{t("home.summaryLoading")}</p>
       ) : hasData ? (
         <>
           <svg
-            className="finova-home-trend-chart"
+            className="hestia-home-trend-chart"
             viewBox="0 0 620 176"
             role="img"
             aria-label={t("home.heroTrendAriaLabel")}
@@ -370,29 +370,29 @@ function HomeTrend({ isLoading, series }) {
               x2="608"
               y1={trend.baseline}
               y2={trend.baseline}
-              className="finova-home-trend-baseline"
+              className="hestia-home-trend-baseline"
             />
-            <polyline points={trend.polyline} className="finova-home-trend-line" />
+            <polyline points={trend.polyline} className="hestia-home-trend-line" />
             {trend.points.map((point) => (
               <circle
                 key={point.month}
                 cx={point.x}
                 cy={point.y}
                 r="3.5"
-                className="finova-home-trend-point"
+                className="hestia-home-trend-point"
               >
                 <title>{`${point.month}: ${formatCurrencyFromCents(point.balance)}`}</title>
               </circle>
             ))}
           </svg>
-          <div className="finova-home-trend-labels" aria-hidden="true">
+          <div className="hestia-home-trend-labels" aria-hidden="true">
             {trend.points.map((point) => (
               <span key={point.month}>{point.month.slice(5)}</span>
             ))}
           </div>
         </>
       ) : (
-        <p className="finova-subtitle mb-0">{t("home.heroTrendEmpty")}</p>
+        <p className="hestia-subtitle mb-0">{t("home.heroTrendEmpty")}</p>
       )}
     </div>
   );
@@ -421,27 +421,27 @@ function HomeFinancialHero({
   ];
 
   return (
-    <section className="finova-home-hero" aria-labelledby="home-financial-title">
-      <div className="finova-home-hero-main">
-        <div className="finova-home-hero-copy">
-          <span className="finova-home-eyebrow">{t("home.heroEyebrow")}</span>
-          <h1 id="home-financial-title" className="finova-title">
+    <section className="hestia-home-hero" aria-labelledby="home-financial-title">
+      <div className="hestia-home-hero-main">
+        <div className="hestia-home-hero-copy">
+          <span className="hestia-home-eyebrow">{t("home.heroEyebrow")}</span>
+          <h1 id="home-financial-title" className="hestia-title">
             {t("home.heroTitle")}
           </h1>
-          <p className="finova-subtitle mb-0">
+          <p className="hestia-subtitle mb-0">
             {t("home.heroDescription", { period: selectedPeriodLabel.toLowerCase() })}
           </p>
-          <p className="finova-home-hero-scope mb-0">{selectedAccountLabel}</p>
+          <p className="hestia-home-hero-scope mb-0">{selectedAccountLabel}</p>
         </div>
 
-        <div className="finova-home-hero-controls">
+        <div className="hestia-home-hero-controls">
           <div>
             <label className="form-label" htmlFor="home-period">
               {t("pages.homePeriod")}
             </label>
             <select
               id="home-period"
-              className="form-select finova-select"
+              className="form-select hestia-select"
               value={period}
               onChange={(event) => onPeriodChange(event.target.value)}
             >
@@ -459,7 +459,7 @@ function HomeFinancialHero({
             </label>
             <select
               id="home-account"
-              className="form-select finova-select"
+              className="form-select hestia-select"
               value={accountFilter}
               onChange={(event) => onAccountChange(event.target.value)}
             >
@@ -475,9 +475,9 @@ function HomeFinancialHero({
         </div>
       </div>
 
-      <div className="finova-home-metrics" aria-label={t("home.heroMetricsLabel")}>
+      <div className="hestia-home-metrics" aria-label={t("home.heroMetricsLabel")}>
         {metrics.map((metric) => (
-          <div key={metric.key} className={`finova-home-metric finova-home-metric-${metric.tone || "default"}`}>
+          <div key={metric.key} className={`hestia-home-metric hestia-home-metric-${metric.tone || "default"}`}>
             <span>{metric.label}</span>
             <strong>{isLoading ? "—" : formatCurrencyFromCents(metric.value)}</strong>
           </div>
@@ -491,47 +491,47 @@ function HomeFinancialHero({
 
 function getPerceptionBadgeClass(tone) {
   if (tone === "income") {
-    return "finova-badge-income";
+    return "hestia-badge-income";
   }
 
   if (tone === "expense") {
-    return "finova-badge-expense";
+    return "hestia-badge-expense";
   }
 
   if (tone === "neutral") {
-    return "finova-badge-neutral";
+    return "hestia-badge-neutral";
   }
 
-  return "finova-badge-primary";
+  return "hestia-badge-primary";
 }
 
 function HomePerception({ insight, isLoading }) {
   const { t } = useI18n();
 
   return (
-    <section className="finova-home-reading-panel" aria-labelledby="home-perception-title">
-      <span className="finova-home-eyebrow">{t("home.perceptionEyebrow")}</span>
-      <h2 id="home-perception-title" className="finova-title h4 mb-2">
+    <section className="hestia-home-reading-panel" aria-labelledby="home-perception-title">
+      <span className="hestia-home-eyebrow">{t("home.perceptionEyebrow")}</span>
+      <h2 id="home-perception-title" className="hestia-title h4 mb-2">
         {insight?.title || t("home.perceptionTitle")}
       </h2>
 
       {isLoading ? (
-        <p className="finova-subtitle mb-0">{t("home.insightsLoading")}</p>
+        <p className="hestia-subtitle mb-0">{t("home.insightsLoading")}</p>
       ) : insight ? (
         <>
           <div className="d-flex align-items-center gap-2 mb-3">
             <span className={getPerceptionBadgeClass(insight.tone)}>{insight.badge}</span>
-            <span className="finova-subtitle small">{t("home.perceptionRuleBased")}</span>
+            <span className="hestia-subtitle small">{t("home.perceptionRuleBased")}</span>
           </div>
-          <p className="finova-subtitle mb-0">{insight.description}</p>
+          <p className="hestia-subtitle mb-0">{insight.description}</p>
           <div className="mt-4">
-            <Link to="/analises" className="btn finova-btn-light">
+            <Link to="/analises" className="btn hestia-btn-light">
               {t("home.openFullAnalyses")}
             </Link>
           </div>
         </>
       ) : (
-        <p className="finova-subtitle mb-0">{t("home.perceptionEmpty")}</p>
+        <p className="hestia-subtitle mb-0">{t("home.perceptionEmpty")}</p>
       )}
     </section>
   );
@@ -541,19 +541,19 @@ function HomeSpendingCategories({ categories, isLoading }) {
   const { formatCurrencyFromCents, t } = useI18n();
 
   return (
-    <section className="finova-home-reading-panel" aria-labelledby="home-spending-title">
-      <span className="finova-home-eyebrow">{t("home.spendingEyebrow")}</span>
-      <h2 id="home-spending-title" className="finova-title h4 mb-2">
+    <section className="hestia-home-reading-panel" aria-labelledby="home-spending-title">
+      <span className="hestia-home-eyebrow">{t("home.spendingEyebrow")}</span>
+      <h2 id="home-spending-title" className="hestia-title h4 mb-2">
         {t("home.spendingTitle")}
       </h2>
-      <p className="finova-subtitle mb-4">{t("home.spendingDescription")}</p>
+      <p className="hestia-subtitle mb-4">{t("home.spendingDescription")}</p>
 
       {isLoading ? (
-        <p className="finova-subtitle mb-0">{t("home.insightsLoading")}</p>
+        <p className="hestia-subtitle mb-0">{t("home.insightsLoading")}</p>
       ) : categories.length === 0 ? (
-        <p className="finova-subtitle mb-0">{t("home.spendingEmpty")}</p>
+        <p className="hestia-subtitle mb-0">{t("home.spendingEmpty")}</p>
       ) : (
-        <ol className="finova-home-spending-list">
+        <ol className="hestia-home-spending-list">
           {categories.map((category) => (
             <CategoryRow
               key={category.name}
@@ -600,12 +600,12 @@ export default function Home() {
       setGoalsRefresh((current) => current + 1);
     }
 
-    window.addEventListener("finova-session-change", handleSessionChange);
-    window.addEventListener("finova-budget-goals-change", handleBudgetGoalsChange);
+    window.addEventListener("hestia-session-change", handleSessionChange);
+    window.addEventListener("hestia-budget-goals-change", handleBudgetGoalsChange);
 
     return () => {
-      window.removeEventListener("finova-session-change", handleSessionChange);
-      window.removeEventListener("finova-budget-goals-change", handleBudgetGoalsChange);
+      window.removeEventListener("hestia-session-change", handleSessionChange);
+      window.removeEventListener("hestia-budget-goals-change", handleBudgetGoalsChange);
     };
   }, []);
 
@@ -867,7 +867,7 @@ export default function Home() {
   const visibleWidgetCount = Object.values(widgets).filter(Boolean).length;
 
   return (
-    <section className="finova-section-space">
+    <section className="hestia-section-space">
       {widgets.summary ? (
         <HomeFinancialHero
           accountFilter={accountFilter}
@@ -887,9 +887,9 @@ export default function Home() {
 
       <div className="d-grid gap-4">
         {visibleWidgetCount === 0 ? (
-          <div className="finova-card p-4 text-center">
-            <h2 className="finova-title h5 mb-2">{t("home.emptyTitle")}</h2>
-            <p className="finova-subtitle mb-3">{t("home.emptyDescription")}</p>
+          <div className="hestia-card p-4 text-center">
+            <h2 className="hestia-title h5 mb-2">{t("home.emptyTitle")}</h2>
+            <p className="hestia-subtitle mb-3">{t("home.emptyDescription")}</p>
             <Button type="button" onClick={handleResetWidgets}>
               {t("home.restoreWidgets")}
             </Button>
@@ -963,7 +963,7 @@ export default function Home() {
                 description={t("home.comparisonDescription")}
               >
                 {isLoading ? (
-                  <p className="finova-subtitle mb-0">{t("home.comparisonLoading")}</p>
+                  <p className="hestia-subtitle mb-0">{t("home.comparisonLoading")}</p>
                 ) : (
                   <>
                     <div className="row g-3 mb-3">
@@ -1006,7 +1006,7 @@ export default function Home() {
                     </div>
 
                     <div className="mt-3">
-                      <Link to="/analises" className="btn finova-btn-light">
+                      <Link to="/analises" className="btn hestia-btn-light">
                         {t("home.openFullAnalyses")}
                       </Link>
                     </div>
@@ -1018,14 +1018,14 @@ export default function Home() {
         </div>
 
         {widgets.goals || widgets.history ? (
-          <section className="finova-home-planning-activity" aria-labelledby="home-planning-activity-title">
-            <div className="finova-home-planning-activity-heading">
+          <section className="hestia-home-planning-activity" aria-labelledby="home-planning-activity-title">
+            <div className="hestia-home-planning-activity-heading">
               <div>
-                <span className="finova-home-eyebrow">{t("home.planningActivityEyebrow")}</span>
-                <h2 id="home-planning-activity-title" className="finova-title h4 mb-1">
+                <span className="hestia-home-eyebrow">{t("home.planningActivityEyebrow")}</span>
+                <h2 id="home-planning-activity-title" className="hestia-title h4 mb-1">
                   {t("home.planningActivityTitle")}
                 </h2>
-                <p className="finova-subtitle mb-0">{t("home.planningActivityDescription")}</p>
+                <p className="hestia-subtitle mb-0">{t("home.planningActivityDescription")}</p>
               </div>
             </div>
 

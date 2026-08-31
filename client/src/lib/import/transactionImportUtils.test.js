@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { normalizeImportCategory, resolveImportCategory } from "./transactionImportUtils";
 
 describe("transaction import category inference", () => {
-  it("maps common expense merchants to Finova categories", () => {
+  it("maps common expense merchants to Héstia categories", () => {
     expect(
       normalizeImportCategory("expense", "", "Compra aprovada em UBER TRIP SAO PAULO")
     ).toBe("Transporte");
@@ -16,7 +16,7 @@ describe("transaction import category inference", () => {
     ).toBe("Saúde");
   });
 
-  it("maps common income descriptions to Finova categories", () => {
+  it("maps common income descriptions to Héstia categories", () => {
     expect(
       normalizeImportCategory("income", "", "PIX CLIENTE JOAO referente servico prestado")
     ).toBe("Freelancer");

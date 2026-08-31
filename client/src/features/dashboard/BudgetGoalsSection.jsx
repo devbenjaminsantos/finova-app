@@ -16,7 +16,7 @@ import Modal from "../../components/ui/Modal";
 import Toast from "../../components/ui/Toast";
 
 function dispatchBudgetGoalsChange() {
-  window.dispatchEvent(new Event("finova-budget-goals-change"));
+  window.dispatchEvent(new Event("hestia-budget-goals-change"));
 }
 
 function currentMonthISO() {
@@ -95,18 +95,18 @@ function GoalCard({ goal, spentCents, onEdit, onDelete, isDeleting, t, formatCur
   const remaining = goal.amountCents - spentCents;
 
   return (
-    <div className="finova-card-soft p-3 h-100">
+    <div className="hestia-card-soft p-3 h-100">
       <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
         <div>
-          <div className="finova-title h6 mb-1">
+          <div className="hestia-title h6 mb-1">
             {goal.category || t("dashboard.goalOverallBudget")}
           </div>
-          <div className={`finova-goal-pill finova-goal-pill-${tone}`}>
+          <div className={`hestia-goal-pill hestia-goal-pill-${tone}`}>
             {getGoalStatus(progress, t)}
           </div>
         </div>
 
-        <div className="finova-actions-row finova-actions-row-end">
+        <div className="hestia-actions-row hestia-actions-row-end">
           <Button type="button" variant="secondary" className="btn-sm" onClick={() => onEdit(goal)}>
             {t("transactions.edit")}
           </Button>
@@ -117,15 +117,15 @@ function GoalCard({ goal, spentCents, onEdit, onDelete, isDeleting, t, formatCur
       </div>
 
       <div className="d-flex justify-content-between small mb-2">
-        <span className="finova-subtitle">{t("dashboard.goalCurrentSpent")}</span>
+        <span className="hestia-subtitle">{t("dashboard.goalCurrentSpent")}</span>
         <strong>{formatCurrencyFromCents(spentCents)}</strong>
       </div>
       <div className="d-flex justify-content-between small mb-2">
-        <span className="finova-subtitle">{t("dashboard.goalTarget")}</span>
+        <span className="hestia-subtitle">{t("dashboard.goalTarget")}</span>
         <strong>{formatCurrencyFromCents(goal.amountCents)}</strong>
       </div>
       <div className="d-flex justify-content-between small mb-3">
-        <span className="finova-subtitle">
+        <span className="hestia-subtitle">
           {remaining >= 0 ? t("dashboard.goalAvailableBalance") : t("dashboard.goalOverage")}
         </span>
         <strong className={remaining >= 0 ? "" : "text-danger"}>
@@ -140,7 +140,7 @@ function GoalCard({ goal, spentCents, onEdit, onDelete, isDeleting, t, formatCur
         tone={tone}
       />
 
-      <div className="small finova-subtitle">
+      <div className="small hestia-subtitle">
         {t("dashboard.goalProgressConsumed", { percent })}
       </div>
     </div>
@@ -359,28 +359,28 @@ export default function BudgetGoalsSection({ transactions }) {
   const isCurrentMonth = month === currentMonth;
 
   return (
-    <div className="finova-budget-goals-section">
+    <div className="hestia-budget-goals-section">
       <div className="d-flex flex-column flex-xl-row justify-content-between align-items-xl-end gap-3 mb-4">
         <div>
-          <h2 className="finova-title h4 mb-1">{t("dashboard.goalsTitle")}</h2>
-          <p className="finova-subtitle mb-0">{t("dashboard.goalsSubtitle")}</p>
+          <h2 className="hestia-title h4 mb-1">{t("dashboard.goalsTitle")}</h2>
+          <p className="hestia-subtitle mb-0">{t("dashboard.goalsSubtitle")}</p>
         </div>
 
-        <div className="finova-actions-row align-items-center">
+        <div className="hestia-actions-row align-items-center">
           <button
             type="button"
-            className="btn finova-btn-light"
+            className="btn hestia-btn-light"
             onClick={() => setMonth((currentValue) => shiftMonth(currentValue, -1))}
           >
             {t("dashboard.previousMonth")}
           </button>
-          <div className="finova-goal-summary text-center">
-            <span className="finova-subtitle small d-block">{t("dashboard.focusMonth")}</span>
+          <div className="hestia-goal-summary text-center">
+            <span className="hestia-subtitle small d-block">{t("dashboard.focusMonth")}</span>
             <strong className="text-capitalize">{monthLabel}</strong>
           </div>
           <button
             type="button"
-            className="btn finova-btn-light"
+            className="btn hestia-btn-light"
             onClick={() => setMonth((currentValue) => shiftMonth(currentValue, 1))}
           >
             {t("dashboard.nextMonth")}
@@ -388,7 +388,7 @@ export default function BudgetGoalsSection({ transactions }) {
           {!isCurrentMonth ? (
             <button
               type="button"
-              className="btn finova-btn-light"
+              className="btn hestia-btn-light"
               onClick={() => setMonth(currentMonth)}
             >
               {t("dashboard.backToCurrentMonth")}
@@ -400,7 +400,7 @@ export default function BudgetGoalsSection({ transactions }) {
       <div className="row g-3 mb-4">
         <div className="col-12 col-md-6 col-xl-3">
           <Metric
-            className="finova-card-soft p-3 h-100"
+            className="hestia-card-soft p-3 h-100"
             label={t("dashboard.summarySpentMonth")}
             value={formatCurrencyFromCents(totalSpent)}
             helper={t("dashboard.summarySpentMonthHelp")}
@@ -408,7 +408,7 @@ export default function BudgetGoalsSection({ transactions }) {
         </div>
         <div className="col-12 col-md-6 col-xl-3">
           <Metric
-            className="finova-card-soft p-3 h-100"
+            className="hestia-card-soft p-3 h-100"
             label={t("dashboard.summaryGoalCategories")}
             value={String(categoryGoals.length)}
             helper={t("dashboard.summaryGoalCategoriesHelp")}
@@ -416,7 +416,7 @@ export default function BudgetGoalsSection({ transactions }) {
         </div>
         <div className="col-12 col-md-6 col-xl-3">
           <Metric
-            className="finova-card-soft p-3 h-100"
+            className="hestia-card-soft p-3 h-100"
             label={t("dashboard.summaryWithoutGoal")}
             value={String(Math.max(categoriesWithExpenses.length - categoryGoals.length, 0))}
             helper={t("dashboard.summaryWithoutGoalHelp")}
@@ -424,7 +424,7 @@ export default function BudgetGoalsSection({ transactions }) {
         </div>
         <div className="col-12 col-md-6 col-xl-3">
           <Metric
-            className="finova-card-soft p-3 h-100"
+            className="hestia-card-soft p-3 h-100"
             label={t("dashboard.summaryGoalsAtRisk")}
             value={String(categoriesOverLimitCount)}
             helper={t("dashboard.summaryGoalsAtRiskHelp")}
@@ -433,21 +433,21 @@ export default function BudgetGoalsSection({ transactions }) {
       </div>
 
       {uncoveredCategorySuggestions.length > 0 ? (
-        <div className="finova-card-soft p-3 mb-4">
+        <div className="hestia-card-soft p-3 mb-4">
           <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
             <div>
-              <h3 className="finova-title h6 mb-1">{t("dashboard.suggestionsTitle")}</h3>
-              <p className="finova-subtitle mb-0">
+              <h3 className="hestia-title h6 mb-1">{t("dashboard.suggestionsTitle")}</h3>
+              <p className="hestia-subtitle mb-0">
                 {t("dashboard.suggestionsSubtitle", { month: monthLabel })}
               </p>
             </div>
 
-            <div className="finova-suggestion-list">
+            <div className="hestia-suggestion-list">
               {uncoveredCategorySuggestions.map((item) => (
                 <button
                   key={item.category}
                   type="button"
-                  className="btn finova-goal-suggestion"
+                  className="btn hestia-goal-suggestion"
                   onClick={() => handlePickSuggestedCategory(item.category)}
                 >
                   <span>{item.category}</span>
@@ -466,7 +466,7 @@ export default function BudgetGoalsSection({ transactions }) {
           </label>
           <select
             id="budget-goal-category"
-            className="form-select finova-select"
+            className="form-select hestia-select"
             value={category}
             onChange={(event) => setCategory(event.target.value)}
             disabled={isSaving}
@@ -487,7 +487,7 @@ export default function BudgetGoalsSection({ transactions }) {
           <input
             id="budget-goal-amount"
             type="text"
-            className="form-control finova-input"
+            className="form-control hestia-input"
             placeholder={t("dashboard.goalAmountPlaceholder")}
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
@@ -499,7 +499,7 @@ export default function BudgetGoalsSection({ transactions }) {
         <div className="col-12 col-lg-3 d-flex align-items-end gap-2">
           <button
             type="submit"
-            className="btn finova-btn-primary flex-grow-1"
+            className="btn hestia-btn-primary flex-grow-1"
             disabled={isSaving}
           >
             {isSaving
@@ -512,7 +512,7 @@ export default function BudgetGoalsSection({ transactions }) {
           {editingGoalId ? (
             <button
               type="button"
-              className="btn finova-btn-light"
+              className="btn hestia-btn-light"
               onClick={handleCancelEdit}
               disabled={isSaving}
             >
@@ -530,14 +530,14 @@ export default function BudgetGoalsSection({ transactions }) {
       ) : null}
 
       {isLoading ? (
-        <div className="finova-subtitle">{t("dashboard.goalsLoading")}</div>
+        <div className="hestia-subtitle">{t("dashboard.goalsLoading")}</div>
       ) : (
         <>
           <div className="mb-4">
             <div className="d-flex justify-content-between align-items-center gap-3 mb-3">
               <div>
-                <h3 className="finova-title h5 mb-1">{t("dashboard.overviewTitle")}</h3>
-                <p className="finova-subtitle mb-0">{t("dashboard.overviewSubtitle")}</p>
+                <h3 className="hestia-title h5 mb-1">{t("dashboard.overviewTitle")}</h3>
+                <p className="hestia-subtitle mb-0">{t("dashboard.overviewSubtitle")}</p>
               </div>
             </div>
 
@@ -553,7 +553,7 @@ export default function BudgetGoalsSection({ transactions }) {
               />
             ) : (
               <EmptyState
-                className="finova-card-soft p-4"
+                className="hestia-card-soft p-4"
                 titleAs="h4"
                 title={t("dashboard.overviewEmptyTitle", { month: monthLabel })}
                 description={t("dashboard.overviewEmptySubtitle")}
@@ -564,17 +564,17 @@ export default function BudgetGoalsSection({ transactions }) {
           <div>
             <div className="d-flex justify-content-between align-items-center gap-3 mb-3">
               <div>
-                <h3 className="finova-title h5 mb-1">{t("dashboard.categoryGoalsTitle")}</h3>
-                <p className="finova-subtitle mb-0">{t("dashboard.categoryGoalsSubtitle")}</p>
+                <h3 className="hestia-title h5 mb-1">{t("dashboard.categoryGoalsTitle")}</h3>
+                <p className="hestia-subtitle mb-0">{t("dashboard.categoryGoalsSubtitle")}</p>
               </div>
-              <span className="finova-badge-primary">
+              <span className="hestia-badge-primary">
                 {t("dashboard.categoryGoalsConfigured", { count: categoryGoals.length })}
               </span>
             </div>
 
             {categoryGoals.length === 0 ? (
               <EmptyState
-                className="finova-card-soft p-4"
+                className="hestia-card-soft p-4"
                 titleAs="h4"
                 title={t("dashboard.categoryGoalsEmptyTitle")}
                 description={t("dashboard.categoryGoalsEmptySubtitle")}
@@ -606,7 +606,7 @@ export default function BudgetGoalsSection({ transactions }) {
         title={t("dashboard.goalDelete")}
         closeLabel={t("transactions.close")}
         footer={(
-          <div className="finova-actions-row finova-actions-row-end w-100">
+          <div className="hestia-actions-row hestia-actions-row-end w-100">
             <Button type="button" variant="secondary" onClick={() => setGoalPendingDelete(null)} disabled={Boolean(deletingId)}>
               {t("common.cancel")}
             </Button>
@@ -616,7 +616,7 @@ export default function BudgetGoalsSection({ transactions }) {
           </div>
         )}
       >
-        <p className="finova-subtitle mb-0">{t("dashboard.goalDeleteConfirm")}</p>
+        <p className="hestia-subtitle mb-0">{t("dashboard.goalDeleteConfirm")}</p>
       </Modal>
     </div>
   );

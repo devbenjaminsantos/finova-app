@@ -6,7 +6,7 @@ import MoneyDelta from "../../components/ui/MoneyDelta";
 export function SummaryCard({ label, value, tone = "default" }) {
   return (
     <div className="col-12 col-md-4">
-      <Metric className="finova-card-soft h-100 p-4" label={label} value={value} tone={tone} />
+      <Metric className="hestia-card-soft h-100 p-4" label={label} value={value} tone={tone} />
     </div>
   );
 }
@@ -32,16 +32,16 @@ export function ComparisonCard({
 
   return (
     <div className="col-12 col-md-4">
-      <div className="finova-card-soft h-100 p-4">
+      <div className="hestia-card-soft h-100 p-4">
         <div className="d-flex justify-content-between align-items-start gap-2 mb-3">
           <div>
-            <div className="finova-subtitle small mb-1">{label}</div>
-            <div className="finova-title h5 mb-0">{formatCurrencyFromCents(currentValue)}</div>
+            <div className="hestia-subtitle small mb-1">{label}</div>
+            <div className="hestia-title h5 mb-0">{formatCurrencyFromCents(currentValue)}</div>
           </div>
           <MoneyDelta delta={delta} label={toneText} />
         </div>
 
-        <div className="small finova-subtitle mb-2">
+        <div className="small hestia-subtitle mb-2">
           {t("dashboardCards.previousBase", {
             range: previousRangeLabel,
           })}: {formatCurrencyFromCents(previousValue)}
@@ -56,7 +56,7 @@ export function ComparisonCard({
               })}
             </span>
           ) : (
-            <span className="finova-subtitle">
+            <span className="hestia-subtitle">
               {t("dashboardCards.noPreviousBase", {
                 range: currentRangeLabel,
               })}
@@ -72,10 +72,10 @@ export function CategoryInsightCard({ title, category, value, tone }) {
   const { formatCurrencyFromCents, t } = useI18n();
   const badgeClass =
     tone === "up"
-      ? "finova-badge-expense"
+      ? "hestia-badge-expense"
       : tone === "down"
-        ? "finova-badge-income"
-        : "finova-badge-primary";
+        ? "hestia-badge-income"
+        : "hestia-badge-primary";
 
   const badgeText =
     tone === "up"
@@ -86,14 +86,14 @@ export function CategoryInsightCard({ title, category, value, tone }) {
 
   return (
     <div className="col-12 col-md-6">
-      <div className="finova-card-soft h-100 p-4">
+      <div className="hestia-card-soft h-100 p-4">
         <div className="d-flex justify-content-between align-items-start gap-2 mb-3">
           <div>
-            <div className="finova-subtitle small mb-1">{title}</div>
-            <div className="finova-title h5 mb-1">
+            <div className="hestia-subtitle small mb-1">{title}</div>
+            <div className="hestia-title h5 mb-1">
               {category || t("dashboardCards.noDominantCategory")}
             </div>
-            <div className="finova-subtitle small">
+            <div className="hestia-subtitle small">
               {value > 0
                 ? formatCurrencyFromCents(value)
                 : t("dashboardCards.noCategoryData")}
@@ -110,7 +110,7 @@ export function InsightCard({ title, description, badge, tone = "primary" }) {
   return (
     <div className="col-12 col-lg-4">
       <SharedInsightCard
-        className="finova-card-soft h-100 p-4"
+        className="hestia-card-soft h-100 p-4"
         title={title}
         description={description}
         badge={badge}

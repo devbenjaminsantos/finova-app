@@ -15,7 +15,7 @@ describe("form controls", () => {
     const button = screen.getByRole("button", { name: "Salvar" });
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-busy", "true");
-    expect(button).toHaveClass("finova-button-primary");
+    expect(button).toHaveClass("hestia-button-primary");
   });
 
   it("supports link and destructive variants without changing button semantics", () => {
@@ -26,8 +26,8 @@ describe("form controls", () => {
       </>
     );
 
-    expect(screen.getByRole("button", { name: "Reenviar" })).toHaveClass("finova-button-link");
-    expect(screen.getByRole("button", { name: "Remover" })).toHaveClass("finova-button-danger");
+    expect(screen.getByRole("button", { name: "Reenviar" })).toHaveClass("hestia-button-link");
+    expect(screen.getByRole("button", { name: "Remover" })).toHaveClass("hestia-button-danger");
   });
 
   it("connects an input label, help text and error", () => {

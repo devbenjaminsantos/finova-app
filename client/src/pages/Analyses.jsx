@@ -40,16 +40,16 @@ function formatMonthLabel(month, locale) {
   }).format(new Date(year, monthNumber - 1, 1));
 }
 
-function AnalysisOverviewCard({ eyebrow, title, description, badgeClass = "finova-badge-primary", badge }) {
+function AnalysisOverviewCard({ eyebrow, title, description, badgeClass = "hestia-badge-primary", badge }) {
   return (
     <div className="col-12 col-lg-4">
-      <div className="finova-card-soft p-3 h-100">
+      <div className="hestia-card-soft p-3 h-100">
         <div className="d-flex justify-content-between align-items-start gap-3 mb-2">
-          <div className="finova-subtitle small">{eyebrow}</div>
+          <div className="hestia-subtitle small">{eyebrow}</div>
           {badge ? <span className={badgeClass}>{badge}</span> : null}
         </div>
-        <div className="finova-title h6 mb-2">{title}</div>
-        <p className="finova-subtitle mb-0">{description}</p>
+        <div className="hestia-title h6 mb-2">{title}</div>
+        <p className="hestia-subtitle mb-0">{description}</p>
       </div>
     </div>
   );
@@ -58,9 +58,9 @@ function AnalysisOverviewCard({ eyebrow, title, description, badgeClass = "finov
 function AnalysisSectionHeader({ eyebrow, title, description }) {
   return (
     <div className="mb-3">
-      <div className="finova-subtitle small text-uppercase mb-1">{eyebrow}</div>
-      <h2 className="finova-title h5 mb-1">{title}</h2>
-      <p className="finova-subtitle mb-0">{description}</p>
+      <div className="hestia-subtitle small text-uppercase mb-1">{eyebrow}</div>
+      <h2 className="hestia-title h5 mb-1">{title}</h2>
+      <p className="hestia-subtitle mb-0">{description}</p>
     </div>
   );
 }
@@ -162,10 +162,10 @@ export default function Analyses() {
   const totalInsightCount = automaticInsights.length + prescriptiveInsights.length;
   const highlightBadgeClass =
     summary.balance < 0
-      ? "finova-badge-expense"
+      ? "hestia-badge-expense"
       : totalInsightCount > 0
-        ? "finova-badge-primary"
-        : "finova-badge-income";
+        ? "hestia-badge-primary"
+        : "hestia-badge-income";
   const highlightBadgeLabel =
     summary.balance < 0
       ? t("analyses.highlightAlert")
@@ -175,13 +175,13 @@ export default function Analyses() {
 
   const confidenceBadgeClass =
     forecast.confidence.tone === "income"
-      ? "finova-badge-income"
+      ? "hestia-badge-income"
       : forecast.confidence.tone === "primary"
-        ? "finova-badge-primary"
-        : "finova-badge-neutral";
+        ? "hestia-badge-primary"
+        : "hestia-badge-neutral";
 
   return (
-    <section className="finova-section-space">
+    <section className="hestia-section-space">
       <PageHeader
         title={t("pages.analysesTitle")}
         subtitle={t("pages.analysesSubtitle")}
@@ -194,7 +194,7 @@ export default function Analyses() {
               </label>
               <select
                 id="analyses-period"
-                className="form-select finova-select"
+                className="form-select hestia-select"
                 value={period}
                 onChange={(event) => setPeriod(event.target.value)}
               >
@@ -212,7 +212,7 @@ export default function Analyses() {
               </label>
               <select
                 id="analyses-range"
-                className="form-select finova-select"
+                className="form-select hestia-select"
                 value={comparisonRange}
                 onChange={(event) => setComparisonRange(Number(event.target.value))}
               >
@@ -230,7 +230,7 @@ export default function Analyses() {
               </label>
               <select
                 id="analyses-account"
-                className="form-select finova-select"
+                className="form-select hestia-select"
                 value={accountFilter}
                 onChange={(event) => setAccountFilter(event.target.value)}
               >
@@ -247,39 +247,39 @@ export default function Analyses() {
         }
       />
 
-      <div className="finova-page-note mb-4">
+      <div className="hestia-page-note mb-4">
         {t("pages.analysesPageNote")}
       </div>
 
-      <div className="finova-card p-4 mb-4">
+      <div className="hestia-card p-4 mb-4">
         <div className="row g-3">
           <div className="col-12 col-lg-4">
-            <div className="finova-card-soft p-3 h-100">
-              <div className="finova-subtitle small mb-1">{t("analyses.overviewCurrentEyebrow")}</div>
-              <div className="finova-title h6 mb-2">{t("analyses.overviewCurrentTitle")}</div>
-              <p className="finova-subtitle mb-0">{t("analyses.overviewCurrentDescription")}</p>
+            <div className="hestia-card-soft p-3 h-100">
+              <div className="hestia-subtitle small mb-1">{t("analyses.overviewCurrentEyebrow")}</div>
+              <div className="hestia-title h6 mb-2">{t("analyses.overviewCurrentTitle")}</div>
+              <p className="hestia-subtitle mb-0">{t("analyses.overviewCurrentDescription")}</p>
             </div>
           </div>
           <div className="col-12 col-lg-4">
-            <div className="finova-card-soft p-3 h-100">
-              <div className="finova-subtitle small mb-1">{t("analyses.overviewSelectedEyebrow")}</div>
-              <div className="finova-title h6 mb-2">{selectedPeriodLabel}</div>
-              <p className="finova-subtitle mb-0">{t("analyses.overviewSelectedDescription")}</p>
+            <div className="hestia-card-soft p-3 h-100">
+              <div className="hestia-subtitle small mb-1">{t("analyses.overviewSelectedEyebrow")}</div>
+              <div className="hestia-title h6 mb-2">{selectedPeriodLabel}</div>
+              <p className="hestia-subtitle mb-0">{t("analyses.overviewSelectedDescription")}</p>
             </div>
           </div>
           <div className="col-12 col-lg-4">
-            <div className="finova-card-soft p-3 h-100">
-              <div className="finova-subtitle small mb-1">{t("analyses.overviewWindowEyebrow")}</div>
-              <div className="finova-title h6 mb-2">{selectedComparisonRangeLabel}</div>
-              <p className="finova-subtitle mb-0">{t("analyses.overviewWindowDescription")}</p>
+            <div className="hestia-card-soft p-3 h-100">
+              <div className="hestia-subtitle small mb-1">{t("analyses.overviewWindowEyebrow")}</div>
+              <div className="hestia-title h6 mb-2">{selectedComparisonRangeLabel}</div>
+              <p className="hestia-subtitle mb-0">{t("analyses.overviewWindowDescription")}</p>
             </div>
           </div>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="finova-card p-4">
-          <p className="finova-subtitle mb-0">{t("analyses.loading")}</p>
+        <div className="hestia-card p-4">
+          <p className="hestia-subtitle mb-0">{t("analyses.loading")}</p>
         </div>
       ) : (
         <>
@@ -304,7 +304,7 @@ export default function Analyses() {
               description={t("analyses.summaryComparisonDescription", {
                 range: selectedComparisonRangeLabel.toLowerCase(),
               })}
-              badgeClass="finova-badge-neutral"
+              badgeClass="hestia-badge-neutral"
               badge={t("analyses.summaryComparisonBadge")}
             />
             <AnalysisOverviewCard
@@ -330,7 +330,7 @@ export default function Analyses() {
             />
           </div>
 
-          <div className="finova-card p-4 mb-4">
+          <div className="hestia-card p-4 mb-4">
             <AnalysisSectionHeader
               eyebrow={t("analyses.insightsEyebrow")}
               title={t("analyses.insightsTitle")}
@@ -357,8 +357,8 @@ export default function Analyses() {
 
             {automaticInsights.length === 0 && prescriptiveInsights.length === 0 ? (
               <div className="text-center py-4">
-                <h3 className="finova-title h6 mb-2">{t("analyses.insightsEmptyTitle")}</h3>
-                <p className="finova-subtitle mb-0">{t("analyses.insightsEmptyDescription")}</p>
+                <h3 className="hestia-title h6 mb-2">{t("analyses.insightsEmptyTitle")}</h3>
+                <p className="hestia-subtitle mb-0">{t("analyses.insightsEmptyDescription")}</p>
               </div>
             ) : (
               <div className="row g-3">
@@ -385,7 +385,7 @@ export default function Analyses() {
             )}
           </div>
 
-          <div className="finova-card p-4 mb-4">
+          <div className="hestia-card p-4 mb-4">
             <AnalysisSectionHeader
               eyebrow={t("analyses.chartsEyebrow")}
               title={t("analyses.chartsTitle")}
@@ -401,7 +401,7 @@ export default function Analyses() {
             />
           </div>
 
-          <div className="finova-card p-4 mb-4">
+          <div className="hestia-card p-4 mb-4">
             <AnalysisSectionHeader
               eyebrow={t("analyses.comparisonsEyebrow")}
               title={t("analyses.comparisonsTitle")}
@@ -450,8 +450,8 @@ export default function Analyses() {
             <div className="pt-4 border-top">
               <div className="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
                 <div>
-                  <h3 className="finova-title h5 mb-1">{t("pages.comparisonsForecastTitle")}</h3>
-                  <p className="finova-subtitle mb-0">
+                  <h3 className="hestia-title h5 mb-1">{t("pages.comparisonsForecastTitle")}</h3>
+                  <p className="hestia-subtitle mb-0">
                     {t("pages.comparisonsForecastSubtitle", {
                       months: forecast.historyMonths || Math.max(3, comparisonRange),
                     })}
@@ -469,17 +469,17 @@ export default function Analyses() {
                   <div className="row g-3 mb-3">
                     {forecast.forecast.map((item) => (
                       <div className="col-12 col-lg-4" key={item.month}>
-                        <div className="finova-card-soft h-100 p-4">
-                          <div className="finova-subtitle small mb-1">
+                        <div className="hestia-card-soft h-100 p-4">
+                          <div className="hestia-subtitle small mb-1">
                             {t("pages.comparisonsForecastMonth")}
                           </div>
-                          <div className="finova-title h5 mb-3">
+                          <div className="hestia-title h5 mb-3">
                             {formatMonthLabel(item.month, locale)}
                           </div>
 
                           <div className="d-grid gap-2 small">
                             <div className="d-flex justify-content-between gap-3">
-                              <span className="finova-subtitle">
+                              <span className="hestia-subtitle">
                                 {t("pages.comparisonsForecastIncome")}
                               </span>
                               <span className="fw-semibold">
@@ -487,7 +487,7 @@ export default function Analyses() {
                               </span>
                             </div>
                             <div className="d-flex justify-content-between gap-3">
-                              <span className="finova-subtitle">
+                              <span className="hestia-subtitle">
                                 {t("pages.comparisonsForecastExpense")}
                               </span>
                               <span className="fw-semibold">
@@ -495,7 +495,7 @@ export default function Analyses() {
                               </span>
                             </div>
                             <div className="d-flex justify-content-between gap-3">
-                              <span className="finova-subtitle">
+                              <span className="hestia-subtitle">
                                 {t("pages.comparisonsForecastBalance")}
                               </span>
                               <span className="fw-semibold">
@@ -508,29 +508,29 @@ export default function Analyses() {
                     ))}
                   </div>
 
-                  <div className="finova-card-soft p-3">
+                  <div className="hestia-card-soft p-3">
                     <div className="row g-3">
                       <div className="col-12 col-lg-4">
-                        <div className="finova-subtitle small mb-1">
+                        <div className="hestia-subtitle small mb-1">
                           {t("pages.comparisonsForecastAverageIncome")}
                         </div>
-                        <div className="finova-title h6 mb-0">
+                        <div className="hestia-title h6 mb-0">
                           {formatCurrencyFromCents(forecast.averageIncome)}
                         </div>
                       </div>
                       <div className="col-12 col-lg-4">
-                        <div className="finova-subtitle small mb-1">
+                        <div className="hestia-subtitle small mb-1">
                           {t("pages.comparisonsForecastAverageExpense")}
                         </div>
-                        <div className="finova-title h6 mb-0">
+                        <div className="hestia-title h6 mb-0">
                           {formatCurrencyFromCents(forecast.averageExpense)}
                         </div>
                       </div>
                       <div className="col-12 col-lg-4">
-                        <div className="finova-subtitle small mb-1">
+                        <div className="hestia-subtitle small mb-1">
                           {t("pages.comparisonsForecastAverageBalance")}
                         </div>
-                        <div className="finova-title h6 mb-0">
+                        <div className="hestia-title h6 mb-0">
                           {formatCurrencyFromCents(forecast.averageBalance)}
                         </div>
                       </div>
@@ -538,8 +538,8 @@ export default function Analyses() {
                   </div>
                 </>
               ) : (
-                <div className="finova-card-soft p-4">
-                  <p className="finova-subtitle mb-0">
+                <div className="hestia-card-soft p-4">
+                  <p className="hestia-subtitle mb-0">
                     {t("pages.comparisonsForecastEmpty")}
                   </p>
                 </div>

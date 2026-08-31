@@ -30,7 +30,7 @@ public class ProfileControllerTests
         {
             Id = 7,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true,
             EmailGoalAlertsEnabled = true,
             GoalAlertThresholdPercent = 90,
@@ -57,7 +57,7 @@ public class ProfileControllerTests
         {
             Id = 7,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true,
             EmailGoalAlertsEnabled = false,
             GoalAlertThresholdPercent = 80
@@ -97,7 +97,7 @@ public class ProfileControllerTests
         {
             Id = 7,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -131,7 +131,7 @@ public class ProfileControllerTests
         {
             Id = 7,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true,
             PasswordHash = HashPassword("SenhaSegura123!")
         });
@@ -250,11 +250,11 @@ public class ProfileControllerTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Demo:Email"] = "demo@finova.app",
+                ["Demo:Email"] = "demo@hestia.local",
                 ["Jwt:Key"] = "uma-chave-super-segura-para-testes-publicos",
                 ["Jwt:Issuer"] = "FinanceDashboard",
                 ["Jwt:Audience"] = "FinanceDashboard",
-                ["Client:BaseUrl"] = "https://finova.app"
+                ["Client:BaseUrl"] = "https://hestia.example"
             })
             .Build();
 
@@ -296,7 +296,7 @@ public class ProfileControllerTests
         var entity = user ?? new User
         {
             Name = "Seed",
-            Email = "seed@finova.app",
+            Email = "seed@hestia.local",
             EmailConfirmed = true
         };
 
@@ -309,7 +309,7 @@ public class ProfileControllerTests
         {
             Id = 7,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true,
             PasswordHash = HashPassword("SenhaSegura123!"),
             PublicDashboardEnabled = publicDashboardEnabled,

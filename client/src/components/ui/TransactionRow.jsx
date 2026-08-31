@@ -3,13 +3,13 @@ import Button from "./Button";
 function getTransactionOriginMeta(transaction, t) {
   switch (transaction.source) {
     case "import_ofx":
-      return { label: t("transactions.importedOfx"), className: "finova-badge-primary" };
+      return { label: t("transactions.importedOfx"), className: "hestia-badge-primary" };
     case "import_csv":
-      return { label: t("transactions.importedCsv"), className: "finova-badge-primary" };
+      return { label: t("transactions.importedCsv"), className: "hestia-badge-primary" };
     case "bank_sync":
-      return { label: t("transactions.synced"), className: "finova-badge-income" };
+      return { label: t("transactions.synced"), className: "hestia-badge-income" };
     default:
-      return { label: t("transactions.manual"), className: "finova-badge-neutral" };
+      return { label: t("transactions.manual"), className: "hestia-badge-neutral" };
   }
 }
 
@@ -51,40 +51,40 @@ export default function TransactionRow({
   const isIncome = transaction.type === "income";
 
   return (
-    <li className={`finova-transaction-list-item${isRecentlyImported ? " finova-row-highlight" : ""}`}>
-      <div className="finova-transaction-list-main">
-        <div className="finova-transaction-list-copy">
-          <time className="finova-transaction-list-date" dateTime={transaction.date}>
+    <li className={`hestia-transaction-list-item${isRecentlyImported ? " hestia-row-highlight" : ""}`}>
+      <div className="hestia-transaction-list-main">
+        <div className="hestia-transaction-list-copy">
+          <time className="hestia-transaction-list-date" dateTime={transaction.date}>
             {formatDate(transaction.date)}
           </time>
-          <strong className="finova-transaction-list-description">{transaction.description}</strong>
-          <div className="finova-transaction-list-badges">
+          <strong className="hestia-transaction-list-description">{transaction.description}</strong>
+          <div className="hestia-transaction-list-badges">
             <span className={originMeta.className}>{originMeta.label}</span>
             {transaction.isRecurring ? (
-              <span className="finova-badge-neutral">{t("transactions.recurringMonthly")}</span>
+              <span className="hestia-badge-neutral">{t("transactions.recurringMonthly")}</span>
             ) : null}
             {installmentMeta ? (
-              <span className="finova-badge-warning">
+              <span className="hestia-badge-warning">
                 {t("transactions.installmentBadge", { index: installmentMeta.label })}
               </span>
             ) : null}
             {(transaction.tagNames || []).map((tagName) => (
-              <span key={`${transaction.id}-${tagName}`} className="finova-badge-primary">#{tagName}</span>
+              <span key={`${transaction.id}-${tagName}`} className="hestia-badge-primary">#{tagName}</span>
             ))}
           </div>
         </div>
 
-        <div className="finova-transaction-list-value">
-          <span className={isIncome ? "finova-badge-income" : "finova-badge-expense"}>
+        <div className="hestia-transaction-list-value">
+          <span className={isIncome ? "hestia-badge-income" : "hestia-badge-expense"}>
             {isIncome ? t("transactions.income") : t("transactions.expense")}
           </span>
-          <strong className={isIncome ? "finova-transaction-amount-income" : "finova-transaction-amount-expense"}>
+          <strong className={isIncome ? "hestia-transaction-amount-income" : "hestia-transaction-amount-expense"}>
             {formatCurrencyFromCents(transaction.amountCents)}
           </strong>
         </div>
       </div>
 
-      <div className="finova-transaction-list-meta">
+      <div className="hestia-transaction-list-meta">
         <span>{t("common.category")}: {transaction.category || t("transactions.noCategory")}</span>
         <span>{t("transactions.accountLabel")}: {transaction.financialAccountLabel || t("transactions.unlinkedAccount")}</span>
         {transaction.importedAtUtc ? (
@@ -98,10 +98,10 @@ export default function TransactionRow({
             })}
           </span>
         ) : null}
-        {isRecentlyImported ? <span className="finova-badge-warning">{t("transactions.newInImport")}</span> : null}
+        {isRecentlyImported ? <span className="hestia-badge-warning">{t("transactions.newInImport")}</span> : null}
       </div>
 
-      <div className="finova-actions-row finova-transaction-list-actions">
+      <div className="hestia-actions-row hestia-transaction-list-actions">
         <Button
           type="button"
           variant="secondary"

@@ -2,7 +2,7 @@ namespace FinanceDashboard.Api.Services.Demo
 {
     public sealed class DemoAccountOptions
     {
-        private const string DefaultEmail = "demo@finova.app";
+        private const string DefaultEmail = "demo@hestia.local";
 
         public string Name { get; init; } = "Conta Demo";
         public string Email { get; init; } = DefaultEmail;

@@ -34,32 +34,32 @@ export default function Planning() {
   const hasCommitments = installmentGroups.length > 0 || visibleRecurringRules.length > 0;
 
   return (
-    <section className="finova-page-container">
+    <section className="hestia-page-container">
       <PageHeader
         title={t("pages.planningTitle")}
         subtitle={t("pages.planningSubtitle")}
         meta={t("pages.planningPageNote")}
       />
 
-      <div className="finova-card p-4 mb-4">
+      <div className="hestia-card p-4 mb-4">
         <BudgetGoalsSection transactions={transactions} />
       </div>
 
-      <section className="finova-card p-4" aria-labelledby="planning-commitments-title">
+      <section className="hestia-card p-4" aria-labelledby="planning-commitments-title">
         <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
           <div>
-            <h2 id="planning-commitments-title" className="finova-title h4 mb-1">
+            <h2 id="planning-commitments-title" className="hestia-title h4 mb-1">
               {t("pages.planningCommitmentsTitle")}
             </h2>
-            <p className="finova-subtitle mb-0">{t("pages.planningCommitmentsSubtitle")}</p>
+            <p className="hestia-subtitle mb-0">{t("pages.planningCommitmentsSubtitle")}</p>
           </div>
-          <Link className="btn finova-btn-light" to="/transacoes">
+          <Link className="btn hestia-btn-light" to="/transacoes">
             {t("pages.planningManageCommitments")}
           </Link>
         </div>
 
         {isLoading ? (
-          <p className="finova-subtitle mb-0" role="status">
+          <p className="hestia-subtitle mb-0" role="status">
             {t("common.loading")}
           </p>
         ) : hasCommitments ? (
@@ -76,7 +76,7 @@ export default function Planning() {
           />
         ) : (
           <EmptyState
-            className="finova-card-soft p-4"
+            className="hestia-card-soft p-4"
             titleAs="h3"
             title={t("pages.planningCommitmentsEmptyTitle")}
             description={t("pages.planningCommitmentsEmptySubtitle")}

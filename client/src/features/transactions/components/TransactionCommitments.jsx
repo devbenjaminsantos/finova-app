@@ -4,7 +4,7 @@ import Metric from "../../../components/ui/Metric";
 
 function CommitmentDetail({ label, value }) {
   return (
-    <div className="finova-commitment-detail">
+    <div className="hestia-commitment-detail">
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
@@ -22,17 +22,17 @@ function RecurringRulesSection({ formatCurrencyFromCents, formatDate, overview, 
   }
 
   return (
-    <section className="finova-commitment-section" aria-labelledby="recurring-rules-title">
-      <div className="finova-commitment-heading">
+    <section className="hestia-commitment-section" aria-labelledby="recurring-rules-title">
+      <div className="hestia-commitment-heading">
         <div>
-          <h2 id="recurring-rules-title" className="finova-title h5 mb-1">
+          <h2 id="recurring-rules-title" className="hestia-title h5 mb-1">
             {t("transactions.recurringRulesTitle")}
           </h2>
-          <p className="finova-subtitle small mb-0">{t("transactions.recurringRulesSubtitle")}</p>
+          <p className="hestia-subtitle small mb-0">{t("transactions.recurringRulesSubtitle")}</p>
         </div>
       </div>
 
-      <div className="finova-commitment-metrics">
+      <div className="hestia-commitment-metrics">
         <Metric
           label={t("transactions.recurringRulesActiveLabel")}
           value={overview.activeRules}
@@ -45,29 +45,29 @@ function RecurringRulesSection({ formatCurrencyFromCents, formatDate, overview, 
         />
       </div>
 
-      <ul className="finova-commitment-list list-unstyled mb-0" aria-label={t("transactions.recurringRulesTitle")}>
+      <ul className="hestia-commitment-list list-unstyled mb-0" aria-label={t("transactions.recurringRulesTitle")}>
         {rules.map((rule) => (
-          <li key={rule.id} className="finova-commitment-item">
-            <div className="finova-commitment-item-main">
-              <div className="finova-commitment-item-copy">
-                <strong className="finova-transaction-list-description">{rule.description}</strong>
-                <div className="finova-transaction-list-badges">
-                  <span className={rule.isActive ? "finova-badge-income" : "finova-badge-neutral"}>
+          <li key={rule.id} className="hestia-commitment-item">
+            <div className="hestia-commitment-item-main">
+              <div className="hestia-commitment-item-copy">
+                <strong className="hestia-transaction-list-description">{rule.description}</strong>
+                <div className="hestia-transaction-list-badges">
+                  <span className={rule.isActive ? "hestia-badge-income" : "hestia-badge-neutral"}>
                     {rule.isActive
                       ? t("transactions.recurringRuleActive")
                       : t("transactions.recurringRuleFinished")}
                   </span>
                   {(rule.tagNames || []).map((tagName) => (
-                    <span key={`${rule.id}-${tagName}`} className="finova-badge-primary">#{tagName}</span>
+                    <span key={`${rule.id}-${tagName}`} className="hestia-badge-primary">#{tagName}</span>
                   ))}
                 </div>
               </div>
-              <strong className={rule.type === "income" ? "finova-transaction-amount-income" : "finova-transaction-amount-expense"}>
+              <strong className={rule.type === "income" ? "hestia-transaction-amount-income" : "hestia-transaction-amount-expense"}>
                 {formatCurrencyFromCents(rule.amountCents)}
               </strong>
             </div>
 
-            <div className="finova-commitment-details">
+            <div className="hestia-commitment-details">
               <CommitmentDetail label={t("common.category")} value={rule.category} />
               <CommitmentDetail
                 label={t("transactions.recurringRuleType")}
@@ -102,17 +102,17 @@ function InstallmentPlansSection({
   }
 
   return (
-    <section className="finova-commitment-section" aria-labelledby="installment-plans-title">
-      <div className="finova-commitment-heading">
+    <section className="hestia-commitment-section" aria-labelledby="installment-plans-title">
+      <div className="hestia-commitment-heading">
         <div>
-          <h2 id="installment-plans-title" className="finova-title h5 mb-1">
+          <h2 id="installment-plans-title" className="hestia-title h5 mb-1">
             {t("transactions.installmentPlansTitle")}
           </h2>
-          <p className="finova-subtitle small mb-0">{t("transactions.installmentPlansSubtitle")}</p>
+          <p className="hestia-subtitle small mb-0">{t("transactions.installmentPlansSubtitle")}</p>
         </div>
       </div>
 
-      <div className="finova-commitment-metrics finova-commitment-metrics-three">
+      <div className="hestia-commitment-metrics hestia-commitment-metrics-three">
         <Metric
           label={t("transactions.installmentOpenDebtLabel")}
           value={formatCurrencyFromCents(overview.remainingAmountCents)}
@@ -131,40 +131,40 @@ function InstallmentPlansSection({
         />
       </div>
 
-      <ul className="finova-commitment-list list-unstyled mb-0" aria-label={t("transactions.installmentPlansTitle")}>
+      <ul className="hestia-commitment-list list-unstyled mb-0" aria-label={t("transactions.installmentPlansTitle")}>
         {groups.map((group) => {
           const progress = getInstallmentProgress(group);
 
           return (
-            <li key={group.id} className="finova-commitment-item">
-              <div className="finova-commitment-item-main">
-                <div className="finova-commitment-item-copy">
-                  <strong className="finova-transaction-list-description">{group.description}</strong>
-                  <div className="finova-transaction-list-badges">
-                    <span className="finova-badge-warning">
+            <li key={group.id} className="hestia-commitment-item">
+              <div className="hestia-commitment-item-main">
+                <div className="hestia-commitment-item-copy">
+                  <strong className="hestia-transaction-list-description">{group.description}</strong>
+                  <div className="hestia-transaction-list-badges">
+                    <span className="hestia-badge-warning">
                       {t("transactions.installmentBadge", {
                         index: `${group.postedInstallments}/${group.installmentCount}`,
                       })}
                     </span>
                     {(group.tagNames || []).map((tagName) => (
-                      <span key={`${group.id}-${tagName}`} className="finova-badge-primary">#{tagName}</span>
+                      <span key={`${group.id}-${tagName}`} className="hestia-badge-primary">#{tagName}</span>
                     ))}
                   </div>
                 </div>
-                <strong className="finova-transaction-amount-expense">
+                <strong className="hestia-transaction-amount-expense">
                   {formatCurrencyFromCents(group.remainingAmountCents)}
                 </strong>
               </div>
 
-              <div className="finova-commitment-progress">
+              <div className="hestia-commitment-progress">
                 <div className="d-flex align-items-center justify-content-between gap-3 small">
-                  <span className="finova-subtitle">{t("transactions.installmentProgress")}</span>
+                  <span className="hestia-subtitle">{t("transactions.installmentProgress")}</span>
                   <strong>{progress}%</strong>
                 </div>
                 <BudgetProgress label={t("transactions.installmentProgress")} progress={progress} />
               </div>
 
-              <div className="finova-commitment-details">
+              <div className="hestia-commitment-details">
                 <CommitmentDetail label={t("common.category")} value={group.category} />
                 <CommitmentDetail
                   label={t("transactions.installmentTotal")}
@@ -200,7 +200,7 @@ function InstallmentPlansSection({
               </div>
 
               {showActions ? (
-                <div className="finova-actions-row finova-transaction-list-actions">
+                <div className="hestia-actions-row hestia-transaction-list-actions">
                   <Button variant="secondary" className="btn-sm" onClick={() => onEdit(group)} disabled={isMutating}>
                     {t("transactions.editInstallmentPlan")}
                   </Button>
@@ -235,7 +235,7 @@ export default function TransactionCommitments({
   }
 
   return (
-    <div className="finova-commitments mb-4">
+    <div className="hestia-commitments mb-4">
       <RecurringRulesSection
         rules={recurringRules}
         overview={recurringOverview}

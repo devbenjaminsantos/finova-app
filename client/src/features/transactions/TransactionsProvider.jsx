@@ -74,10 +74,10 @@ export function TransactionsProvider({ children }) {
       loadAll();
     }
 
-    window.addEventListener("finova-session-change", handleSessionChange);
+    window.addEventListener("hestia-session-change", handleSessionChange);
 
     return () => {
-      window.removeEventListener("finova-session-change", handleSessionChange);
+      window.removeEventListener("hestia-session-change", handleSessionChange);
     };
   }, [loadAll]);
 

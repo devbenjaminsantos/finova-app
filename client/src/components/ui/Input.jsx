@@ -19,27 +19,27 @@ export default function Input({
     <input
       {...props}
       id={inputId}
-      className={["form-control", "finova-input", className].filter(Boolean).join(" ")}
+      className={["form-control", "hestia-input", className].filter(Boolean).join(" ")}
       aria-describedby={describedBy}
       aria-invalid={error ? true : props["aria-invalid"]}
     />
   );
 
   return (
-    <div className="finova-field">
+    <div className="hestia-field">
       {label ? (
-        <label className="finova-field-label" htmlFor={inputId}>
+        <label className="hestia-field-label" htmlFor={inputId}>
           {label}
         </label>
       ) : null}
       {endAdornment ? <div className="input-group">{input}{endAdornment}</div> : input}
       {helpText ? (
-        <div id={helpId} className="finova-field-help">
+        <div id={helpId} className="hestia-field-help">
           {helpText}
         </div>
       ) : null}
       {error ? (
-        <div id={errorId} className="finova-field-error" role="alert">
+        <div id={errorId} className="hestia-field-error" role="alert">
           {error}
         </div>
       ) : null}

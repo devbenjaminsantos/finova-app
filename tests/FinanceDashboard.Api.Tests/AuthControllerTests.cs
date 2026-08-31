@@ -29,7 +29,7 @@ public class AuthControllerTests
         context.Users.Add(new User
         {
             Name = "Já Existe",
-            Email = "user@finova.app",
+            Email = "user@hestia.local",
             EmailConfirmed = true,
             PasswordHash = HashPassword("SenhaSegura123!")
         });
@@ -38,7 +38,7 @@ public class AuthControllerTests
         var result = await controller.Register(new RegisterRequest
         {
             Name = "Novo Usuário",
-            Email = "USER@finova.app",
+            Email = "USER@hestia.local",
             Password = "SenhaSegura123!"
         });
 
@@ -59,7 +59,7 @@ public class AuthControllerTests
         var result = await controller.Register(new RegisterRequest
         {
             Name = "Novo Usuário",
-            Email = "novo@finova.app",
+            Email = "novo@hestia.local",
             Password = "SenhaSegura123!"
         });
 
@@ -68,7 +68,7 @@ public class AuthControllerTests
         var user = await context.Users.SingleAsync();
 
         Assert.Equal(StatusCodes.Status201Created, created.StatusCode);
-        Assert.Equal("novo@finova.app", user.Email);
+        Assert.Equal("novo@hestia.local", user.Email);
         Assert.False(user.EmailConfirmed);
         Assert.Single(context.EmailVerificationTokens);
         Assert.Contains(context.AuditLogs, log => log.Action == "auth.registered" && log.UserId == user.Id);
@@ -87,7 +87,7 @@ public class AuthControllerTests
         var result = await controller.Register(new RegisterRequest
         {
             Name = "Novo Usuário",
-            Email = "novo@finova.app",
+            Email = "novo@hestia.local",
             Password = "SenhaSegura123!"
         });
 
@@ -108,7 +108,7 @@ public class AuthControllerTests
         var result = await controller.Register(new RegisterRequest
         {
             Name = "Novo Usuário",
-            Email = "novo@finova.app",
+            Email = "novo@hestia.local",
             Password = "12345678"
         });
 
@@ -127,8 +127,8 @@ public class AuthControllerTests
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = false,
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -158,7 +158,7 @@ public class AuthControllerTests
 
         var result = await controller.Login(new LoginRequest
         {
-            Email = "inexistente@finova.app",
+            Email = "inexistente@hestia.local",
             Password = "SenhaSegura123!"
         });
 
@@ -176,8 +176,8 @@ public class AuthControllerTests
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = false,
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -207,8 +207,8 @@ public class AuthControllerTests
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = true,
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -270,7 +270,7 @@ public class AuthControllerTests
         var demoUser = new User
         {
             Name = "Nome alterado",
-            Email = "demo@finova.app",
+            Email = "demo@hestia.local",
             EmailConfirmed = false,
             OnboardingOptIn = true,
             EmailGoalAlertsEnabled = true,
@@ -288,7 +288,7 @@ public class AuthControllerTests
         var realUser = new User
         {
             Name = "Usuário Real",
-            Email = "real@finova.app",
+            Email = "real@hestia.local",
             EmailConfirmed = true,
             PasswordHash = HashPassword("SenhaSegura123!")
         };
@@ -405,7 +405,7 @@ public class AuthControllerTests
         Assert.NotEqual(demoUser.Id, isolatedDemo.Id);
         Assert.Equal("Conta Demo", isolatedDemo.Name);
         Assert.StartsWith("demo+", isolatedDemo.Email);
-        Assert.EndsWith("@finova.app", isolatedDemo.Email);
+        Assert.EndsWith("@hestia.local", isolatedDemo.Email);
         Assert.True(isolatedDemo.EmailConfirmed);
         Assert.False(isolatedDemo.OnboardingOptIn);
         Assert.False(isolatedDemo.EmailGoalAlertsEnabled);
@@ -456,7 +456,7 @@ public class AuthControllerTests
             seedContext.Users.Add(new User
             {
                 Name = "Conta Demo",
-                Email = "demo@finova.app",
+                Email = "demo@hestia.local",
                 EmailConfirmed = true,
                 PasswordHash = HashPassword("DemoReset123!"),
                 SessionVersion = 1
@@ -469,7 +469,7 @@ public class AuthControllerTests
         var options = new DemoAccountOptions
         {
             Name = "Conta Demo",
-            Email = "demo@finova.app",
+            Email = "demo@hestia.local",
             LockTimeout = TimeSpan.FromSeconds(5)
         };
         var firstService = new DemoAccountPreparationService(firstContext, CreatePasswordHasher());
@@ -501,7 +501,7 @@ public class AuthControllerTests
         var options = new DemoAccountOptions
         {
             Name = "Conta Demo",
-            Email = "demo@finova.app",
+            Email = "demo@hestia.local",
             LockTimeout = TimeSpan.FromSeconds(5),
             SessionLifetime = TimeSpan.FromHours(2)
         };
@@ -533,7 +533,7 @@ public class AuthControllerTests
         var options = new DemoAccountOptions
         {
             Name = "Conta Demo",
-            Email = "demo@finova.app",
+            Email = "demo@hestia.local",
             LockTimeout = TimeSpan.FromSeconds(5),
             SessionLifetime = TimeSpan.FromHours(2)
         };
@@ -561,8 +561,8 @@ public class AuthControllerTests
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = true,
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -608,8 +608,8 @@ public class AuthControllerTests
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = true,
             FailedLoginAttempts = 2,
             LastFailedLoginAtUtc = DateTime.UtcNow.AddMinutes(-3)
@@ -644,7 +644,7 @@ public class AuthControllerTests
         await controller.Register(new RegisterRequest
         {
             Name = "Novo Usuário",
-            Email = "novo@finova.app",
+            Email = "novo@hestia.local",
             Password = "SenhaSegura123!"
         });
 
@@ -675,7 +675,7 @@ public class AuthControllerTests
         await controller.Register(new RegisterRequest
         {
             Name = "Novo Usuário",
-            Email = "novo@finova.app",
+            Email = "novo@hestia.local",
             Password = "SenhaSegura123!"
         });
 
@@ -684,7 +684,7 @@ public class AuthControllerTests
 
         var result = await controller.ResendEmailVerification(new ResendEmailVerificationRequest
         {
-            Email = "novo@finova.app"
+            Email = "novo@hestia.local"
         });
 
         Assert.IsType<OkObjectResult>(result);
@@ -703,14 +703,14 @@ public class AuthControllerTests
             emailSender: emailSender,
             configurationValues: new Dictionary<string, string?>
             {
-                ["Client:BaseUrl"] = "https://finova.example",
+                ["Client:BaseUrl"] = "https://hestia.example",
                 ["PasswordReset:ExposeResetUrlInResponse"] = "true"
             });
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = true,
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -744,14 +744,14 @@ public class AuthControllerTests
             environmentName: "Production",
             configurationValues: new Dictionary<string, string?>
             {
-                ["Client:BaseUrl"] = "https://finova.example",
+                ["Client:BaseUrl"] = "https://hestia.example",
                 ["PasswordReset:ExposeResetUrlInResponse"] = "false"
             });
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = true,
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -777,14 +777,14 @@ public class AuthControllerTests
             context,
             configurationValues: new Dictionary<string, string?>
             {
-                ["Client:BaseUrl"] = "https://finova.example",
+                ["Client:BaseUrl"] = "https://hestia.example",
                 ["PasswordReset:ExposeResetUrlInResponse"] = "true"
             });
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = true,
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -832,14 +832,14 @@ public class AuthControllerTests
             context,
             configurationValues: new Dictionary<string, string?>
             {
-                ["Client:BaseUrl"] = "https://finova.example",
+                ["Client:BaseUrl"] = "https://hestia.example",
                 ["PasswordReset:ExposeResetUrlInResponse"] = "true"
             });
 
         var user = new User
         {
-            Name = "Finova User",
-            Email = "user@finova.app",
+            Name = "Héstia User",
+            Email = "user@hestia.local",
             EmailConfirmed = true,
         };
         user.PasswordHash = HashPassword("SenhaSegura123!", user);
@@ -889,10 +889,10 @@ public class AuthControllerTests
     {
         var configData = new Dictionary<string, string?>
         {
-            ["Jwt:Key"] = "FinovaJwtKey2026-Segura-Com-32-Bytes!",
+            ["Jwt:Key"] = "HestiaJwtKey2026-Segura-Com-32-Bytes!",
             ["Jwt:Issuer"] = "FinanceDashboard",
             ["Jwt:Audience"] = "FinanceDashboard",
-            ["Client:BaseUrl"] = "https://finova.example"
+            ["Client:BaseUrl"] = "https://hestia.example"
         };
 
         if (configurationValues is not null)
@@ -937,7 +937,7 @@ public class AuthControllerTests
 
     private static string HashPassword(string password, User? user = null)
     {
-        var entity = user ?? new User { Email = "seed@finova.app", Name = "Seed", EmailConfirmed = true };
+        var entity = user ?? new User { Email = "seed@hestia.local", Name = "Seed", EmailConfirmed = true };
         return CreatePasswordHasher().HashPassword(entity, password);
     }
 

@@ -16,13 +16,13 @@ export default function HomeCustomizationCard({
   const { t } = useI18n();
 
   return (
-    <div className="finova-card p-4 p-md-5">
+    <div className="hestia-card p-4 p-md-5">
       <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
         <div>
-          <h2 className="finova-title h5 mb-1">
+          <h2 className="hestia-title h5 mb-1">
             {title ?? t("profile.homeCustomizationTitle")}
           </h2>
-          <p className="finova-subtitle mb-0">
+          <p className="hestia-subtitle mb-0">
             {description ?? t("profile.homeCustomizationSubtitle")}
           </p>
         </div>
@@ -35,7 +35,7 @@ export default function HomeCustomizationCard({
       <div className="row g-2">
         {HOME_WIDGET_OPTIONS.map((option) => (
           <div className="col-12 col-md-6 col-xl-4" key={option.key}>
-            <label className="finova-widget-toggle">
+            <label className="hestia-widget-toggle">
               <input
                 type="checkbox"
                 checked={widgets[option.key]}

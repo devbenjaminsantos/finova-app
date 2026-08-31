@@ -124,7 +124,7 @@ public class PublicDashboardControllerTests
         {
             Id = 7,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             EmailConfirmed = true,
             PasswordHash = "test-only",
             PublicDashboardEnabled = true,

@@ -56,7 +56,7 @@ export default function AuditLogs() {
   const hiddenLogsCount = logs.length - visibleLogs.length;
 
   return (
-    <section className="finova-section-space">
+    <section className="hestia-section-space">
       <PageHeader
         title={t("pages.historyTitle")}
         subtitle={t("pages.historySubtitle")}
@@ -67,7 +67,7 @@ export default function AuditLogs() {
           </label>
           <select
             id="history-limit"
-            className="form-select finova-select"
+            className="form-select hestia-select"
             value={limit}
             onChange={(event) => setLimit(Number(event.target.value))}
           >
@@ -79,22 +79,22 @@ export default function AuditLogs() {
         }
       />
 
-      <div className="finova-page-note mb-4">{t("pages.historyPageNote")}</div>
+      <div className="hestia-page-note mb-4">{t("pages.historyPageNote")}</div>
 
-      <div className="finova-card p-4">
+      <div className="hestia-card p-4">
         {isLoading ? (
-          <div className="finova-loading-state">
+          <div className="hestia-loading-state">
             <div className="spinner-border spinner-border-sm text-primary" />
-            <p className="finova-subtitle mb-0">{t("history.loading")}</p>
+            <p className="hestia-subtitle mb-0">{t("history.loading")}</p>
           </div>
         ) : error ? (
           <div className="alert alert-danger py-2 mb-0" role="alert">
             {error}
           </div>
         ) : visibleLogs.length === 0 ? (
-          <div className="finova-empty-state">
-            <h2 className="finova-title h6 mb-2">{t("history.emptyTitle")}</h2>
-            <p className="finova-subtitle mb-0">{t("history.emptySubtitle")}</p>
+          <div className="hestia-empty-state">
+            <h2 className="hestia-title h6 mb-2">{t("history.emptyTitle")}</h2>
+            <p className="hestia-subtitle mb-0">{t("history.emptySubtitle")}</p>
           </div>
         ) : (
           <div className="d-grid gap-3">
@@ -110,16 +110,16 @@ export default function AuditLogs() {
             ) : null}
 
             {visibleLogs.map((log) => (
-              <div key={log.id} className="finova-card-soft p-3">
+              <div key={log.id} className="hestia-card-soft p-3">
                 <div className="d-flex flex-column flex-md-row justify-content-between gap-2 mb-2">
                   <div className="d-flex flex-wrap align-items-center gap-2">
                     <span className={getActionToneClass(log.action)}>
                       {formatActionLabel(log.action, t)}
                     </span>
-                    <span className="finova-badge-neutral">{getActionGroup(log.action, t)}</span>
+                    <span className="hestia-badge-neutral">{getActionGroup(log.action, t)}</span>
                   </div>
 
-                  <span className="finova-subtitle small">
+                  <span className="hestia-subtitle small">
                     {formatAuditDate(log.createdAtUtc, formatDateTime)}
                   </span>
                 </div>

@@ -51,17 +51,17 @@ export default function ForgotPassword() {
     : "";
 
   return (
-    <div className="finova-page finova-auth-layout d-flex align-items-center justify-content-center px-3 py-4">
-      <div className="finova-auth-shell finova-auth-shell-md">
-        <div className="text-center mb-4 finova-auth-hero">
+    <div className="hestia-page hestia-auth-layout d-flex align-items-center justify-content-center px-3 py-4">
+      <div className="hestia-auth-shell hestia-auth-shell-md">
+        <div className="text-center mb-4 hestia-auth-hero">
           <BrandMark className="mb-2" size="hero" centered />
-          <p className="finova-subtitle mb-0">{t("auth.forgotPageSubtitle")}</p>
+          <p className="hestia-subtitle mb-0">{t("auth.forgotPageSubtitle")}</p>
         </div>
 
-        <div className="finova-card finova-auth-card p-4 p-md-5">
-          <div className="mb-4 text-center finova-auth-card-header">
-            <h2 className="finova-title h4 mb-2">{t("auth.forgotTitle")}</h2>
-            <p className="finova-subtitle mb-0">{t("auth.forgotSubtitle")}</p>
+        <div className="hestia-card hestia-auth-card p-4 p-md-5">
+          <div className="mb-4 text-center hestia-auth-card-header">
+            <h2 className="hestia-title h4 mb-2">{t("auth.forgotTitle")}</h2>
+            <p className="hestia-subtitle mb-0">{t("auth.forgotSubtitle")}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="d-grid gap-3">
@@ -93,7 +93,7 @@ export default function ForgotPassword() {
                 {success}
                 {localResetPath ? (
                   <div className="mt-2">
-                    <Link to={localResetPath} className="fw-semibold finova-auth-link">
+                    <Link to={localResetPath} className="fw-semibold hestia-auth-link">
                       {t("auth.openResetLink")}
                     </Link>
                   </div>
@@ -106,8 +106,8 @@ export default function ForgotPassword() {
             </Button>
           </form>
 
-          <div className="text-center mt-4 finova-auth-footer">
-            <Link to="/login" className="text-decoration-none fw-semibold finova-auth-link">
+          <div className="text-center mt-4 hestia-auth-footer">
+            <Link to="/login" className="text-decoration-none fw-semibold hestia-auth-link">
               {t("common.backToLogin")}
             </Link>
           </div>

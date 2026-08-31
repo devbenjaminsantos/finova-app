@@ -34,7 +34,7 @@ builder.Configuration.AddJsonFile(
     optional: true,
     reloadOnChange: true);
 
-builder.Services.AddFinovaDatabase(builder.Configuration);
+builder.Services.AddHestiaDatabase(builder.Configuration);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -107,7 +107,7 @@ builder.Services.AddAuthentication(options =>
         OnMessageReceived = context =>
         {
             if (string.IsNullOrWhiteSpace(context.Token) &&
-                context.Request.Cookies.TryGetValue(AuthCookieService.CookieName, out var cookieToken))
+                AuthCookieService.TryRead(context.Request.Cookies, out var cookieToken))
             {
                 context.Token = cookieToken;
             }
@@ -169,7 +169,7 @@ builder.Services.AddAntiforgery(options =>
 {
     var isDevelopment = builder.Environment.IsDevelopment();
     options.HeaderName = "X-CSRF-TOKEN";
-    options.Cookie.Name = "finova_csrf";
+    options.Cookie.Name = "hestia_csrf";
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = isDevelopment ? SameSiteMode.Lax : SameSiteMode.None;
     options.Cookie.SecurePolicy = isDevelopment

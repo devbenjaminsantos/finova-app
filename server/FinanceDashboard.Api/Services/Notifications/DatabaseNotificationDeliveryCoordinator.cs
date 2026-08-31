@@ -207,7 +207,7 @@ namespace FinanceDashboard.Api.Services.Notifications
 
         private static string BuildSqlServerLockResource(NotificationDelivery delivery)
         {
-            return $"Finova.NotificationDelivery.{Convert.ToHexString(BuildLockHash(delivery))}";
+            return $"Hestia.NotificationDelivery.{Convert.ToHexString(BuildLockHash(delivery))}";
         }
 
         private static long BuildPostgreSqlLockKey(NotificationDelivery delivery)

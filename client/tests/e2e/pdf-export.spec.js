@@ -39,7 +39,7 @@ async function prepareAuthenticatedTransactionsPage(page) {
       })
     );
     localStorage.setItem("finova:last-activity-at", String(Date.now()));
-    localStorage.setItem("finova-language", "pt-BR");
+    localStorage.setItem("hestia-language", "pt-BR");
   });
 
   await page.route("**/*", async (route) => {

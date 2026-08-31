@@ -17,7 +17,7 @@ public class SessionValidationServiceTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Jwt:Key"] = "FinovaJwtKey2026-Segura-Com-32-Bytes!",
+                ["Jwt:Key"] = "HestiaJwtKey2026-Segura-Com-32-Bytes!",
                 ["Jwt:Issuer"] = "FinanceDashboard",
                 ["Jwt:Audience"] = "FinanceDashboard"
             })
@@ -121,7 +121,7 @@ public class SessionValidationServiceTests
         {
             Id = 7,
             Name = "Keller",
-            Email = "keller@finova.app",
+            Email = "keller@hestia.local",
             PasswordHash = "hash",
             SessionVersion = sessionVersion
         };

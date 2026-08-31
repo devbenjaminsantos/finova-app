@@ -48,7 +48,7 @@ describe("feedback and dashboard primitives", () => {
     );
 
     expect(screen.getByRole("heading", { name: "Sem lançamentos" })).toBeInTheDocument();
-    expect(screen.getByText("R$ 250,00")).toHaveClass("finova-metric-value");
+    expect(screen.getByText("R$ 250,00")).toHaveClass("hestia-metric-value");
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "85");
   });
 
@@ -61,7 +61,7 @@ describe("feedback and dashboard primitives", () => {
       </>
     );
 
-    expect(screen.getByText("Abaixo do período anterior")).toHaveClass("finova-money-delta-negative");
+    expect(screen.getByText("Abaixo do período anterior")).toHaveClass("hestia-money-delta-negative");
     expect(screen.getByText("64% das despesas")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Entradas e saídas" })).toBeInTheDocument();
   });

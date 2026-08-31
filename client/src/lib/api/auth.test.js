@@ -31,10 +31,10 @@ describe("auth storage helpers", () => {
 
   it("persists only non-sensitive user state", () => {
     localStorage.setItem("token", "legacy-token");
-    persistSession({ id: 1, name: "Finova" });
+    persistSession({ id: 1, name: "Héstia" });
 
     expect(localStorage.getItem("token")).toBeNull();
-    expect(getStoredUser()).toEqual({ id: 1, name: "Finova" });
+    expect(getStoredUser()).toEqual({ id: 1, name: "Héstia" });
   });
 
   it("does not create a client session without a user payload", () => {
@@ -57,7 +57,7 @@ describe("auth storage helpers", () => {
 
     persistSession({
       id: 1,
-      name: "Finova",
+      name: "Héstia",
     });
 
     expect(isSessionIdle()).toBe(false);
@@ -74,7 +74,7 @@ describe("auth storage helpers", () => {
 
     persistSession({
       id: 1,
-      name: "Finova",
+      name: "Héstia",
     });
 
     vi.setSystemTime(new Date("2026-04-14T12:20:00.000Z"));
@@ -91,12 +91,12 @@ describe("auth storage helpers", () => {
   });
 
   it("creates a session from the login user without storing the JWT", async () => {
-    apiRequest.mockResolvedValue({ user: { id: 7, name: "Finova User" } });
+    apiRequest.mockResolvedValue({ user: { id: 7, name: "Héstia User" } });
 
-    await loginRequest("user@finova.app", "SenhaSegura123!");
+    await loginRequest("user@hestia.local", "SenhaSegura123!");
 
     expect(localStorage.getItem("token")).toBeNull();
-    expect(getStoredUser()).toEqual({ id: 7, name: "Finova User" });
+    expect(getStoredUser()).toEqual({ id: 7, name: "Héstia User" });
   });
 
   it("remembers and consumes a protected route redirect", () => {
@@ -109,8 +109,8 @@ describe("auth storage helpers", () => {
   it("updates onboarding preference and refreshes stored user", async () => {
     apiRequest.mockResolvedValue({
       id: 7,
-      name: "Finova User",
-      email: "user@finova.app",
+      name: "Héstia User",
+      email: "user@hestia.local",
       onboardingOptIn: true,
     });
 

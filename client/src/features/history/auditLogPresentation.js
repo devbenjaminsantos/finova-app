@@ -72,16 +72,16 @@ export function getActionGroup(action, t) {
 
 export function getActionToneClass(action) {
   if (action?.includes("deleted") || action?.includes("locked-out")) {
-    return "finova-badge-danger";
+    return "hestia-badge-danger";
   }
 
   if (action?.includes("updated") || action?.includes("changed")) {
-    return "finova-badge-warning";
+    return "hestia-badge-warning";
   }
 
   if (action?.includes("password-reset") || action?.includes("confirmed")) {
-    return "finova-badge-income";
+    return "hestia-badge-income";
   }
 
-  return "finova-badge-primary";
+  return "hestia-badge-primary";
 }

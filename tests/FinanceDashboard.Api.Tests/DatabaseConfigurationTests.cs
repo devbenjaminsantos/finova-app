@@ -6,13 +6,13 @@ namespace FinanceDashboard.Api.Tests;
 public class DatabaseConfigurationTests
 {
     [Theory]
-    [InlineData("SqlServer", FinovaDatabaseProvider.SqlServer)]
-    [InlineData("sqlserver", FinovaDatabaseProvider.SqlServer)]
-    [InlineData("PostgreSql", FinovaDatabaseProvider.PostgreSql)]
-    [InlineData("postgresql", FinovaDatabaseProvider.PostgreSql)]
+    [InlineData("SqlServer", HestiaDatabaseProvider.SqlServer)]
+    [InlineData("sqlserver", HestiaDatabaseProvider.SqlServer)]
+    [InlineData("PostgreSql", HestiaDatabaseProvider.PostgreSql)]
+    [InlineData("postgresql", HestiaDatabaseProvider.PostgreSql)]
     public void ResolveProviderAcceptsSupportedNames(
         string configuredProvider,
-        FinovaDatabaseProvider expected)
+        HestiaDatabaseProvider expected)
     {
         var provider = DatabaseConfiguration.ResolveProvider(configuredProvider);
 

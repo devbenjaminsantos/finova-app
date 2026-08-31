@@ -29,7 +29,7 @@ describe("transactionsCsv import parser", () => {
     expect(result[0].amountCents).toBe(18990);
   });
 
-  it("infers Finova categories from bank-like labels and descriptions", () => {
+  it("infers Héstia categories from bank-like labels and descriptions", () => {
     const result = parseTransactionsCsv(`Data;Descricao;Categoria;Tipo;Valor
 14/04/2026;Supermercado Central;Supermercado;Despesa;220,00
 15/04/2026;Posto Shell;Combustivel;Despesa;180,00

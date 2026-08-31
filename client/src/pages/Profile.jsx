@@ -256,26 +256,26 @@ export default function Profile() {
   }
 
   return (
-    <section className="finova-section-space">
+    <section className="hestia-section-space">
       <PageHeader title={t("profile.title")} subtitle={t("profile.subtitle")} />
 
-      <div className="finova-page-note">
+      <div className="hestia-page-note">
         {t("profile.pageNote")}
       </div>
 
-      <div className="finova-page-stack finova-page-stack-narrow">
-        <div className="finova-card p-4 p-md-5">
+      <div className="hestia-page-stack hestia-page-stack-narrow">
+        <div className="hestia-card p-4 p-md-5">
           {isLoading ? (
-            <div className="finova-loading-state">
+            <div className="hestia-loading-state">
               <div className="spinner-border spinner-border-sm text-primary" />
-              <p className="finova-subtitle mb-0">{t("profile.loading")}</p>
+              <p className="hestia-subtitle mb-0">{t("profile.loading")}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="row g-3">
               <div className="col-12">
-                <div className="finova-profile-section-heading">
-                  <h2 className="finova-title h5 mb-1">{t("profile.accountSectionTitle")}</h2>
-                  <p className="finova-subtitle small mb-0">{t("profile.accountSectionSubtitle")}</p>
+                <div className="hestia-profile-section-heading">
+                  <h2 className="hestia-title h5 mb-1">{t("profile.accountSectionTitle")}</h2>
+                  <p className="hestia-subtitle small mb-0">{t("profile.accountSectionSubtitle")}</p>
                 </div>
               </div>
 
@@ -286,7 +286,7 @@ export default function Profile() {
                 <input
                   id="profile-name"
                   type="text"
-                  className="form-control finova-input"
+                  className="form-control hestia-input"
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
                   placeholder={t("common.preferredNamePlaceholder")}
@@ -303,7 +303,7 @@ export default function Profile() {
                 <input
                   id="profile-email"
                   type="email"
-                  className="form-control finova-input"
+                  className="form-control hestia-input"
                   value={form.email}
                   disabled
                   readOnly
@@ -311,11 +311,11 @@ export default function Profile() {
               </div>
 
               <div className="col-12">
-                <div className="finova-card finova-profile-subsection border-0 p-3 p-md-4">
+                <div className="hestia-card hestia-profile-subsection border-0 p-3 p-md-4">
                   <div className="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3">
                     <div>
-                      <h2 className="finova-title h5 mb-1">{t("profile.emailAlertsTitle")}</h2>
-                      <p className="finova-subtitle small mb-0">
+                      <h2 className="hestia-title h5 mb-1">{t("profile.emailAlertsTitle")}</h2>
+                      <p className="hestia-subtitle small mb-0">
                         {t("profile.emailAlertsSubtitle")}
                       </p>
                     </div>
@@ -350,7 +350,7 @@ export default function Profile() {
                       </label>
                       <select
                         id="goalAlertThresholdPercent"
-                        className="form-select finova-input"
+                        className="form-select hestia-input"
                         value={String(form.goalAlertThresholdPercent)}
                         onChange={(e) =>
                           updateField("goalAlertThresholdPercent", Number(e.target.value))
@@ -370,10 +370,10 @@ export default function Profile() {
                       <div className="border-top pt-3">
                         <div className="d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-3">
                           <div>
-                            <h3 className="finova-title h6 mb-1">
+                            <h3 className="hestia-title h6 mb-1">
                               {t("profile.monthlyReportTitle")}
                             </h3>
-                            <p className="finova-subtitle small mb-0">
+                            <p className="hestia-subtitle small mb-0">
                               {t("profile.monthlyReportSubtitle")}
                             </p>
                           </div>
@@ -410,7 +410,7 @@ export default function Profile() {
                             </label>
                             <select
                               id="monthlyReportDay"
-                              className="form-select finova-input"
+                              className="form-select hestia-input"
                               value={String(form.monthlyReportDay)}
                               onChange={(e) =>
                                 updateField("monthlyReportDay", Number(e.target.value))
@@ -435,9 +435,9 @@ export default function Profile() {
               </div>
 
               <div className="col-12">
-                <div className="finova-profile-section-heading finova-profile-section-heading-divider">
-                  <h2 className="finova-title h5 mb-1">{t("profile.changePasswordTitle")}</h2>
-                  <p className="finova-subtitle small mb-0">{t("profile.changePasswordSubtitle")}</p>
+                <div className="hestia-profile-section-heading hestia-profile-section-heading-divider">
+                  <h2 className="hestia-title h5 mb-1">{t("profile.changePasswordTitle")}</h2>
+                  <p className="hestia-subtitle small mb-0">{t("profile.changePasswordSubtitle")}</p>
                 </div>
               </div>
 
@@ -449,7 +449,7 @@ export default function Profile() {
                   <input
                     id="profile-current-password"
                     type={isCurrentPasswordVisible ? "text" : "password"}
-                    className="form-control finova-input"
+                    className="form-control hestia-input"
                     value={form.currentPassword}
                     onChange={(e) => updateField("currentPassword", e.target.value)}
                     disabled={isSubmitting}
@@ -470,7 +470,7 @@ export default function Profile() {
                   <input
                     id="profile-new-password"
                     type={isNewPasswordVisible ? "text" : "password"}
-                    className="form-control finova-input"
+                    className="form-control hestia-input"
                     value={form.newPassword}
                     onChange={(e) => updateField("newPassword", e.target.value)}
                     disabled={isSubmitting}
@@ -492,7 +492,7 @@ export default function Profile() {
                   <input
                     id="profile-confirm-password"
                     type={isConfirmPasswordVisible ? "text" : "password"}
-                    className="form-control finova-input"
+                    className="form-control hestia-input"
                     value={form.confirmPassword}
                     onChange={(e) => updateField("confirmPassword", e.target.value)}
                     disabled={isSubmitting}
@@ -522,10 +522,10 @@ export default function Profile() {
               ) : null}
 
               <div className="col-12">
-                <div className="finova-actions-row finova-actions-row-end pt-2">
+                <div className="hestia-actions-row hestia-actions-row-end pt-2">
                   <button
                     type="submit"
-                    className="btn finova-btn-primary px-4"
+                    className="btn hestia-btn-primary px-4"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? t("profile.savingButton") : t("profile.saveButton")}
@@ -550,11 +550,11 @@ export default function Profile() {
         ) : null}
 
         {!isLoading ? (
-          <div className="finova-card p-4 p-md-5">
+          <div className="hestia-card p-4 p-md-5">
             <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-3">
               <div>
-                <h2 className="finova-title h5 mb-1">{t("profile.publicDashboardTitle")}</h2>
-                <p className="finova-subtitle small mb-0">
+                <h2 className="hestia-title h5 mb-1">{t("profile.publicDashboardTitle")}</h2>
+                <p className="hestia-subtitle small mb-0">
                   {t("profile.publicDashboardSubtitle")}
                 </p>
               </div>
@@ -589,26 +589,26 @@ export default function Profile() {
                     <input
                       id="publicDashboardUrl"
                       type="text"
-                      className="form-control finova-input"
+                      className="form-control hestia-input"
                       value={publicDashboard.publicUrl}
                       readOnly
                     />
                     <div className="form-text">{t("profile.publicDashboardLinkHelp")}</div>
                   </div>
                 ) : (
-                  <p className="finova-subtitle mb-0">
+                  <p className="hestia-subtitle mb-0">
                     {publicDashboard.hasActiveToken
                       ? t("profile.publicDashboardHiddenLink")
                       : t("profile.publicDashboardMissingLink")}
                   </p>
                 )}
 
-                <div className="finova-actions-row">
+                <div className="hestia-actions-row">
                   {publicDashboard.publicUrl ? (
                     <>
                       <button
                         type="button"
-                        className="btn finova-btn-light"
+                        className="btn hestia-btn-light"
                         onClick={handleCopyPublicDashboardLink}
                         disabled={isUpdatingPublicDashboard}
                       >
@@ -618,7 +618,7 @@ export default function Profile() {
                         href={publicDashboard.publicUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="btn finova-btn-primary"
+                        className="btn hestia-btn-primary"
                       >
                         {t("profile.publicDashboardOpen")}
                       </a>
@@ -626,7 +626,7 @@ export default function Profile() {
                   ) : null}
                   <button
                     type="button"
-                    className="btn finova-btn-light"
+                    className="btn hestia-btn-light"
                     onClick={handleRotatePublicDashboardLink}
                     disabled={isUpdatingPublicDashboard}
                   >
@@ -643,7 +643,7 @@ export default function Profile() {
                 </div>
               </div>
             ) : (
-              <p className="finova-subtitle mb-0">{t("profile.publicDashboardEmpty")}</p>
+              <p className="hestia-subtitle mb-0">{t("profile.publicDashboardEmpty")}</p>
             )}
 
             {publicDashboardMessage ? (
@@ -655,27 +655,27 @@ export default function Profile() {
         ) : null}
 
         {!isLoading ? (
-          <div className="finova-card p-4 p-md-5">
+          <div className="hestia-card p-4 p-md-5">
             <div className="d-flex flex-column gap-1 mb-3">
-              <h2 className="finova-title h5 mb-0">{t("profile.notificationHistoryTitle")}</h2>
-              <p className="finova-subtitle small mb-0">
+              <h2 className="hestia-title h5 mb-0">{t("profile.notificationHistoryTitle")}</h2>
+              <p className="hestia-subtitle small mb-0">
                 {t("profile.notificationHistorySubtitle")}
               </p>
             </div>
 
             {notificationDeliveries.length === 0 ? (
-              <p className="finova-subtitle mb-0">{t("profile.notificationHistoryEmpty")}</p>
+              <p className="hestia-subtitle mb-0">{t("profile.notificationHistoryEmpty")}</p>
             ) : (
               <div className="d-grid gap-3">
                 {notificationDeliveries.map((delivery) => (
-                  <div key={delivery.id} className="finova-card-soft p-3">
+                  <div key={delivery.id} className="hestia-card-soft p-3">
                     <div className="d-flex flex-column flex-md-row justify-content-between gap-2 mb-2">
                       <div className="d-flex align-items-center gap-2 flex-wrap">
-                        <span className="finova-badge-neutral">
+                        <span className="hestia-badge-neutral">
                           {formatNotificationType(delivery.notificationType, t)}
                         </span>
                       </div>
-                      <span className="finova-subtitle small">
+                      <span className="hestia-subtitle small">
                         {formatDateTime(delivery.sentAtUtc)}
                       </span>
                     </div>

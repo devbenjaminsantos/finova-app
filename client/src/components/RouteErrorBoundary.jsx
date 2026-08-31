@@ -6,11 +6,11 @@ function RouteErrorFallback() {
 
   return (
     <div className="py-5 text-center" role="alert">
-      <h1 className="finova-title h4">{t("common.routeLoadErrorTitle")}</h1>
-      <p className="finova-subtitle">{t("common.routeLoadErrorMessage")}</p>
+      <h1 className="hestia-title h4">{t("common.routeLoadErrorTitle")}</h1>
+      <p className="hestia-subtitle">{t("common.routeLoadErrorMessage")}</p>
       <button
         type="button"
-        className="btn finova-btn-primary"
+        className="btn hestia-btn-primary"
         onClick={() => window.location.reload()}
       >
         {t("common.reloadPage")}

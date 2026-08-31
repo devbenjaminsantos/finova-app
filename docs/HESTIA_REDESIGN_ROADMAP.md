@@ -9,14 +9,12 @@ execução e critérios de aceite.
 
 - [x] Revisar as 13 páginas do spec.
 - [x] Mapear rotas, componentes, estilos, i18n e contratos preservados.
-- [ ] Criar a identidade gráfica de Héstia.
+- [x] Criar a identidade gráfica de Héstia.
 - [x] Iniciar a migração visual do frontend pela fundação da Etapa 1.
 
-O ambiente publicado continua apresentando a marca Finova. O checkout local já
-contém um protótipo parcial de rebranding para Héstia, mas ele ainda não
-representa uma etapa concluída: símbolo, favicon e parte dos testes ainda não
-estão alinhados. Essas alterações devem permanecer tratadas como exploração até
-o gate da Etapa 0 ser aprovado.
+O redesign local foi concluído e a transição operacional da identidade está
+registrada em `HESTIA_TRANSITION_ROADMAP.md`. A publicação ainda usa nomes
+técnicos legados até o término coordenado da migração de infraestrutura.
 
 ## Contratos preservados
 
@@ -98,11 +96,11 @@ ou dashboard público.
 - [x] Atualizar `BrandMark`, metadados e textos visíveis PT-BR/inglês.
 - [ ] Substituir o losango textual provisório por um ativo aprovado.
 - [x] Remover ou substituir os favicons e logos antigos da Finova.
-- [ ] Definir a grafia oficial da marca, incluindo uso de acento em português e
+- [x] Definir a grafia oficial da marca, incluindo uso de acento em português e
   inglês, nomes de arquivo e metadados.
-- [ ] Interromper trocas globais adicionais de Finova para Héstia até a direção
+- [x] Interromper trocas globais adicionais de Finova para Héstia até a direção
   visual ser escolhida.
-- [ ] Decidir quais identificadores técnicos `finova-*` permanecem internos para
+- [x] Decidir quais identificadores técnicos `finova-*` permanecem internos para
   evitar uma renomeação mecânica arriscada.
 
 **Gate:** a marca precisa funcionar no login, no futuro sidebar e como favicon
@@ -119,8 +117,8 @@ antes da troca global de Finova para Héstia.
   Finova;
 - o losango provisório foi removido do código, mas o item de aprovação visual
   permanece aberto até a confirmação explícita da direção de marca;
-- a grafia continua `Héstia` em PT-BR e inglês. Nome técnico, nomes de arquivos
-  e metadados finais continuam pendentes de aprovação da identidade.
+- a grafia continua `Héstia` em PT-BR e inglês; identificadores técnicos usam
+  `hestia` sem acento, conforme o roadmap de transição operacional.
 - a versão otimizada tem 27 kB, transparência real e cantos transparentes
   validados, substituindo o custo de cerca de 852 kB do PNG original. Lint, dois
   testes de `BrandMark`, build e nove smokes Playwright passaram.

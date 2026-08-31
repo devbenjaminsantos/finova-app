@@ -110,14 +110,14 @@ export default function DashboardCharts({ transactions, chartMonths, periodLabel
     <div className="row g-3">
       <div className="col-12 col-lg-5" style={{ minWidth: 0 }}>
         <ChartContainer
-          className="finova-card h-100 p-4"
+          className="hestia-card h-100 p-4"
           title={t("dashboard.expensesByCategory")}
           meta={categoryCaption}
         >
           {expenseByCategory.length === 0 ? (
-            <div className="finova-subtitle">{t("dashboard.noExpensesInPeriod")}</div>
+            <div className="hestia-subtitle">{t("dashboard.noExpensesInPeriod")}</div>
           ) : (
-            <div className="finova-chart-shell">
+            <div className="hestia-chart-shell">
               <ResponsiveContainer width="100%" height="100%" debounce={100}>
                 <PieChart>
                   <Tooltip formatter={(value) => formatCurrencyFromCents(value)} />
@@ -136,13 +136,13 @@ export default function DashboardCharts({ transactions, chartMonths, periodLabel
 
       <div className="col-12 col-lg-7" style={{ minWidth: 0 }}>
         <ChartContainer
-          className="finova-card h-100 p-4"
+          className="hestia-card h-100 p-4"
           title={t("dashboard.incomeVsExpense")}
           meta={periodLabel}
           footer={hasIncomeVsExpenseData ? t("dashboard.chartFootnote") : null}
         >
           {hasIncomeVsExpenseData ? (
-            <div className="finova-chart-shell">
+            <div className="hestia-chart-shell">
               <ResponsiveContainer width="100%" height="100%" debounce={100}>
                 <BarChart data={incomeVsExpense} margin={{ left: 10, right: 10 }}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -156,7 +156,7 @@ export default function DashboardCharts({ transactions, chartMonths, periodLabel
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="finova-subtitle">{t("dashboard.noMovementComparison")}</div>
+            <div className="hestia-subtitle">{t("dashboard.noMovementComparison")}</div>
           )}
         </ChartContainer>
       </div>

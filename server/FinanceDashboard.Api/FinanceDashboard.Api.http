@@ -8,7 +8,7 @@ Content-Type: {{contentType}}
 
 {
   "name": "Usuário Teste",
-  "email": "teste@finova.local",
+  "email": "teste@hestia.local",
   "password": "SenhaForte123"
 }
 
@@ -17,7 +17,7 @@ POST {{FinanceDashboard.Api_HostAddress}}/api/auth/login
 Content-Type: {{contentType}}
 
 {
-  "email": "teste@finova.local",
+  "email": "teste@hestia.local",
   "password": "SenhaForte123"
 }
 

@@ -16,7 +16,7 @@ describe("BrandMark", () => {
     const { container } = renderBrandMark({ size: "navbar" });
 
     expect(screen.getByRole("img", { name: /Héstia/ })).toHaveTextContent("Héstia");
-    expect(container.querySelector(".finova-brand-logo img")).toHaveAttribute(
+    expect(container.querySelector(".hestia-brand-logo img")).toHaveAttribute(
       "src",
       expect.stringContaining("hestia-mark-optimized.webp")
     );
@@ -26,6 +26,6 @@ describe("BrandMark", () => {
     const { container } = renderBrandMark({ showWordmark: false });
 
     expect(screen.getByRole("img", { name: /Héstia/ })).toBeInTheDocument();
-    expect(container.querySelector(".finova-brand-wordmark")).not.toBeInTheDocument();
+    expect(container.querySelector(".hestia-brand-wordmark")).not.toBeInTheDocument();
   });
 });

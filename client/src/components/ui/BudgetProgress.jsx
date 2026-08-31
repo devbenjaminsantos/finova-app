@@ -2,9 +2,9 @@ export default function BudgetProgress({ className = "", label, progress, tone =
   const percentage = Math.min(Math.max(Number(progress) || 0, 0), 100);
 
   return (
-    <div className={["finova-budget-progress", className].filter(Boolean).join(" ")}>
+    <div className={["hestia-budget-progress", className].filter(Boolean).join(" ")}>
       <div
-        className="finova-goal-progress"
+        className="hestia-goal-progress"
         role="progressbar"
         aria-label={label}
         aria-valuemin="0"
@@ -12,7 +12,7 @@ export default function BudgetProgress({ className = "", label, progress, tone =
         aria-valuenow={Math.round(percentage)}
       >
         <div
-          className={`finova-goal-progress-bar finova-goal-progress-bar-${tone}`}
+          className={`hestia-goal-progress-bar hestia-goal-progress-bar-${tone}`}
           style={{ width: `${percentage}%` }}
         />
       </div>

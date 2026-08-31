@@ -95,30 +95,30 @@ export default function Login() {
   const demoHighlights = t("auth.demoHighlights");
 
   return (
-    <div className="finova-page finova-auth-layout d-flex align-items-center justify-content-center px-3 py-4">
-      <div className="finova-auth-shell finova-auth-shell-lg">
-        <div className="text-center mb-4 finova-auth-hero">
+    <div className="hestia-page hestia-auth-layout d-flex align-items-center justify-content-center px-3 py-4">
+      <div className="hestia-auth-shell hestia-auth-shell-lg">
+        <div className="text-center mb-4 hestia-auth-hero">
           <BrandMark className="mb-2" size="hero" centered />
-          <p className="finova-subtitle mb-0">{t("auth.loginPageSubtitle")}</p>
+          <p className="hestia-subtitle mb-0">{t("auth.loginPageSubtitle")}</p>
         </div>
 
-        <div className="finova-card finova-auth-card p-4 p-md-5">
-          <div className="mb-4 text-center finova-auth-card-header">
-            <h2 className="finova-title h4 mb-2">{t("auth.loginTitle")}</h2>
-            <p className="finova-subtitle mb-0">{t("auth.loginSubtitle")}</p>
+        <div className="hestia-card hestia-auth-card p-4 p-md-5">
+          <div className="mb-4 text-center hestia-auth-card-header">
+            <h2 className="hestia-title h4 mb-2">{t("auth.loginTitle")}</h2>
+            <p className="hestia-subtitle mb-0">{t("auth.loginSubtitle")}</p>
           </div>
 
-          <div className="finova-demo-panel p-4 mb-4">
+          <div className="hestia-demo-panel p-4 mb-4">
             <div className="d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start">
               <div>
                 <div className="small text-uppercase fw-semibold text-primary mb-2">
                   {t("auth.demoEyebrow")}
                 </div>
-                <h3 className="finova-title h5 mb-2">{t("auth.demoTitle")}</h3>
-                <p className="finova-subtitle mb-3">{t("auth.demoDescription")}</p>
-                <div className="d-grid gap-2 finova-auth-highlight-list">
+                <h3 className="hestia-title h5 mb-2">{t("auth.demoTitle")}</h3>
+                <p className="hestia-subtitle mb-3">{t("auth.demoDescription")}</p>
+                <div className="d-grid gap-2 hestia-auth-highlight-list">
                   {demoHighlights.map((item) => (
-                    <div key={item} className="small text-muted finova-auth-highlight-item">
+                    <div key={item} className="small text-muted hestia-auth-highlight-item">
                       {item}
                     </div>
                   ))}
@@ -137,9 +137,9 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="finova-divider mb-4">
+          <div className="hestia-divider mb-4">
             <hr />
-            <span className="finova-subtitle small">{t("auth.demoDivider")}</span>
+            <span className="hestia-subtitle small">{t("auth.demoDivider")}</span>
             <hr />
           </div>
 
@@ -151,7 +151,7 @@ export default function Login() {
               <input
                 id="login-email"
                 type="email"
-                className="form-control finova-input"
+                className="form-control hestia-input"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder={t("common.emailPlaceholder")}
@@ -167,7 +167,7 @@ export default function Login() {
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="small text-decoration-none fw-semibold mb-2 finova-auth-link"
+                  className="small text-decoration-none fw-semibold mb-2 hestia-auth-link"
                 >
                   {t("auth.forgotPassword")}
                 </Link>
@@ -176,7 +176,7 @@ export default function Login() {
                 <input
                   id="login-password"
                   type={isPasswordVisible ? "text" : "password"}
-                  className="form-control finova-input"
+                  className="form-control hestia-input"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder={t("common.password")}
@@ -198,7 +198,7 @@ export default function Login() {
                   <Button
                     type="button"
                     variant="link"
-                    className="mt-2 finova-auth-link"
+                    className="mt-2 hestia-auth-link"
                     onClick={handleResendVerification}
                     loading={isResendingVerification}
                   >
@@ -225,10 +225,10 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="text-center mt-4 finova-auth-footer">
-            <span className="finova-subtitle small">
+          <div className="text-center mt-4 hestia-auth-footer">
+            <span className="hestia-subtitle small">
               {t("auth.noAccount")}{" "}
-              <Link to="/register" className="text-decoration-none fw-semibold finova-auth-link">
+              <Link to="/register" className="text-decoration-none fw-semibold hestia-auth-link">
                 {t("auth.createAccount")}
               </Link>
             </span>

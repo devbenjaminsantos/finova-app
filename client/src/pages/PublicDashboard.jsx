@@ -78,7 +78,7 @@ export default function PublicDashboard() {
   const summary = useMemo(() => summarizeTransactions(filteredTransactions), [filteredTransactions]);
 
   return (
-    <section className="finova-section-space">
+    <section className="hestia-section-space">
       <PageHeader
         title={t("publicDashboard.title")}
         subtitle={
@@ -93,7 +93,7 @@ export default function PublicDashboard() {
           </label>
           <select
             id="public-dashboard-period"
-            className="form-select finova-select"
+            className="form-select hestia-select"
             value={period}
             onChange={(event) => setPeriod(event.target.value)}
             disabled={isLoading || Boolean(error)}
@@ -108,21 +108,21 @@ export default function PublicDashboard() {
         }
       />
 
-      <div className="finova-page-note mb-4">
+      <div className="hestia-page-note mb-4">
         {t("publicDashboard.pageNote")}
       </div>
 
-      <div className="finova-card p-4 mb-4">
+      <div className="hestia-card p-4 mb-4">
         <div className="d-flex flex-column flex-lg-row justify-content-between gap-3">
           <div>
-            <span className="finova-badge-primary">{t("publicDashboard.readOnlyBadge")}</span>
-            <p className="finova-subtitle mb-0 mt-2">{t("publicDashboard.readOnlyDescription")}</p>
+            <span className="hestia-badge-primary">{t("publicDashboard.readOnlyBadge")}</span>
+            <p className="hestia-subtitle mb-0 mt-2">{t("publicDashboard.readOnlyDescription")}</p>
           </div>
 
-          <div className="finova-public-dashboard-meta">
-            <div className="finova-subtitle small">{t("publicDashboard.visibilityLabel")}</div>
-            <div className="finova-title h6 mb-0">{t("publicDashboard.visibilityValue")}</div>
-            <div className="finova-subtitle small mt-2">
+          <div className="hestia-public-dashboard-meta">
+            <div className="hestia-subtitle small">{t("publicDashboard.visibilityLabel")}</div>
+            <div className="hestia-title h6 mb-0">{t("publicDashboard.visibilityValue")}</div>
+            <div className="hestia-subtitle small mt-2">
               {dashboard?.lastTransactionDate
                 ? t("publicDashboard.lastUpdated", {
                     date: formatDate(dashboard.lastTransactionDate),
@@ -134,26 +134,26 @@ export default function PublicDashboard() {
       </div>
 
       {isLoading ? (
-        <div className="finova-card p-4">
-          <p className="finova-subtitle mb-0">{t("common.loading")}</p>
+        <div className="hestia-card p-4">
+          <p className="hestia-subtitle mb-0">{t("common.loading")}</p>
         </div>
       ) : error ? (
-        <div className="finova-card p-4">
-          <h2 className="finova-title h5 mb-2">{t("publicDashboard.unavailableTitle")}</h2>
-          <p className="finova-subtitle mb-3">{error}</p>
-          <div className="finova-actions-row">
-            <Link to="/login" className="btn finova-btn-light">
+        <div className="hestia-card p-4">
+          <h2 className="hestia-title h5 mb-2">{t("publicDashboard.unavailableTitle")}</h2>
+          <p className="hestia-subtitle mb-3">{error}</p>
+          <div className="hestia-actions-row">
+            <Link to="/login" className="btn hestia-btn-light">
               {t("auth.goToLogin")}
             </Link>
-            <Link to="/register" className="btn finova-btn-primary">
+            <Link to="/register" className="btn hestia-btn-primary">
               {t("auth.createAccount")}
             </Link>
           </div>
         </div>
       ) : filteredTransactions.length === 0 ? (
-        <div className="finova-card p-4">
-          <h2 className="finova-title h5 mb-2">{t("publicDashboard.emptyTitle")}</h2>
-          <p className="finova-subtitle mb-0">{t("publicDashboard.emptySubtitle")}</p>
+        <div className="hestia-card p-4">
+          <h2 className="hestia-title h5 mb-2">{t("publicDashboard.emptyTitle")}</h2>
+          <p className="hestia-subtitle mb-0">{t("publicDashboard.emptySubtitle")}</p>
         </div>
       ) : (
         <>
@@ -175,10 +175,10 @@ export default function PublicDashboard() {
             />
           </div>
 
-          <div className="finova-card p-4">
+          <div className="hestia-card p-4">
             <div className="mb-3">
-              <h2 className="finova-title h5 mb-1">{t("pages.dashboardCardTitle")}</h2>
-              <p className="finova-subtitle mb-0">
+              <h2 className="hestia-title h5 mb-1">{t("pages.dashboardCardTitle")}</h2>
+              <p className="hestia-subtitle mb-0">
                 {t("pages.dashboardCardSubtitle", {
                   period: selectedPeriodLabel.toLowerCase(),
                 })}

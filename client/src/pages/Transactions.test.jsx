@@ -214,10 +214,10 @@ describe("Transactions page", () => {
 
     const historySection = screen
       .getByRole("list", { name: "Histórico financeiro" })
-      .closest(".finova-transactions-history");
+      .closest(".hestia-transactions-history");
     const commitmentsSection = screen
       .getByRole("list", { name: "Regras recorrentes" })
-      .closest(".finova-transactions-commitments");
+      .closest(".hestia-transactions-commitments");
 
     expect(historySection).not.toBeNull();
     expect(commitmentsSection).not.toBeNull();

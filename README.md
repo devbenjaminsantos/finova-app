@@ -1,6 +1,6 @@
-# Finova
+# Héstia
 
-Finova is a full-stack personal finance application built to make day-to-day money management clearer, safer, and easier to inspect. It started as a finance dashboard and evolved into a SaaS-style product with authentication, demo access, transaction management, financial charts, budgets, recurring entries, account organization, exports, notifications, public read-only sharing, and deployment workflows targeting Azure.
+Héstia is a full-stack personal finance application built to make day-to-day money management clearer, safer, and easier to inspect. It combines authentication, demo access, transaction management, financial charts, budgets, recurring entries, account organization, exports, notifications, and public read-only sharing.
 
 Portuguese version: [README-pt-BR.md](README-pt-BR.md)
 
@@ -8,15 +8,15 @@ Portuguese version: [README-pt-BR.md](README-pt-BR.md)
 
 | Home | Transactions |
 | --- | --- |
-| ![Finova home dashboard preview](media/inicio.png) | ![Finova transactions page preview](media/transacoes.png) |
+| ![Héstia home dashboard preview](media/inicio.png) | ![Héstia transactions page preview](media/transacoes.png) |
 
 | Analyses | Profile |
 | --- | --- |
-| ![Finova analyses page preview](media/analises.png) | ![Finova profile page preview](media/perfil.png) |
+| ![Héstia analyses page preview](media/analises.png) | ![Héstia profile page preview](media/perfil.png) |
 
 ## What It Does
 
-Finova helps users:
+Héstia helps users:
 
 - create an account and sign in with JWT authentication protected by an `HttpOnly` cookie
 - confirm email addresses during registration
@@ -49,51 +49,51 @@ Finova helps users:
 
 - ASP.NET Core 10
 - Entity Framework Core 10
-- SQL Server
+- PostgreSQL in production, with SQL Server retained for local compatibility
 - JWT in an `HttpOnly` cookie, with Bearer support for external clients
 - Scalar.AspNetCore
-- SMTP email delivery behind an `IEmailSender` abstraction
+- email delivery behind an `IEmailSender` abstraction, disabled until the Héstia domain is configured
 - Pluggy backend foundation for future Open Finance flows
 
 ### Infrastructure
 
-- Azure Static Web Apps
-- Azure App Service
-- Azure SQL Database
-- GitHub Actions for validated frontend and API deployments
+- Vercel for the React frontend
+- Railway for the ASP.NET Core API
+- Neon PostgreSQL for persisted data
+- GitHub as the source repository
 
 ## Architecture At A Glance
 
 ```text
-Finova/
+Héstia/
 |-- client/                          # React/Vite frontend
 |-- server/
 |   |-- FinanceDashboard.Api/        # ASP.NET Core API
-|   |-- docker-compose.yml           # Local SQL Server
+|   |-- docker-compose.yml           # Optional local SQL Server
 |   `-- .env.example                 # Local environment example
 |-- tests/
 |   `-- FinanceDashboard.Api.Tests/  # Backend test project
 |-- docs/
-|   |-- azure-deploy.md              # Azure deployment guide
+|   |-- HESTIA_TRANSITION_ROADMAP.md # Rebranding and cutover checklist
 |   |-- roadmap.md                   # Product and technical roadmap
 |   |-- changelog.md                 # Delivery history by milestone
 |   `-- architecture-decisions.md    # Design decisions and rationale
 `-- finance-dashboard-react.sln
 ```
 
-The frontend calls the API through `VITE_API_URL`. In production, this value must point to the App Service API URL, including `/api`.
+The frontend calls `/api/*` through a Vercel rewrite to the Railway service. Direct clients can use the Railway API URL with `/api`.
 
 ## Deployment
 
-The repository is prepared for this Azure architecture:
+The production architecture is:
 
-- Frontend: `Azure Static Web Apps`
-- Backend: `Azure App Service`
-- Database: `Azure SQL Database`
+- Frontend: Vercel
+- Backend: Railway
+- Database: Neon PostgreSQL
 
-Deployment URLs are environment-specific and intentionally not hardcoded here. After a resource transfer or recreation, use the commands and post-deployment checklist in the [Azure deployment guide](docs/azure-deploy.md) before treating an environment as active.
+The coordinated rename and its rollback boundaries are documented in the [Héstia transition roadmap](docs/HESTIA_TRANSITION_ROADMAP.md). Historical Azure material remains archived for audit purposes only.
 
-The planned custom domain is `finovawallet`.
+The custom domain is still pending. Brevo must remain disabled until that domain and its email authentication records are ready.
 
 ## Running Locally
 

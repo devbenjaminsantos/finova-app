@@ -7,7 +7,7 @@ export default function Button({
   variant = "primary",
   ...props
 }) {
-  const classes = ["btn", "finova-button", `finova-button-${variant}`, className]
+  const classes = ["btn", "hestia-button", `hestia-button-${variant}`, className]
     .filter(Boolean)
     .join(" ");
 

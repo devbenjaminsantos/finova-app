@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceDashboard.Api.Data;
 
-public enum FinovaDatabaseProvider
+public enum HestiaDatabaseProvider
 {
     SqlServer,
     PostgreSql
@@ -10,7 +10,7 @@ public enum FinovaDatabaseProvider
 
 public static class DatabaseConfiguration
 {
-    public static IServiceCollection AddFinovaDatabase(
+    public static IServiceCollection AddHestiaDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -21,7 +21,7 @@ public static class DatabaseConfiguration
         {
             switch (provider)
             {
-                case FinovaDatabaseProvider.SqlServer:
+                case HestiaDatabaseProvider.SqlServer:
                     options.UseSqlServer(
                         connectionString,
                         sqlOptions => sqlOptions.EnableRetryOnFailure(
@@ -30,7 +30,7 @@ public static class DatabaseConfiguration
                             errorNumbersToAdd: null));
                     break;
 
-                case FinovaDatabaseProvider.PostgreSql:
+                case HestiaDatabaseProvider.PostgreSql:
                     options.UseNpgsql(
                         connectionString,
                         npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
@@ -48,22 +48,22 @@ public static class DatabaseConfiguration
         return services;
     }
 
-    public static FinovaDatabaseProvider ResolveProvider(string? configuredProvider)
+    public static HestiaDatabaseProvider ResolveProvider(string? configuredProvider)
     {
         if (string.Equals(
                 configuredProvider,
-                nameof(FinovaDatabaseProvider.SqlServer),
+                nameof(HestiaDatabaseProvider.SqlServer),
                 StringComparison.OrdinalIgnoreCase))
         {
-            return FinovaDatabaseProvider.SqlServer;
+            return HestiaDatabaseProvider.SqlServer;
         }
 
         if (string.Equals(
                 configuredProvider,
-                nameof(FinovaDatabaseProvider.PostgreSql),
+                nameof(HestiaDatabaseProvider.PostgreSql),
                 StringComparison.OrdinalIgnoreCase))
         {
-            return FinovaDatabaseProvider.PostgreSql;
+            return HestiaDatabaseProvider.PostgreSql;
         }
 
         throw new InvalidOperationException(

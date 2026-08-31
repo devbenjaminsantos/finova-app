@@ -8,7 +8,8 @@ namespace FinanceDashboard.Api.Services.Auth
 {
     public class JwTokenService
     {
-        public const string SessionVersionClaimType = "finova:session_version";
+        public const string SessionVersionClaimType = "hestia:session_version";
+        public const string LegacySessionVersionClaimType = "finova:session_version";
 
         private readonly IConfiguration _configuration;
 

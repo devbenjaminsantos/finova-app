@@ -25,7 +25,7 @@ public class FinancialAccountsControllerTests
         var dto = new FinancialAccountCreateRequest
         {
             Provider = "manual",
-            InstitutionName = "Banco Finova",
+            InstitutionName = "Banco Héstia",
             AccountName = "Conta principal",
             AccountMask = "1234"
         };
@@ -50,7 +50,7 @@ public class FinancialAccountsControllerTests
         {
             UserId = 4,
             Provider = "manual",
-            InstitutionName = "Banco Finova",
+            InstitutionName = "Banco Héstia",
             AccountName = "Conta principal",
             Status = "pending"
         });
@@ -78,7 +78,7 @@ public class FinancialAccountsControllerTests
             UserId = 4,
             Provider = "pluggy",
             ProviderItemId = "item-123",
-            InstitutionName = "Banco Finova",
+            InstitutionName = "Banco Héstia",
             AccountName = "Conta principal",
             Status = "pending"
         });
