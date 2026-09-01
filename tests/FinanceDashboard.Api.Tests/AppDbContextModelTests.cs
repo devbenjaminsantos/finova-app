@@ -1,5 +1,6 @@
 using FinanceDashboard.Api.Data;
 using FinanceDashboard.Api.Models;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -163,6 +164,15 @@ public class AppDbContextModelTests
                 postgreSqlContext,
                 typeof(TransactionalEmailDelivery),
                 nameof(TransactionalEmailDelivery.PasswordResetTokenId)));
+    }
+
+    [Fact]
+    public void AppDbContextPersistsDataProtectionKeys()
+    {
+        using var context = CreatePostgreSqlContext();
+
+        Assert.IsAssignableFrom<IDataProtectionKeyContext>(context);
+        Assert.NotNull(context.Model.FindEntityType(typeof(DataProtectionKey)));
     }
 
     private static string? GetPublicDashboardTokenIndexFilter(AppDbContext context)

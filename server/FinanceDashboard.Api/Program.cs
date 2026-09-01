@@ -51,7 +51,9 @@ builder.Services.Configure<PluggyOptions>(
 builder.Services.Configure<NotificationOptions>(
     builder.Configuration.GetSection(NotificationOptions.SectionName));
 builder.Services.AddHestiaEmail(builder.Configuration);
-builder.Services.AddDataProtection().SetApplicationName("Hestia");
+builder.Services.AddDataProtection()
+    .SetApplicationName("Hestia")
+    .PersistKeysToDbContext<AppDbContext>();
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<IPluggyClient, PluggyClient>((serviceProvider, client) =>
 {

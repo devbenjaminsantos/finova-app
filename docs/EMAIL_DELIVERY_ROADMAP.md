@@ -1,8 +1,9 @@
 # Decisão e roadmap de e-mail transacional
 
 **Última revisão:** 1 de setembro de 2026
-**Estado:** adapter Resend e outbox transacional implementados e mantidos desativados; configuração
-remota e envio real adiados até a definição do domínio próprio da Héstia.
+**Estado:** adapter Resend, outbox transacional e key ring persistido no Neon
+implementados; a ativação remota depende da chave e do remetente temporário do
+Resend.
 
 ## Decisão
 
@@ -113,12 +114,33 @@ contador/timestamps, estado, código de falha e ID retornado pelo provedor. O
 token recuperável fica protegido pelo ASP.NET Core Data Protection, nunca em
 texto claro, e a URL/conteúdo são refeitos em memória no retry.
 
-**Limite conhecido:** essa proteção usa o key ring configurado para a API. Antes
-de depender de retries após redeploy ou de escalar a API, o key ring deve ser
-persistido/compartilhado fora do container; se uma chave anterior não puder ser
-aberta, a entrega é marcada como rejeitada com `delivery_token_unavailable` e o
-próximo reenvio cria um link novo. Isso evita armazenar o token em claro, mas
-não substitui a configuração de Data Protection da infraestrutura.
+O key ring do Data Protection é persistido no Neon por
+`PersistKeysToDbContext<AppDbContext>()`. Assim, links pendentes, cookies e
+antiforgery não dependem do filesystem efêmero da Railway e podem sobreviver a
+um redeploy ou a mais de uma réplica. A tabela fica acessível somente pela
+conexão privada da API; acesso de leitura/escrita ao banco deve ser tratado com
+o mesmo nível de proteção das variáveis de ambiente.
+
+Enquanto não houver domínio próprio, a ativação usará a URL de produção da
+Vercel como `Client__BaseUrl`:
+`https://hestia-app-benjamin-santos.vercel.app`. O remetente temporário de
+teste do Resend não substitui a validação posterior de domínio, SPF, DKIM e
+DMARC.
+
+## Ativação temporária com a URL da Vercel
+
+- [x] Definir a URL pública estável da Vercel para links de confirmação e
+  recuperação.
+- [x] Persistir o key ring de Data Protection no Neon antes de habilitar o
+  envio, por migration explícita.
+- [ ] Criar uma chave de envio no Resend e um remetente temporário permitido
+  pelo provedor.
+- [ ] Configurar na Railway `Email__Enabled=true`, `Email__Provider=Resend`,
+  `Resend__ApiKey`, `Resend__FromEmail`, `Resend__FromName` e
+  `Client__BaseUrl`, sem expor os valores.
+- [ ] Aplicar as migrations no Neon e confirmar o startup da Railway.
+- [ ] Enviar confirmação e recuperação para uma conta controlada e verificar o
+  ID aceito pelo Resend. O estado `delivered` continua dependendo do webhook.
 
 ## Ativação depois do domínio próprio
 

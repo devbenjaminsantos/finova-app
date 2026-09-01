@@ -41,8 +41,8 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [ ] Validar duas instâncias concorrentes contra o Azure SQL ativo.
   - [x] Fechar a janela entre o aceite externo e o commit local com a chave
     idempotente do Resend e um estado de entrega persistido antes do envio.
-    A recuperação após redeploy ainda depende de persistir o key ring de Data
-    Protection antes de escalar a API.
+  - [x] Persistir o key ring de Data Protection no Neon antes de escalar a API,
+    preservando tokens protegidos, antiforgery e cookies durante redeploys.
 - [x] Confirmar persistência compartilhada do ASP.NET Core Data Protection entre instâncias do mesmo slot no Azure App Service.
 - [ ] Adotar key ring externo antes de usar troca de deployment slots, pois slots diferentes não compartilham chaves.
 - [ ] Isolar a conta demo, com expiração e proteção contra uso concorrente abusivo.
@@ -56,8 +56,9 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [ ] Identificar e remover manualmente a antiga conta compartilhada somente após confirmar seu ID e propriedade no banco ativo.
   - [ ] Validar criação e limpeza contra o Azure SQL ativo e monitorar abuso do endpoint anônimo.
 - [ ] Implementar e verificar entrega real de cadastro, confirmação e
-  recuperação pelo Resend depois do domínio próprio; notificações financeiras
-  ficam para cron/worker posterior.
+  recuperação pelo Resend com remetente temporário e URL da Vercel; migrar para
+  o domínio autenticado antes de tratar o envio como produção. Notificações
+  financeiras ficam para cron/worker posterior.
 
 ## Desempenho e manutenção
 

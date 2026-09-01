@@ -618,13 +618,14 @@ o redesign pronto para produção.
 ## Trilha paralela C - domínio e e-mail transacional
 
 O Resend pela API HTTPS foi escolhido no fim do cutover, substituindo o plano
-anterior de Brevo por SMTP. A ativação continua deliberadamente bloqueada: o
-domínio próprio precisa ser definido antes de configurar remetente,
-autenticação DNS, links transacionais ou credenciais de produção. O detalhamento
-atual está em [`EMAIL_DELIVERY_ROADMAP.md`](EMAIL_DELIVERY_ROADMAP.md), que
-prevalece sobre referências históricas ao Brevo neste documento.
+anterior de Brevo por SMTP. A primeira ativação usará a URL pública estável da
+Vercel para os links transacionais e um remetente temporário permitido pelo
+Resend. A autenticação de domínio, SPF, DKIM e DMARC continuam obrigatórios
+antes de tratar o envio como produção. O detalhamento atual está em
+[`EMAIL_DELIVERY_ROADMAP.md`](EMAIL_DELIVERY_ROADMAP.md), que prevalece sobre
+referências históricas ao Brevo neste documento.
 
-### Antes do novo domínio - somente preparação de código
+### Antes do novo domínio
 
 - [x] Introduzir uma configuração explícita para e-mail habilitado/desabilitado,
   sem exigir credenciais do provedor durante a pausa.
@@ -638,6 +639,10 @@ prevalece sobre referências históricas ao Brevo neste documento.
   HTTP indefinidamente.
 - [x] Persistir entregas transacionais pendentes e repetir com o mesmo token e
   chave idempotente, sem armazenar token ou conteúdo em texto claro.
+- [x] Persistir o key ring de Data Protection no Neon para preservar retries,
+  antiforgery e cookies entre redeploys da Railway.
+- [ ] Criar chave e remetente temporário no Resend e habilitar o adapter apenas
+  na Railway, com a URL estável da Vercel nos links.
 - [x] Manter apenas placeholders nos arquivos de exemplo; não criar nem inserir
   chave Resend agora.
 - [x] Manter `Notifications__Enabled=false` no serviço web.
@@ -699,7 +704,8 @@ CSS não comprovam o estado atual.
 5. [ ] Executar em paralelo os hardenings P0/P1 que não dependem do domínio.
 6. [ ] Escolher e configurar o novo domínio somente quando a marca estiver pronta.
 7. [ ] Atualizar URLs, CORS, cookies e callbacks e executar smoke completo.
-8. [ ] Configurar e validar o Resend somente depois da troca do domínio.
+8. [ ] Configurar e validar o Resend temporariamente com a URL estável da
+   Vercel; repetir a validação depois da troca do domínio.
 9. [ ] Encerrar a janela de rollback e remover pipelines Azure conflitantes.
 10. [ ] Publicar o rebranding apenas com todas as evidências do gate final.
 
