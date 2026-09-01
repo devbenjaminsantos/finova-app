@@ -5,7 +5,7 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
 ## Concluído na revisão
 
 - [x] Revisar pontos de XSS, SQL manual, autorização de endpoints, código sem uso e documentação desatualizada.
-- [x] Remover a dependência de runtime do Azure Communication Services e manter envio de e-mail atrás de `IEmailSender` com SMTP.
+- [x] Remover a dependência de runtime do Azure Communication Services e manter envio de e-mail atrás de `IEmailSender`.
 - [x] Validar builds, lint, testes de frontend, testes de backend, auditorias de dependências e smoke tests no navegador.
 
 ## Prioridade imediata
@@ -39,7 +39,8 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [x] Liberar nova tentativa quando o envio SMTP falhar.
   - [x] Cobrir orquestração de entrega única, repetição e falha com testes unitários.
   - [ ] Validar duas instâncias concorrentes contra o Azure SQL ativo.
-  - [ ] Monitorar a janela rara entre o aceite do SMTP e o commit no banco, que não pode ser atômica sem suporte de idempotência do provedor.
+  - [ ] Fechar a janela entre o aceite externo e o commit local com a chave
+    idempotente do Resend e um estado de entrega persistido.
 - [x] Confirmar persistência compartilhada do ASP.NET Core Data Protection entre instâncias do mesmo slot no Azure App Service.
 - [ ] Adotar key ring externo antes de usar troca de deployment slots, pois slots diferentes não compartilham chaves.
 - [ ] Isolar a conta demo, com expiração e proteção contra uso concorrente abusivo.
@@ -52,7 +53,9 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [x] Cobrir preservação de usuários reais, isolamento, expiração lógica e acessos concorrentes com testes unitários.
   - [ ] Identificar e remover manualmente a antiga conta compartilhada somente após confirmar seu ID e propriedade no banco ativo.
   - [ ] Validar criação e limpeza contra o Azure SQL ativo e monitorar abuso do endpoint anônimo.
-- [ ] Verificar entrega real de cadastro, confirmação, recuperação de senha e notificações após a migração da Azure.
+- [ ] Implementar e verificar entrega real de cadastro, confirmação e
+  recuperação pelo Resend depois do domínio próprio; notificações financeiras
+  ficam para cron/worker posterior.
 
 ## Desempenho e manutenção
 

@@ -2,6 +2,8 @@ using FinanceDashboard.Api.Data;
 using FinanceDashboard.Api.Models;
 using FinanceDashboard.Api.Services.Email;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace FinanceDashboard.Api.Services.Notifications
 {
@@ -116,14 +118,19 @@ namespace FinanceDashboard.Api.Services.Notifications
                                 Subject = $"Alerta de meta mensal - {goalLabel}",
                                 SentAtUtc = utcNow
                             },
-                            () => _emailSender.SendBudgetGoalAlertEmailAsync(
+                            async () => EnsureAccepted(await _emailSender.SendBudgetGoalAlertEmailAsync(
                                 user.Email,
                                 user.Name,
                                 month,
                                 goalLabel,
                                 progressPercent,
                                 ConvertCentsToAmount(spentCents),
-                                ConvertCentsToAmount(goal.AmountCents)),
+                                ConvertCentsToAmount(goal.AmountCents),
+                                BuildNotificationIdempotencyKey(
+                                    user.Id,
+                                    NotificationTypes.GoalAlert,
+                                    referenceKey),
+                                cancellationToken)),
                             cancellationToken);
                     }
                     catch (Exception exception)
@@ -233,7 +240,7 @@ namespace FinanceDashboard.Api.Services.Notifications
                             Subject = $"Resumo mensal - {reportMonth}",
                             SentAtUtc = utcNow
                         },
-                        () => _emailSender.SendMonthlySummaryEmailAsync(
+                        async () => EnsureAccepted(await _emailSender.SendMonthlySummaryEmailAsync(
                             user.Email,
                             user.Name,
                             reportMonth,
@@ -242,7 +249,12 @@ namespace FinanceDashboard.Api.Services.Notifications
                             ConvertCentsToAmount(incomeCents - expenseCents),
                             topExpenseCategory?.Category,
                             topExpenseCategory is null ? null : ConvertCentsToAmount(topExpenseCategory.TotalCents),
-                            goalSummaries),
+                            goalSummaries,
+                            BuildNotificationIdempotencyKey(
+                                user.Id,
+                                NotificationTypes.MonthlyReport,
+                                referenceKey),
+                            cancellationToken)),
                         cancellationToken);
                 }
                 catch (Exception exception)
@@ -265,6 +277,25 @@ namespace FinanceDashboard.Api.Services.Notifications
         private static decimal ConvertCentsToAmount(long amountCents)
         {
             return amountCents / 100m;
+        }
+
+        private static string BuildNotificationIdempotencyKey(
+            int userId,
+            string notificationType,
+            string referenceKey)
+        {
+            var source = $"{userId}|{notificationType}|{referenceKey}";
+            var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(source)));
+            return $"financial-notification/{hash}";
+        }
+
+        private static void EnsureAccepted(EmailSendResult result)
+        {
+            if (!result.IsAccepted)
+            {
+                throw new InvalidOperationException(
+                    $"O envio de e-mail não foi aceito. Estado: {result.Status}.");
+            }
         }
 
         private static class NotificationTypes

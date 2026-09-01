@@ -56,9 +56,12 @@ alteração destrutiva ou de schema fez parte desta etapa.
 
 ## E-mail
 
-Brevo e qualquer remetente de produção permanecem desativados. A configuração
-só será retomada depois da definição e validação do domínio próprio, incluindo
-SPF, DKIM e DMARC.
+O Resend pela API HTTPS foi escolhido como alvo para os e-mails transacionais,
+substituindo o plano anterior de Brevo por SMTP. Qualquer remetente de produção
+permanece desativado: conta, chave, webhook e DNS só serão configurados depois
+da definição do domínio próprio. A implementação, os cuidados com cold start,
+idempotência, SPF, DKIM e DMARC estão em
+[`EMAIL_DELIVERY_ROADMAP.md`](EMAIL_DELIVERY_ROADMAP.md).
 
 ## Evidências locais de 2026-08-31
 
@@ -103,4 +106,5 @@ SPF, DKIM e DMARC.
   banco e roles internos permaneceram estáveis conforme a fronteira definida;
 - nove cenários Playwright de login, cadastro, rotas protegidas, desktop e
   mobile passaram; o cenário de PDF também passou com dados e inspeção visual;
-- Brevo e notificações por e-mail continuam desativados até o domínio próprio.
+- Resend e notificações por e-mail continuam desativados até o domínio próprio;
+  nenhum secret ou recurso remoto do provedor foi criado nesta decisão.

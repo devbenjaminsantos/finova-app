@@ -326,24 +326,36 @@ public class FinancialEmailAutomationServiceTests
         public int GoalAlertAttempts { get; private set; }
         public int GoalAlertFailuresRemaining { get; init; }
 
-        public Task SendPasswordResetEmailAsync(string toEmail, string name, string resetUrl)
+        public Task<EmailSendResult> SendPasswordResetEmailAsync(
+            string toEmail,
+            string name,
+            string resetUrl,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(EmailSendResult.Accepted());
         }
 
-        public Task SendEmailVerificationAsync(string toEmail, string name, string verificationUrl)
+        public Task<EmailSendResult> SendEmailVerificationAsync(
+            string toEmail,
+            string name,
+            string verificationUrl,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(EmailSendResult.Accepted());
         }
 
-        public Task SendBudgetGoalAlertEmailAsync(
+        public Task<EmailSendResult> SendBudgetGoalAlertEmailAsync(
             string toEmail,
             string name,
             string monthLabel,
             string goalLabel,
             int progressPercent,
             decimal spentAmount,
-            decimal targetAmount)
+            decimal targetAmount,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
             lock (GoalAlerts)
             {
@@ -357,10 +369,10 @@ public class FinancialEmailAutomationServiceTests
                 GoalAlerts.Add($"{toEmail}:{monthLabel}:{goalLabel}:{progressPercent}");
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(EmailSendResult.Accepted());
         }
 
-        public Task SendMonthlySummaryEmailAsync(
+        public Task<EmailSendResult> SendMonthlySummaryEmailAsync(
             string toEmail,
             string name,
             string monthLabel,
@@ -369,10 +381,12 @@ public class FinancialEmailAutomationServiceTests
             decimal balanceAmount,
             string? topExpenseCategory,
             decimal? topExpenseAmount,
-            IReadOnlyList<MonthlyGoalSummary> goalSummaries)
+            IReadOnlyList<MonthlyGoalSummary> goalSummaries,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
             MonthlyReports.Add($"{toEmail}:{monthLabel}:{incomeAmount}:{expenseAmount}");
-            return Task.CompletedTask;
+            return Task.FromResult(EmailSendResult.Accepted());
         }
     }
 

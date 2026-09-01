@@ -5,6 +5,7 @@ Esta pasta reúne os documentos de apoio do Héstia. O README principal apresent
 ## Índice
 
 - [Roadmap de transição Héstia](HESTIA_TRANSITION_ROADMAP.md): rebranding técnico, cutover de infraestrutura e rollback.
+- [Decisão e roadmap de e-mail](EMAIL_DELIVERY_ROADMAP.md): escolha do Resend, impacto de cold start, segurança e ordem de ativação após o domínio próprio.
 - [Roadmap](roadmap.md): direção técnica e de produto para as próximas evoluções.
 - [Changelog](changelog.md): histórico de entregas organizado por marcos do projeto.
 - [Decisões de arquitetura](architecture-decisions.md): registro das escolhas técnicas, seus motivos e impactos.

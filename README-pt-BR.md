@@ -52,7 +52,7 @@ A Héstia permite:
 - PostgreSQL em produção, com SQL Server preservado para compatibilidade local
 - JWT em cookie `HttpOnly`, com suporte Bearer para clientes externos
 - Scalar.AspNetCore
-- envio de e-mail atrás da abstração `IEmailSender`, desativado até a configuração do domínio da Héstia
+- envio de e-mail atrás da abstração `IEmailSender`, com Resend escolhido e desativado até a configuração do domínio da Héstia
 - base de backend Pluggy para futuros fluxos de Open Finance
 
 ### Infraestrutura
@@ -93,7 +93,10 @@ A arquitetura de produção é:
 
 O renome coordenado e as fronteiras de rollback estão documentados no [roadmap de transição Héstia](docs/HESTIA_TRANSITION_ROADMAP.md). O material da Azure permanece apenas como histórico de auditoria.
 
-O domínio próprio ainda será definido. O Brevo deve permanecer desativado até que o domínio e os registros de autenticação de e-mail estejam prontos.
+O domínio próprio ainda será definido. O Resend foi escolhido para os e-mails
+transacionais, mas conta, chave, webhook e DNS do remetente só serão configurados
+depois que esse domínio estiver pronto. Consulte o
+[roadmap de envio de e-mail](docs/EMAIL_DELIVERY_ROADMAP.md).
 
 ## Como rodar localmente
 

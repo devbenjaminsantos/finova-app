@@ -6,6 +6,11 @@
 
 **Estado:** planejamento; nenhuma etapa deste documento implica que a migração já foi executada.
 
+> **Registro histórico:** a migração e o rebranding foram concluídos depois da
+> criação deste plano. As instruções de Brevo/SMTP abaixo não devem mais ser
+> aplicadas. O alvo atual é Resend pela API HTTPS e está documentado em
+> [`EMAIL_DELIVERY_ROADMAP.md`](EMAIL_DELIVERY_ROADMAP.md).
+
 ## Objetivo
 
 Migrar o ecossistema atualmente hospedado na Azure para:

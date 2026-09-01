@@ -13,7 +13,12 @@ namespace FinanceDashboard.Api.Services.Email
             _configuration = configuration;
         }
 
-        public Task SendPasswordResetEmailAsync(string toEmail, string name, string resetUrl)
+        public Task<EmailSendResult> SendPasswordResetEmailAsync(
+            string toEmail,
+            string name,
+            string resetUrl,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
             return SendAsync(
                 toEmail,
@@ -27,10 +32,17 @@ namespace FinanceDashboard.Api.Services.Email
                 {resetUrl}
 
                 Se você não solicitou essa alteração, ignore este e-mail.
-                """);
+                """,
+                idempotencyKey,
+                cancellationToken);
         }
 
-        public Task SendEmailVerificationAsync(string toEmail, string name, string verificationUrl)
+        public Task<EmailSendResult> SendEmailVerificationAsync(
+            string toEmail,
+            string name,
+            string verificationUrl,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
             return SendAsync(
                 toEmail,
@@ -44,17 +56,21 @@ namespace FinanceDashboard.Api.Services.Email
                 {verificationUrl}
 
                 Se você não criou esta conta, ignore este e-mail.
-                """);
+                """,
+                idempotencyKey,
+                cancellationToken);
         }
 
-        public Task SendBudgetGoalAlertEmailAsync(
+        public Task<EmailSendResult> SendBudgetGoalAlertEmailAsync(
             string toEmail,
             string name,
             string monthLabel,
             string goalLabel,
             int progressPercent,
             decimal spentAmount,
-            decimal targetAmount)
+            decimal targetAmount,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
             return SendAsync(
                 toEmail,
@@ -68,10 +84,12 @@ namespace FinanceDashboard.Api.Services.Email
                 Limite planejado: {targetAmount:C}
 
                 Acesse a Héstia para revisar suas movimentações e ajustar o plano do mês, se necessário.
-                """);
+                """,
+                idempotencyKey,
+                cancellationToken);
         }
 
-        public Task SendMonthlySummaryEmailAsync(
+        public Task<EmailSendResult> SendMonthlySummaryEmailAsync(
             string toEmail,
             string name,
             string monthLabel,
@@ -80,7 +98,9 @@ namespace FinanceDashboard.Api.Services.Email
             decimal balanceAmount,
             string? topExpenseCategory,
             decimal? topExpenseAmount,
-            IReadOnlyList<MonthlyGoalSummary> goalSummaries)
+            IReadOnlyList<MonthlyGoalSummary> goalSummaries,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
             var goalLines = goalSummaries.Count == 0
                 ? "Nenhuma meta cadastrada para este mês."
@@ -111,11 +131,20 @@ namespace FinanceDashboard.Api.Services.Email
                 {goalLines}
 
                 Acesse a Héstia para revisar os detalhes e planejar o próximo mês.
-                """);
+                """,
+                idempotencyKey,
+                cancellationToken);
         }
 
-        private async Task SendAsync(string toEmail, string subject, string body)
+        private async Task<EmailSendResult> SendAsync(
+            string toEmail,
+            string subject,
+            string body,
+            string idempotencyKey,
+            CancellationToken cancellationToken)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(idempotencyKey);
+
             var host = _configuration["Smtp:Host"];
             var fromEmail = _configuration["Smtp:FromEmail"];
 
@@ -139,6 +168,7 @@ namespace FinanceDashboard.Api.Services.Email
             };
 
             message.To.Add(toEmail);
+            message.Headers.Add("X-Hestia-Idempotency-Key", idempotencyKey);
 
             using var client = new SmtpClient(host, port)
             {
@@ -150,7 +180,8 @@ namespace FinanceDashboard.Api.Services.Email
                 client.Credentials = new NetworkCredential(username, password);
             }
 
-            await client.SendMailAsync(message);
+            await client.SendMailAsync(message, cancellationToken);
+            return EmailSendResult.Accepted();
         }
     }
 }

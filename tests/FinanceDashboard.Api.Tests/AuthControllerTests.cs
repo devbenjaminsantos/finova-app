@@ -73,16 +73,38 @@ public class AuthControllerTests
         Assert.Single(context.EmailVerificationTokens);
         Assert.Contains(context.AuditLogs, log => log.Action == "auth.registered" && log.UserId == user.Id);
         Assert.NotNull(emailSender.LastVerificationUrl);
+        Assert.Equal($"email-verification/{context.EmailVerificationTokens.Single().Id}", emailSender.LastVerificationIdempotencyKey);
         Assert.True(payload.VerificationEmailSent);
         Assert.Equal(payload.User.Email, user.Email);
     }
 
     [Fact]
-    public async Task Register_ReportsPendingVerificationEmail_WhenSmtpFails()
+    public async Task Register_ReportsPendingVerificationEmail_WhenProviderFails()
     {
         using var context = CreateContext();
         var emailSender = new FakeEmailSender { ThrowOnVerification = true };
         var controller = CreateController(context, emailSender: emailSender);
+
+        var result = await controller.Register(new RegisterRequest
+        {
+            Name = "Novo Usuário",
+            Email = "novo@hestia.local",
+            Password = "SenhaSegura123!"
+        });
+
+        var created = Assert.IsType<ObjectResult>(result.Result);
+        var payload = Assert.IsType<RegistrationResponse>(created.Value);
+
+        Assert.False(payload.VerificationEmailSent);
+        Assert.Single(context.Users);
+        Assert.Single(context.EmailVerificationTokens);
+    }
+
+    [Fact]
+    public async Task Register_ReportsPendingVerificationEmail_WhenEmailIsDisabled()
+    {
+        using var context = CreateContext();
+        var controller = CreateController(context, emailSender: new DisabledEmailSender());
 
         var result = await controller.Register(new RegisterRequest
         {
@@ -883,7 +905,7 @@ public class AuthControllerTests
 
     private static AuthController CreateController(
         AppDbContext context,
-        FakeEmailSender? emailSender = null,
+        IEmailSender? emailSender = null,
         Dictionary<string, string?>? configurationValues = null,
         string environmentName = "Development")
     {
@@ -957,10 +979,17 @@ public class AuthControllerTests
     {
         public string? LastResetUrl { get; private set; }
         public string? LastVerificationUrl { get; private set; }
+        public string? LastResetIdempotencyKey { get; private set; }
+        public string? LastVerificationIdempotencyKey { get; private set; }
         public bool ThrowOnPasswordReset { get; set; }
         public bool ThrowOnVerification { get; set; }
 
-        public Task SendPasswordResetEmailAsync(string toEmail, string name, string resetUrl)
+        public Task<EmailSendResult> SendPasswordResetEmailAsync(
+            string toEmail,
+            string name,
+            string resetUrl,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
             if (ThrowOnPasswordReset)
             {
@@ -968,10 +997,16 @@ public class AuthControllerTests
             }
 
             LastResetUrl = resetUrl;
-            return Task.CompletedTask;
+            LastResetIdempotencyKey = idempotencyKey;
+            return Task.FromResult(EmailSendResult.Accepted());
         }
 
-        public Task SendEmailVerificationAsync(string toEmail, string name, string verificationUrl)
+        public Task<EmailSendResult> SendEmailVerificationAsync(
+            string toEmail,
+            string name,
+            string verificationUrl,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
             if (ThrowOnVerification)
             {
@@ -979,22 +1014,25 @@ public class AuthControllerTests
             }
 
             LastVerificationUrl = verificationUrl;
-            return Task.CompletedTask;
+            LastVerificationIdempotencyKey = idempotencyKey;
+            return Task.FromResult(EmailSendResult.Accepted());
         }
 
-        public Task SendBudgetGoalAlertEmailAsync(
+        public Task<EmailSendResult> SendBudgetGoalAlertEmailAsync(
             string toEmail,
             string name,
             string monthLabel,
             string goalLabel,
             int progressPercent,
             decimal spentAmount,
-            decimal targetAmount)
+            decimal targetAmount,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(EmailSendResult.Accepted());
         }
 
-        public Task SendMonthlySummaryEmailAsync(
+        public Task<EmailSendResult> SendMonthlySummaryEmailAsync(
             string toEmail,
             string name,
             string monthLabel,
@@ -1003,9 +1041,11 @@ public class AuthControllerTests
             decimal balanceAmount,
             string? topExpenseCategory,
             decimal? topExpenseAmount,
-            IReadOnlyList<FinanceDashboard.Api.Services.Notifications.MonthlyGoalSummary> goalSummaries)
+            IReadOnlyList<FinanceDashboard.Api.Services.Notifications.MonthlyGoalSummary> goalSummaries,
+            string idempotencyKey,
+            CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(EmailSendResult.Accepted());
         }
     }
 

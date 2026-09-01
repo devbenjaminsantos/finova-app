@@ -37,19 +37,32 @@ Impactos:
 
 ## Provedor de e-mail abstraído
 
-Os fluxos de negócio dependem de `IEmailSender`, e a implementação de runtime usa SMTP genérico. A dependência direta do Azure Communication Services Email foi removida para facilitar portabilidade entre contas e provedores.
+Os fluxos de negócio dependem de `IEmailSender`. O runtime registra
+`DisabledEmailSender` enquanto `Email__Enabled=false`; o adapter SMTP legado
+continua compilável, mas não é registrado. O alvo escolhido para a próxima
+implementação é o Resend pela API HTTPS, chamado pela API ASP.NET Core na
+Railway. A dependência direta do Azure Communication Services Email já foi
+removida.
 
 Motivos:
 
 - usar o mesmo contrato em desenvolvimento e produção
 - evitar acoplamento do domínio a um SDK de nuvem
-- permitir trocar o serviço SMTP sem reescrever os fluxos de negócio
+- permitir trocar o provedor sem reescrever os fluxos de negócio
+- manter chave, tokens e regras de envio fora do frontend e da Vercel
+- aproveitar timeout, resposta estruturada, webhooks e idempotência da API do
+  provedor
 
 Impactos:
 
-- host, porta, credenciais e remetente SMTP precisam ser configurados por ambiente
+- o modo desativado precisa inicializar sem credenciais e sem simular entrega
+- chave, remetente e segredo de webhook precisam existir somente na Railway
 - falhas de envio não devem invalidar links anteriores ainda válidos
+- aceite do provedor e entrega real são estados distintos
 - a entrega real precisa ser validada depois de cada mudança de infraestrutura
+
+O detalhamento e a ordem de ativação estão em
+[`EMAIL_DELIVERY_ROADMAP.md`](EMAIL_DELIVERY_ROADMAP.md).
 
 ## Contas financeiras como camada central
 

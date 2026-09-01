@@ -615,28 +615,30 @@ o redesign pronto para produção.
 - [ ] Definir retenção e limpeza de tokens expirados, auditoria e registros de
   entrega considerando privacidade e crescimento do banco.
 
-## Trilha paralela C - domínio e e-mail Brevo
+## Trilha paralela C - domínio e e-mail transacional
 
-O Brevo está deliberadamente bloqueado neste momento. A identidade e o novo
-domínio precisam ser decididos antes de configurar remetente, autenticação DNS,
-links transacionais ou credenciais de produção. Nenhum item da seção
-"depois do novo domínio" deve ser antecipado.
+O Resend pela API HTTPS foi escolhido no fim do cutover, substituindo o plano
+anterior de Brevo por SMTP. A ativação continua deliberadamente bloqueada: o
+domínio próprio precisa ser definido antes de configurar remetente,
+autenticação DNS, links transacionais ou credenciais de produção. O detalhamento
+atual está em [`EMAIL_DELIVERY_ROADMAP.md`](EMAIL_DELIVERY_ROADMAP.md), que
+prevalece sobre referências históricas ao Brevo neste documento.
 
 ### Antes do novo domínio - somente preparação de código
 
-- [ ] Introduzir uma configuração explícita para e-mail habilitado/desabilitado,
-  sem exigir credenciais Brevo durante a pausa.
-- [ ] Remover o acoplamento que derruba toda a API em produção quando SMTP está
+- [x] Introduzir uma configuração explícita para e-mail habilitado/desabilitado,
+  sem exigir credenciais do provedor durante a pausa.
+- [x] Remover o acoplamento que derruba toda a API em produção quando SMTP está
   intencionalmente desabilitado.
-- [ ] Definir respostas honestas para cadastro, reenvio e recuperação quando o
+- [x] Definir respostas honestas para cadastro, reenvio e recuperação quando o
   e-mail estiver indisponível, sem afirmar que houve entrega.
 - [ ] Decidir se cadastro público fica temporariamente indisponível enquanto a
   confirmação de e-mail não puder ser enviada.
-- [ ] Adicionar timeout e cancelamento ao envio SMTP para não prender requisições
+- [ ] Adicionar timeout e cancelamento ao envio HTTP para não prender requisições
   HTTP indefinidamente.
-- [ ] Manter apenas placeholders nos arquivos de exemplo; não criar nem inserir
-  chave SMTP agora.
-- [ ] Manter `Notifications__Enabled=false` no serviço web.
+- [x] Manter apenas placeholders nos arquivos de exemplo; não criar nem inserir
+  chave Resend agora.
+- [x] Manter `Notifications__Enabled=false` no serviço web.
 
 ### Depois da aprovação da marca e do novo domínio
 
@@ -645,22 +647,22 @@ links transacionais ou credenciais de produção. Nenhum item da seção
 - [ ] Atualizar `Client__BaseUrl`, CORS, links de confirmação/redefinição,
   callbacks, webhooks e CSP.
 - [ ] Validar HTTPS, certificados, redirects e cookies no domínio definitivo.
-- [ ] Criar ou validar o remetente Héstia no Brevo.
-- [ ] Autenticar o domínio no Brevo com SPF, DKIM e, quando aplicável, DMARC.
-- [ ] Criar uma chave SMTP exclusiva para `production` e armazená-la somente nas
+- [ ] Criar e validar o remetente Héstia no Resend.
+- [ ] Autenticar o domínio no Resend com SPF, DKIM e DMARC.
+- [ ] Criar uma chave Resend exclusiva para `production` e armazená-la somente nas
   variáveis privadas da Railway.
-- [ ] Configurar `Smtp__Host`, porta, usuário, chave, remetente, nome e TLS.
+- [ ] Configurar `Email__*` e `Resend__*` sem expor valores.
 - [ ] Fazer deploy e confirmar o diagnóstico de startup sem imprimir valores.
 - [ ] Testar cadastro, confirmação, reenvio e recuperação com contas controladas.
-- [ ] Confirmar `Delivered` no log transacional do Brevo; resposta `200`/`201` da
+- [ ] Confirmar `delivered` no Resend; resposta `200`/`201` da
   API não é prova de entrega.
-- [ ] Testar reputação, spam, bounce e tratamento de remetente inválido.
+- [ ] Validar webhook assinado, idempotência, spam, bounce e remetente inválido.
 - [ ] Só então avaliar reativar alertas de metas e resumos mensais em worker ou
   cron dedicado, preservando idempotência no PostgreSQL.
 
 **Gate:** o rebranding só pode ser publicado como Héstia quando domínio,
 `Client__BaseUrl`, CORS, cookies e links transacionais apontarem para o mesmo
-ambiente aprovado. O funcionamento do Brevo é um gate posterior à troca do
+ambiente aprovado. O funcionamento do Resend é um gate posterior à troca do
 domínio, não um bloqueio para explorar e implementar o frontend localmente.
 
 ## Validação por incremento
@@ -695,7 +697,7 @@ CSS não comprovam o estado atual.
 5. [ ] Executar em paralelo os hardenings P0/P1 que não dependem do domínio.
 6. [ ] Escolher e configurar o novo domínio somente quando a marca estiver pronta.
 7. [ ] Atualizar URLs, CORS, cookies e callbacks e executar smoke completo.
-8. [ ] Configurar e validar o Brevo somente depois da troca do domínio.
+8. [ ] Configurar e validar o Resend somente depois da troca do domínio.
 9. [ ] Encerrar a janela de rollback e remover pipelines Azure conflitantes.
 10. [ ] Publicar o rebranding apenas com todas as evidências do gate final.
 
@@ -703,5 +705,5 @@ CSS não comprovam o estado atual.
 
 Criar três direções de identidade para o símbolo de Héstia, comparar presença em
 16 px, sidebar, login e light/dark, e escolher uma antes de consolidar novas
-alterações no frontend. O Brevo permanece fora deste incremento e só deve ser
+alterações no frontend. O Resend permanece fora deste incremento e só deve ser
 configurado depois da definição e troca para o novo domínio.

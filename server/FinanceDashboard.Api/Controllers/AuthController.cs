@@ -125,19 +125,28 @@ namespace FinanceDashboard.Api.Controllers
                 });
             }
 
-            var (_, verificationUrl) = await CreateEmailVerificationTokenAsync(user);
+            var (verificationToken, verificationUrl) = await CreateEmailVerificationTokenAsync(user);
             var verificationSent = false;
 
             try
             {
-                await _emailSender.SendEmailVerificationAsync(user.Email, user.Name, verificationUrl);
-                verificationSent = true;
+                var sendResult = await _emailSender.SendEmailVerificationAsync(
+                    user.Email,
+                    user.Name,
+                    verificationUrl,
+                    BuildEmailIdempotencyKey("email-verification", verificationToken.Id),
+                    HttpContext.RequestAborted);
+                verificationSent = sendResult.IsAccepted;
+            }
+            catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception exception)
             {
                 _logger.LogWarning(
                     exception,
-                    "Não foi possível enviar o e-mail de confirmação via SMTP.");
+                    "Não foi possível solicitar o e-mail de confirmação ao provedor.");
             }
 
             await _auditLogService.WriteAsync(
@@ -313,14 +322,23 @@ namespace FinanceDashboard.Api.Controllers
 
             try
             {
-                await _emailSender.SendEmailVerificationAsync(user.Email, user.Name, verificationUrl);
-                verificationSent = true;
+                var sendResult = await _emailSender.SendEmailVerificationAsync(
+                    user.Email,
+                    user.Name,
+                    verificationUrl,
+                    BuildEmailIdempotencyKey("email-verification", verificationToken.Id),
+                    HttpContext.RequestAborted);
+                verificationSent = sendResult.IsAccepted;
+            }
+            catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception exception)
             {
                 _logger.LogWarning(
                     exception,
-                    "Não foi possível reenviar o e-mail de confirmação via SMTP.");
+                    "Não foi possível solicitar o reenvio de confirmação ao provedor.");
             }
 
             if (verificationSent)
@@ -409,14 +427,23 @@ namespace FinanceDashboard.Api.Controllers
 
             try
             {
-                await _emailSender.SendPasswordResetEmailAsync(user.Email, user.Name, resetUrl);
-                resetEmailSent = true;
+                var sendResult = await _emailSender.SendPasswordResetEmailAsync(
+                    user.Email,
+                    user.Name,
+                    resetUrl,
+                    BuildEmailIdempotencyKey("password-reset", resetToken.Id),
+                    HttpContext.RequestAborted);
+                resetEmailSent = sendResult.IsAccepted;
+            }
+            catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
+            {
+                throw;
             }
             catch (Exception exception)
             {
                 _logger.LogWarning(
                     exception,
-                    "Não foi possível enviar e-mail de redefinição de senha via SMTP.");
+                    "Não foi possível solicitar o e-mail de redefinição ao provedor.");
             }
 
             var exposeResetUrl = _environment.IsDevelopment() ||
@@ -655,6 +682,11 @@ namespace FinanceDashboard.Api.Controllers
         private string BuildEmailVerificationUrl(string token)
         {
             return $"{ResolveClientBaseUrl()}/verify-email?token={Uri.EscapeDataString(token)}";
+        }
+
+        private static string BuildEmailIdempotencyKey(string eventType, int tokenId)
+        {
+            return $"{eventType}/{tokenId}";
         }
 
         private string ResolveClientBaseUrl()

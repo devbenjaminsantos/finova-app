@@ -49,6 +49,7 @@ builder.Services.Configure<PluggyOptions>(
     builder.Configuration.GetSection(PluggyOptions.SectionName));
 builder.Services.Configure<NotificationOptions>(
     builder.Configuration.GetSection(NotificationOptions.SectionName));
+builder.Services.AddHestiaEmail(builder.Configuration);
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<IPluggyClient, PluggyClient>((serviceProvider, client) =>
 {
@@ -75,7 +76,6 @@ builder.Services.AddScoped<INotificationDeliveryCoordinator, DatabaseNotificatio
 builder.Services.AddScoped<FinancialEmailAutomationService>();
 builder.Services.AddScoped<IBankSyncProvider, PluggyBankSyncProvider>();
 builder.Services.AddScoped<CurrentUserService>();
-builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<FinanceDashboard.Api.Services.Notifications.FinancialEmailAutomationHostedService>();
@@ -250,7 +250,7 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();
 
-ValidateSmtpConfiguration(app);
+LogEmailConfiguration(app);
 
 app.UseExceptionHandler(exceptionHandlerApp =>
 {
@@ -347,31 +347,13 @@ static void ConfigureRailwayPort(WebApplicationBuilder builder)
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
 
-static void ValidateSmtpConfiguration(WebApplication app)
+static void LogEmailConfiguration(WebApplication app)
 {
     var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("EmailConfiguration");
-    logger.LogInformation("Provedor de e-mail configurado: SMTP.");
-
-    var smtpHost = app.Configuration["Smtp:Host"];
-    var smtpUsername = app.Configuration["Smtp:Username"];
-    var smtpPassword = app.Configuration["Smtp:Password"];
-    var smtpFromEmail = app.Configuration["Smtp:FromEmail"];
-
-    if (string.IsNullOrWhiteSpace(smtpHost)
-        || string.IsNullOrWhiteSpace(smtpUsername)
-        || string.IsNullOrWhiteSpace(smtpPassword)
-        || string.IsNullOrWhiteSpace(smtpFromEmail))
-    {
-        const string message =
-            "SMTP incompleto. Verifique Smtp__Host, Smtp__Username, Smtp__Password e Smtp__FromEmail.";
-
-        if (!app.Environment.IsDevelopment())
-        {
-            throw new InvalidOperationException(message);
-        }
-
-        logger.LogWarning(message);
-    }
+    var provider = app.Configuration["Email:Provider"] ?? "Resend";
+    logger.LogInformation(
+        "Envio de e-mail desativado. Provedor planejado: {EmailProvider}.",
+        provider);
 }
 
 static string GetRequiredJwtKey(IConfiguration configuration)
