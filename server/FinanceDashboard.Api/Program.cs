@@ -253,6 +253,8 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
+await ApplyPendingMigrationsOnStartupAsync(app);
+
 app.UseForwardedHeaders();
 
 LogEmailConfiguration(app);
@@ -368,6 +370,33 @@ static void LogEmailConfiguration(WebApplication app)
             "Envio de e-mail desativado. Provedor planejado: {EmailProvider}.",
             provider);
     }
+}
+
+static async Task ApplyPendingMigrationsOnStartupAsync(WebApplication app)
+{
+    if (!app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
+    {
+        return;
+    }
+
+    await using var scope = app.Services.CreateAsyncScope();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+    var pendingMigrationCount = pendingMigrations.Count();
+
+    if (pendingMigrationCount == 0)
+    {
+        app.Logger.LogInformation("Nenhuma migration pendente para aplicar no startup.");
+        return;
+    }
+
+    app.Logger.LogInformation(
+        "Aplicando {PendingMigrationCount} migration(s) pendente(s) no startup.",
+        pendingMigrationCount);
+
+    await context.Database.MigrateAsync();
+
+    app.Logger.LogInformation("Migrations pendentes aplicadas com sucesso no startup.");
 }
 
 static string GetRequiredJwtKey(IConfiguration configuration)
