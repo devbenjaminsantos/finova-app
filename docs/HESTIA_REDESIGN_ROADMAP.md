@@ -634,7 +634,7 @@ prevalece sobre referências históricas ao Brevo neste documento.
   e-mail estiver indisponível, sem afirmar que houve entrega.
 - [ ] Decidir se cadastro público fica temporariamente indisponível enquanto a
   confirmação de e-mail não puder ser enviada.
-- [ ] Adicionar timeout e cancelamento ao envio HTTP para não prender requisições
+- [x] Adicionar timeout e cancelamento ao envio HTTP para não prender requisições
   HTTP indefinidamente.
 - [x] Manter apenas placeholders nos arquivos de exemplo; não criar nem inserir
   chave Resend agora.

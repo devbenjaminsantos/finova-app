@@ -716,6 +716,31 @@ public class AuthControllerTests
     }
 
     [Fact]
+    public async Task ResendEmailVerification_PreservesNewToken_WhenProviderResultIsPending()
+    {
+        using var context = CreateContext();
+        var emailSender = new FakeEmailSender();
+        var controller = CreateController(context, emailSender: emailSender);
+
+        await controller.Register(new RegisterRequest
+        {
+            Name = "Novo Usuário",
+            Email = "novo@hestia.local",
+            Password = "SenhaSegura123!"
+        });
+
+        emailSender.VerificationResult = EmailSendResult.Pending("timeout");
+        var result = await controller.ResendEmailVerification(new ResendEmailVerificationRequest
+        {
+            Email = "novo@hestia.local"
+        });
+
+        Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(2, await context.EmailVerificationTokens.CountAsync());
+        Assert.Contains(context.AuditLogs, log => log.Action == "auth.verification-resend-pending");
+    }
+
+    [Fact]
     public async Task ForgotPassword_PersistsResetToken_AndReturnsUrl_WhenExposureIsEnabled()
     {
         using var context = CreateContext();
@@ -789,6 +814,34 @@ public class AuthControllerTests
         var remainingToken = await context.PasswordResetTokens.SingleAsync();
         Assert.Equal(previousToken.Id, remainingToken.Id);
         Assert.Null(remainingToken.UsedAtUtc);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_PreservesNewToken_WhenProviderResultIsPending()
+    {
+        using var context = CreateContext();
+        var emailSender = new FakeEmailSender();
+        var controller = CreateController(
+            context,
+            emailSender: emailSender,
+            environmentName: "Production");
+        var user = new User
+        {
+            Name = "Héstia User",
+            Email = "user@hestia.local",
+            EmailConfirmed = true,
+            PasswordHash = "hash"
+        };
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+
+        emailSender.ResetResult = EmailSendResult.Pending("network_error");
+        await controller.ForgotPassword(new ForgotPasswordRequest { Email = user.Email });
+
+        Assert.Single(context.PasswordResetTokens);
+        Assert.Contains(
+            context.AuditLogs,
+            log => log.Summary.Contains("entrega do e-mail pendente", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -983,6 +1036,8 @@ public class AuthControllerTests
         public string? LastVerificationIdempotencyKey { get; private set; }
         public bool ThrowOnPasswordReset { get; set; }
         public bool ThrowOnVerification { get; set; }
+        public EmailSendResult ResetResult { get; set; } = EmailSendResult.Accepted();
+        public EmailSendResult VerificationResult { get; set; } = EmailSendResult.Accepted();
 
         public Task<EmailSendResult> SendPasswordResetEmailAsync(
             string toEmail,
@@ -998,7 +1053,7 @@ public class AuthControllerTests
 
             LastResetUrl = resetUrl;
             LastResetIdempotencyKey = idempotencyKey;
-            return Task.FromResult(EmailSendResult.Accepted());
+            return Task.FromResult(ResetResult);
         }
 
         public Task<EmailSendResult> SendEmailVerificationAsync(
@@ -1015,7 +1070,7 @@ public class AuthControllerTests
 
             LastVerificationUrl = verificationUrl;
             LastVerificationIdempotencyKey = idempotencyKey;
-            return Task.FromResult(EmailSendResult.Accepted());
+            return Task.FromResult(VerificationResult);
         }
 
         public Task<EmailSendResult> SendBudgetGoalAlertEmailAsync(

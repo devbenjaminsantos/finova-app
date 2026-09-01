@@ -350,10 +350,19 @@ static void ConfigureRailwayPort(WebApplicationBuilder builder)
 static void LogEmailConfiguration(WebApplication app)
 {
     var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("EmailConfiguration");
+    var enabled = app.Configuration.GetValue<bool>("Email:Enabled");
     var provider = app.Configuration["Email:Provider"] ?? "Resend";
-    logger.LogInformation(
-        "Envio de e-mail desativado. Provedor planejado: {EmailProvider}.",
-        provider);
+
+    if (enabled)
+    {
+        logger.LogInformation("Provedor de e-mail configurado: {EmailProvider}.", provider);
+    }
+    else
+    {
+        logger.LogInformation(
+            "Envio de e-mail desativado. Provedor planejado: {EmailProvider}.",
+            provider);
+    }
 }
 
 static string GetRequiredJwtKey(IConfiguration configuration)

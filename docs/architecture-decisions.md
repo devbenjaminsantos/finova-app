@@ -38,11 +38,11 @@ Impactos:
 ## Provedor de e-mail abstraído
 
 Os fluxos de negócio dependem de `IEmailSender`. O runtime registra
-`DisabledEmailSender` enquanto `Email__Enabled=false`; o adapter SMTP legado
-continua compilável, mas não é registrado. O alvo escolhido para a próxima
-implementação é o Resend pela API HTTPS, chamado pela API ASP.NET Core na
-Railway. A dependência direta do Azure Communication Services Email já foi
-removida.
+`DisabledEmailSender` enquanto `Email__Enabled=false` e `ResendEmailSender`
+quando a configuração completa é habilitada. O adapter SMTP legado foi removido
+depois da implementação da API HTTPS do Resend. O envio continua na API ASP.NET
+Core da Railway; a dependência direta do Azure Communication Services Email já
+foi removida.
 
 Motivos:
 

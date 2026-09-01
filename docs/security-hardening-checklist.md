@@ -36,7 +36,7 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
 
 - [ ] Reduzir duplicidade de notificações em múltiplas instâncias da API.
   - [x] Coordenar cada entrega com `sp_getapplock` e registro transacional no Azure SQL.
-  - [x] Liberar nova tentativa quando o envio SMTP falhar.
+  - [x] Liberar nova tentativa quando o provedor rejeitar o envio.
   - [x] Cobrir orquestração de entrega única, repetição e falha com testes unitários.
   - [ ] Validar duas instâncias concorrentes contra o Azure SQL ativo.
   - [ ] Fechar a janela entre o aceite externo e o commit local com a chave
@@ -49,7 +49,7 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [x] Serializar criação e limpeza entre instâncias com `sp_getapplock` e transação `Serializable`.
   - [x] Não apagar nenhuma conta apenas por coincidir com o e-mail-base configurado.
   - [x] Limitar o endpoint anônimo a cinco chamadas por minuto por IP.
-  - [x] Excluir contas demo da automação SMTP.
+  - [x] Excluir contas demo da automação de e-mail.
   - [x] Cobrir preservação de usuários reais, isolamento, expiração lógica e acessos concorrentes com testes unitários.
   - [ ] Identificar e remover manualmente a antiga conta compartilhada somente após confirmar seu ID e propriedade no banco ativo.
   - [ ] Validar criação e limpeza contra o Azure SQL ativo e monitorar abuso do endpoint anônimo.

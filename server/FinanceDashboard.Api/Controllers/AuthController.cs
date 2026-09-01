@@ -137,6 +137,7 @@ namespace FinanceDashboard.Api.Controllers
                     BuildEmailIdempotencyKey("email-verification", verificationToken.Id),
                     HttpContext.RequestAborted);
                 verificationSent = sendResult.IsAccepted;
+                LogEmailSendResult(sendResult, "email-verification", user.Id);
             }
             catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
             {
@@ -329,6 +330,21 @@ namespace FinanceDashboard.Api.Controllers
                     BuildEmailIdempotencyKey("email-verification", verificationToken.Id),
                     HttpContext.RequestAborted);
                 verificationSent = sendResult.IsAccepted;
+                LogEmailSendResult(sendResult, "email-verification", user.Id);
+
+                if (sendResult.IsPending)
+                {
+                    await _auditLogService.WriteAsync(
+                        action: "auth.verification-resend-pending",
+                        entityType: "User",
+                        entityId: user.Id.ToString(),
+                        userId: user.Id,
+                        summary: "Novo link criado; resultado do envio de confirmação pendente.");
+                    return Ok(new
+                    {
+                        message = "Se a conta existir e ainda não estiver confirmada, enviaremos um novo link."
+                    });
+                }
             }
             catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
             {
@@ -434,6 +450,18 @@ namespace FinanceDashboard.Api.Controllers
                     BuildEmailIdempotencyKey("password-reset", resetToken.Id),
                     HttpContext.RequestAborted);
                 resetEmailSent = sendResult.IsAccepted;
+                LogEmailSendResult(sendResult, "password-reset", user.Id);
+
+                if (sendResult.IsPending)
+                {
+                    await _auditLogService.WriteAsync(
+                        action: "auth.password-reset-requested",
+                        entityType: "User",
+                        entityId: user.Id.ToString(),
+                        userId: user.Id,
+                        summary: "Solicitação de redefinição registrada; entrega do e-mail pendente.");
+                    return Ok(response);
+                }
             }
             catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
             {
@@ -687,6 +715,22 @@ namespace FinanceDashboard.Api.Controllers
         private static string BuildEmailIdempotencyKey(string eventType, int tokenId)
         {
             return $"{eventType}/{tokenId}";
+        }
+
+        private void LogEmailSendResult(EmailSendResult result, string eventType, int userId)
+        {
+            if (result.IsAccepted || result.Status == EmailSendStatus.Disabled)
+            {
+                return;
+            }
+
+            _logger.LogWarning(
+                "Solicitação de e-mail terminou com estado {EmailStatus}, código {FailureCode}, " +
+                "evento {EmailEventType} e usuário {UserId}.",
+                result.Status,
+                result.FailureCode,
+                eventType,
+                userId);
         }
 
         private string ResolveClientBaseUrl()

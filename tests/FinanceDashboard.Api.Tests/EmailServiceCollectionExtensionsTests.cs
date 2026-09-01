@@ -26,7 +26,29 @@ public class EmailServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void AddHestiaEmail_RejectsActivation_BeforeResendIsImplemented()
+    public void AddHestiaEmail_RegistersResendSender_WhenConfigurationIsComplete()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Email:Enabled"] = "true",
+                ["Email:Provider"] = "Resend",
+                ["Resend:ApiKey"] = "re_test_key_not_real",
+                ["Resend:FromEmail"] = "mail@hestia.example",
+                ["Resend:FromName"] = "Héstia",
+                ["Resend:TimeoutSeconds"] = "8"
+            })
+            .Build();
+        var services = new ServiceCollection();
+
+        services.AddHestiaEmail(configuration);
+
+        using var provider = services.BuildServiceProvider();
+        Assert.IsType<ResendEmailSender>(provider.GetRequiredService<IEmailSender>());
+    }
+
+    [Fact]
+    public void AddHestiaEmail_RejectsActivation_WhenResendConfigurationIsIncomplete()
     {
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -40,7 +62,7 @@ public class EmailServiceCollectionExtensionsTests
         var exception = Assert.Throws<InvalidOperationException>(
             () => services.AddHestiaEmail(configuration));
 
-        Assert.Contains("Email__Enabled=false", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("Resend__ApiKey", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

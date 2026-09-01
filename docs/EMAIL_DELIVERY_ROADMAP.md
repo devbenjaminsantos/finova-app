@@ -1,8 +1,8 @@
 # Decisão e roadmap de e-mail transacional
 
 **Última revisão:** 31 de agosto de 2026  
-**Estado:** provedor escolhido e fundação desativada concluída; adapter Resend e
-configuração remota adiados até a definição do domínio próprio da Héstia.
+**Estado:** adapter Resend implementado e mantido desativado; configuração
+remota e envio real adiados até a definição do domínio próprio da Héstia.
 
 ## Decisão
 
@@ -88,14 +88,16 @@ deve usar “enviado” quando a API só conhece um estado pendente.
 - [x] Alterar `IEmailSender` para receber `CancellationToken`, tipo do evento e
   uma chave idempotente e retornar um resultado estruturado, sem acoplar
   controllers ao Resend.
-- [ ] Implementar `ResendEmailSender` com `HttpClient` tipado, timeout finito e
+- [x] Implementar `ResendEmailSender` com `HttpClient` tipado, timeout finito e
   respostas estruturadas; não registrar API key, token, URL sensível ou corpo.
 - [x] Usar chaves determinísticas como
   `email-verification/{tokenId}` e `password-reset/{tokenId}`.
-- [ ] Tratar separadamente rejeição definitiva, indisponibilidade temporária e
+- [x] Tratar separadamente rejeição definitiva, indisponibilidade temporária e
   timeout de resultado desconhecido.
-- [ ] Não remover um token válido somente porque um timeout deixou incerto se o
-  provedor aceitou a mensagem; repetir com a mesma chave idempotente.
+- [x] Não remover um token válido somente porque um timeout deixou incerto se o
+  provedor aceitou a mensagem.
+- [ ] Repetir uma entrega pendente usando o mesmo token e a mesma chave
+  idempotente, sem gerar outro token a cada tentativa.
 - [ ] Persistir o identificador do provedor e o estado mínimo da entrega para
   auditoria, sem guardar o token bruto nem o conteúdo completo do e-mail.
 - [x] Ajustar cadastro, reenvio e recuperação para respostas honestas quando o
@@ -148,6 +150,24 @@ deve usar “enviado” quando a API só conhece um estado pendente.
   porta no executor local antes de ser encerrado; portanto ele não conta como
   evidência de startup e deverá ser repetido no deploy Railway;
 - nenhuma conta, chave, variável remota, domínio ou webhook do Resend foi criado.
+
+## Evidências do adapter Resend em 31 de agosto de 2026
+
+- build da API e do projeto de testes aprovado com zero erros e zero avisos;
+- 44 testes focados em Resend, configuração, autenticação e automação aprovados;
+- mais 14 testes do adapter/configuração aprovados depois da cobertura explícita
+  de timeout;
+- a suíte completa anterior ao último teste adicional terminou com 108 de 109
+  testes aprovados e somente a falha conhecida de limite da importação;
+- headers `Authorization`, `User-Agent` e `Idempotency-Key`, payload e ID de
+  resposta foram verificados sem realizar chamadas externas;
+- respostas `429`, `5xx` e conflito concorrente são pendentes; erros definitivos
+  de autenticação, validação e idempotência são rejeitados;
+- falha de rede e timeout preservam estado pendente, enquanto cancelamento do
+  cliente continua sendo propagado;
+- o adapter SMTP legado foi removido;
+- `Email__Enabled=false` permanece em todos os exemplos e nenhum secret real foi
+  criado ou armazenado.
 
 ## Etapa posterior: notificações financeiras
 
