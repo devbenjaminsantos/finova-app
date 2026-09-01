@@ -139,6 +139,11 @@ DMARC.
   `Resend__ApiKey`, `Resend__FromEmail`, `Resend__FromName` e
   `Client__BaseUrl`, sem expor os valores.
 - [ ] Aplicar as migrations no Neon e confirmar o startup da Railway.
+  - Bloqueio encontrado em 1 de setembro de 2026: a conexão de runtime da API
+    não tem `CREATE` no schema `public` (`SQLSTATE 42501`), como esperado para
+    menor privilégio. Criar uma role/conexão administrativa exclusiva em
+    `ConnectionStrings__Migration`; não conceder DDL à conexão de runtime nem
+    habilitar o Resend antes disso.
 - [ ] Enviar confirmação e recuperação para uma conta controlada e verificar o
   ID aceito pelo Resend. O estado `delivered` continua dependendo do webhook.
 

@@ -379,8 +379,17 @@ static async Task ApplyPendingMigrationsOnStartupAsync(WebApplication app)
         return;
     }
 
-    await using var scope = app.Services.CreateAsyncScope();
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var migrationConnectionString = app.Configuration.GetConnectionString("Migration");
+    if (string.IsNullOrWhiteSpace(migrationConnectionString))
+    {
+        throw new InvalidOperationException(
+            "ConnectionStrings__Migration é obrigatória quando Database__ApplyMigrationsOnStartup=true.");
+    }
+
+    var options = new DbContextOptionsBuilder<AppDbContext>()
+        .UseNpgsql(migrationConnectionString)
+        .Options;
+    await using var context = new AppDbContext(options);
     var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
     var pendingMigrationCount = pendingMigrations.Count();
 
