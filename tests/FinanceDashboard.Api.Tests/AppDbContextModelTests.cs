@@ -133,6 +133,38 @@ public class AppDbContextModelTests
             GetColumnType(context, typeof(BudgetGoal), nameof(BudgetGoal.Category)));
     }
 
+    [Fact]
+    public void TransactionalEmailDeliveryTokenIndexesIgnoreNullsInBothProviders()
+    {
+        using var sqlServerContext = CreateSqlServerContext();
+        using var postgreSqlContext = CreatePostgreSqlContext();
+
+        Assert.Equal(
+            "[EmailVerificationTokenId] IS NOT NULL",
+            GetIndexFilter(
+                sqlServerContext,
+                typeof(TransactionalEmailDelivery),
+                nameof(TransactionalEmailDelivery.EmailVerificationTokenId)));
+        Assert.Equal(
+            "[PasswordResetTokenId] IS NOT NULL",
+            GetIndexFilter(
+                sqlServerContext,
+                typeof(TransactionalEmailDelivery),
+                nameof(TransactionalEmailDelivery.PasswordResetTokenId)));
+        Assert.Equal(
+            "\"EmailVerificationTokenId\" IS NOT NULL",
+            GetIndexFilter(
+                postgreSqlContext,
+                typeof(TransactionalEmailDelivery),
+                nameof(TransactionalEmailDelivery.EmailVerificationTokenId)));
+        Assert.Equal(
+            "\"PasswordResetTokenId\" IS NOT NULL",
+            GetIndexFilter(
+                postgreSqlContext,
+                typeof(TransactionalEmailDelivery),
+                nameof(TransactionalEmailDelivery.PasswordResetTokenId)));
+    }
+
     private static string? GetPublicDashboardTokenIndexFilter(AppDbContext context)
     {
         var userEntity = context.Model.FindEntityType(typeof(User))
@@ -143,6 +175,21 @@ public class AppDbContextModelTests
             .Single(index => index.Properties.SequenceEqual(new[] { tokenProperty }));
 
         return tokenIndex.GetFilter();
+    }
+
+    private static string? GetIndexFilter(
+        AppDbContext context,
+        Type entityType,
+        string propertyName)
+    {
+        var entity = context.Model.FindEntityType(entityType)
+            ?? throw new InvalidOperationException("A entidade não foi encontrada.");
+        var property = entity.FindProperty(propertyName)
+            ?? throw new InvalidOperationException("A propriedade não foi encontrada.");
+        var index = entity.GetIndexes()
+            .Single(candidate => candidate.Properties.SequenceEqual(new[] { property }));
+
+        return index.GetFilter();
     }
 
     private static string GetCheckConstraintSql<TEntity>(

@@ -6,6 +6,7 @@ using FinanceDashboard.Api.Services.Audit;
 using FinanceDashboard.Api.Services.Auth;
 using FinanceDashboard.Api.Services.Demo;
 using FinanceDashboard.Api.Services.Email;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -688,7 +689,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task ResendEmailVerification_PreservesPreviousToken_WhenEmailFails()
+    public async Task ResendEmailVerification_PersistsNewPendingToken_WhenPreviousDeliveryWasAccepted()
     {
         using var context = CreateContext();
         var emailSender = new FakeEmailSender();
@@ -710,9 +711,12 @@ public class AuthControllerTests
         });
 
         Assert.IsType<OkObjectResult>(result);
-        var remainingToken = await context.EmailVerificationTokens.SingleAsync();
-        Assert.Equal(previousToken.Id, remainingToken.Id);
-        Assert.Null(remainingToken.UsedAtUtc);
+        var remainingTokens = await context.EmailVerificationTokens.ToListAsync();
+        Assert.Equal(2, remainingTokens.Count);
+        Assert.Contains(remainingTokens, token => token.Id == previousToken.Id && token.UsedAtUtc is null);
+        Assert.Contains(context.TransactionalEmailDeliveries, delivery =>
+            delivery.Status == TransactionalEmailDeliveryStatus.Pending &&
+            delivery.EmailVerificationTokenId != previousToken.Id);
     }
 
     [Fact]
@@ -738,6 +742,42 @@ public class AuthControllerTests
         Assert.IsType<OkObjectResult>(result);
         Assert.Equal(2, await context.EmailVerificationTokens.CountAsync());
         Assert.Contains(context.AuditLogs, log => log.Action == "auth.verification-resend-pending");
+    }
+
+    [Fact]
+    public async Task ResendEmailVerification_RetriesPendingDelivery_WithSameLinkAndIdempotencyKey()
+    {
+        using var context = CreateContext();
+        var emailSender = new FakeEmailSender
+        {
+            VerificationResult = EmailSendResult.Pending("timeout")
+        };
+        var controller = CreateController(context, emailSender: emailSender);
+
+        await controller.Register(new RegisterRequest
+        {
+            Name = "Novo Usuário",
+            Email = "novo@hestia.local",
+            Password = "SenhaSegura123!"
+        });
+
+        var firstUrl = emailSender.LastVerificationUrl;
+        var firstIdempotencyKey = emailSender.LastVerificationIdempotencyKey;
+        emailSender.VerificationResult = EmailSendResult.Accepted("resend-message-1");
+
+        var result = await controller.ResendEmailVerification(new ResendEmailVerificationRequest
+        {
+            Email = "novo@hestia.local"
+        });
+
+        Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(firstUrl, emailSender.LastVerificationUrl);
+        Assert.Equal(firstIdempotencyKey, emailSender.LastVerificationIdempotencyKey);
+        Assert.Single(context.EmailVerificationTokens);
+        var delivery = await context.TransactionalEmailDeliveries.SingleAsync();
+        Assert.Equal(2, delivery.AttemptCount);
+        Assert.Equal(TransactionalEmailDeliveryStatus.Accepted, delivery.Status);
+        Assert.Equal("resend-message-1", delivery.ProviderMessageId);
     }
 
     [Fact]
@@ -781,7 +821,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task ForgotPassword_PreservesPreviousToken_WhenEmailFailsInProduction()
+    public async Task ForgotPassword_PersistsPendingToken_WhenNewDeliveryFailsInProduction()
     {
         using var context = CreateContext();
         var emailSender = new FakeEmailSender();
@@ -811,9 +851,12 @@ public class AuthControllerTests
         emailSender.ThrowOnPasswordReset = true;
         await controller.ForgotPassword(new ForgotPasswordRequest { Email = user.Email });
 
-        var remainingToken = await context.PasswordResetTokens.SingleAsync();
-        Assert.Equal(previousToken.Id, remainingToken.Id);
-        Assert.Null(remainingToken.UsedAtUtc);
+        var remainingTokens = await context.PasswordResetTokens.ToListAsync();
+        Assert.Equal(2, remainingTokens.Count);
+        Assert.Contains(remainingTokens, token => token.Id == previousToken.Id && token.UsedAtUtc is null);
+        Assert.Contains(context.TransactionalEmailDeliveries, delivery =>
+            delivery.Status == TransactionalEmailDeliveryStatus.Pending &&
+            delivery.PasswordResetTokenId != previousToken.Id);
     }
 
     [Fact]
@@ -842,6 +885,49 @@ public class AuthControllerTests
         Assert.Contains(
             context.AuditLogs,
             log => log.Summary.Contains("entrega do e-mail pendente", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ForgotPassword_RetriesPendingDelivery_WithSameLinkAndIdempotencyKey()
+    {
+        using var context = CreateContext();
+        var emailSender = new FakeEmailSender
+        {
+            ResetResult = EmailSendResult.Pending("network_error")
+        };
+        var controller = CreateController(
+            context,
+            emailSender: emailSender,
+            configurationValues: new Dictionary<string, string?>
+            {
+                ["PasswordReset:ExposeResetUrlInResponse"] = "true"
+            });
+        var user = new User
+        {
+            Name = "Héstia User",
+            Email = "user@hestia.local",
+            EmailConfirmed = true,
+            PasswordHash = "hash"
+        };
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+
+        await controller.ForgotPassword(new ForgotPasswordRequest { Email = user.Email });
+        var firstUrl = emailSender.LastResetUrl;
+        var firstIdempotencyKey = emailSender.LastResetIdempotencyKey;
+        emailSender.ResetResult = EmailSendResult.Accepted("resend-message-2");
+
+        var result = await controller.ForgotPassword(new ForgotPasswordRequest { Email = user.Email });
+
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var payload = Assert.IsType<ForgotPasswordResponse>(ok.Value);
+        Assert.Equal(firstUrl, emailSender.LastResetUrl);
+        Assert.Equal(firstIdempotencyKey, emailSender.LastResetIdempotencyKey);
+        Assert.Equal(firstUrl, payload.ResetUrl);
+        Assert.Single(context.PasswordResetTokens);
+        var delivery = await context.TransactionalEmailDeliveries.SingleAsync();
+        Assert.Equal(2, delivery.AttemptCount);
+        Assert.Equal(TransactionalEmailDeliveryStatus.Accepted, delivery.Status);
     }
 
     [Fact]
@@ -983,6 +1069,7 @@ public class AuthControllerTests
             .Build();
 
         var environment = new FakeWebHostEnvironment { EnvironmentName = environmentName };
+        var tokenUtility = new PasswordResetTokenService();
         var controller = new AuthController(
             context,
             new AuditLogService(context, new HttpContextAccessor()),
@@ -990,8 +1077,14 @@ public class AuthControllerTests
             new PasswordPolicyService(),
             new JwTokenService(configuration),
             new AuthCookieService(environment),
-            new PasswordResetTokenService(),
-            emailSender ?? new FakeEmailSender(),
+            tokenUtility,
+            new TransactionalEmailDeliveryService(
+                context,
+                emailSender ?? new FakeEmailSender(),
+                tokenUtility,
+                new EphemeralDataProtectionProvider(),
+                configuration,
+                NullLogger<TransactionalEmailDeliveryService>.Instance),
             new DemoAccountPreparationService(context, CreatePasswordHasher()),
             configuration,
             environment,

@@ -13,6 +13,7 @@ using FinanceDashboard.Api.Services.PublicDashboard;
 using FinanceDashboard.Api.Services.Recurring;
 using FinanceDashboard.Api.Services.Security;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,7 @@ builder.Services.Configure<PluggyOptions>(
 builder.Services.Configure<NotificationOptions>(
     builder.Configuration.GetSection(NotificationOptions.SectionName));
 builder.Services.AddHestiaEmail(builder.Configuration);
+builder.Services.AddDataProtection().SetApplicationName("Hestia");
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<IPluggyClient, PluggyClient>((serviceProvider, client) =>
 {
@@ -67,6 +69,7 @@ builder.Services.AddScoped<AuthCookieService>();
 builder.Services.AddScoped<CookieAntiforgeryFilter>();
 builder.Services.AddScoped<SessionValidationService>();
 builder.Services.AddScoped<PasswordResetTokenService>();
+builder.Services.AddScoped<TransactionalEmailDeliveryService>();
 builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<BankSyncService>();
 builder.Services.AddScoped<RecurringTransactionGenerationService>();

@@ -1,7 +1,7 @@
 # Decisão e roadmap de e-mail transacional
 
-**Última revisão:** 31 de agosto de 2026  
-**Estado:** adapter Resend implementado e mantido desativado; configuração
+**Última revisão:** 1 de setembro de 2026
+**Estado:** adapter Resend e outbox transacional implementados e mantidos desativados; configuração
 remota e envio real adiados até a definição do domínio próprio da Héstia.
 
 ## Decisão
@@ -96,9 +96,9 @@ deve usar “enviado” quando a API só conhece um estado pendente.
   timeout de resultado desconhecido.
 - [x] Não remover um token válido somente porque um timeout deixou incerto se o
   provedor aceitou a mensagem.
-- [ ] Repetir uma entrega pendente usando o mesmo token e a mesma chave
+- [x] Repetir uma entrega pendente usando o mesmo token e a mesma chave
   idempotente, sem gerar outro token a cada tentativa.
-- [ ] Persistir o identificador do provedor e o estado mínimo da entrega para
+- [x] Persistir o identificador do provedor e o estado mínimo da entrega para
   auditoria, sem guardar o token bruto nem o conteúdo completo do e-mail.
 - [x] Ajustar cadastro, reenvio e recuperação para respostas honestas quando o
   serviço estiver desligado ou pendente.
@@ -106,6 +106,19 @@ deve usar “enviado” quando a API só conhece um estado pendente.
   loading/retry adequados ao cold boot da Railway.
 - [x] Manter `Notifications__Enabled=false`; alertas financeiros e resumo
   mensal continuam fora da primeira ativação.
+
+O outbox `TransactionalEmailDeliveries` é criado antes da chamada externa. Ele
+guarda somente o tipo do evento, referência do token, chave idempotente,
+contador/timestamps, estado, código de falha e ID retornado pelo provedor. O
+token recuperável fica protegido pelo ASP.NET Core Data Protection, nunca em
+texto claro, e a URL/conteúdo são refeitos em memória no retry.
+
+**Limite conhecido:** essa proteção usa o key ring configurado para a API. Antes
+de depender de retries após redeploy ou de escalar a API, o key ring deve ser
+persistido/compartilhado fora do container; se uma chave anterior não puder ser
+aberta, a entrega é marcada como rejeitada com `delivery_token_unavailable` e o
+próximo reenvio cria um link novo. Isso evita armazenar o token em claro, mas
+não substitui a configuração de Data Protection da infraestrutura.
 
 ## Ativação depois do domínio próprio
 
@@ -168,6 +181,17 @@ deve usar “enviado” quando a API só conhece um estado pendente.
 - o adapter SMTP legado foi removido;
 - `Email__Enabled=false` permanece em todos os exemplos e nenhum secret real foi
   criado ou armazenado.
+
+## Evidências do outbox transacional em 1 de setembro de 2026
+
+- a migration `20260901141938_AddTransactionalEmailDeliveries` cria a tabela,
+  referências exclusivas para exatamente um token, chave idempotente única e
+  índices filtrados compatíveis com PostgreSQL e SQL Server;
+- 35 testes focados de autenticação e modelo passaram, incluindo repetição de
+  confirmação e recuperação com a mesma URL e a mesma chave;
+- nenhuma migration foi aplicada no Neon/Railway e nenhum e-mail foi enviado;
+- o envio segue condicionado a `Email__Enabled=true` e ao domínio configurado
+  posteriormente.
 
 ## Etapa posterior: notificações financeiras
 

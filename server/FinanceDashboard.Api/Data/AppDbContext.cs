@@ -19,6 +19,7 @@ namespace FinanceDashboard.Api.Data
         public DbSet<TransactionTagLink> TransactionTagLinks { get; set; }
         public DbSet<BudgetGoal> BudgetGoals { get; set; }
         public DbSet<NotificationDelivery> NotificationDeliveries { get; set; }
+        public DbSet<TransactionalEmailDelivery> TransactionalEmailDeliveries { get; set; }
         public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
@@ -397,6 +398,54 @@ namespace FinanceDashboard.Api.Data
                 entity.HasOne(token => token.User)
                     .WithMany(user => user.EmailVerificationTokens)
                     .HasForeignKey(token => token.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<TransactionalEmailDelivery>(entity =>
+            {
+                entity.Property(delivery => delivery.EventType).HasMaxLength(40);
+                entity.Property(delivery => delivery.IdempotencyKey).HasMaxLength(256);
+                entity.Property(delivery => delivery.ProtectedToken).HasMaxLength(512);
+                entity.Property(delivery => delivery.Status).HasConversion<string>().HasMaxLength(16);
+                entity.Property(delivery => delivery.ProviderMessageId).HasMaxLength(256);
+                entity.Property(delivery => delivery.FailureCode).HasMaxLength(80);
+
+                entity.HasIndex(delivery => delivery.IdempotencyKey).IsUnique();
+                var verificationDeliveryIndex = entity
+                    .HasIndex(delivery => delivery.EmailVerificationTokenId)
+                    .IsUnique();
+                var resetDeliveryIndex = entity
+                    .HasIndex(delivery => delivery.PasswordResetTokenId)
+                    .IsUnique();
+
+                if (Database.IsSqlServer())
+                {
+                    verificationDeliveryIndex.HasFilter("[EmailVerificationTokenId] IS NOT NULL");
+                    resetDeliveryIndex.HasFilter("[PasswordResetTokenId] IS NOT NULL");
+                }
+                else if (usesPostgreSql)
+                {
+                    verificationDeliveryIndex.HasFilter("\"EmailVerificationTokenId\" IS NOT NULL");
+                    resetDeliveryIndex.HasFilter("\"PasswordResetTokenId\" IS NOT NULL");
+                }
+                entity.HasIndex(delivery => new { delivery.UserId, delivery.EventType, delivery.Status });
+
+                entity.ToTable(table => table.HasCheckConstraint(
+                    "CK_TransactionalEmailDeliveries_ExactlyOneToken",
+                    $"({Column("EmailVerificationTokenId")} IS NOT NULL AND {Column("PasswordResetTokenId")} IS NULL) OR " +
+                    $"({Column("EmailVerificationTokenId")} IS NULL AND {Column("PasswordResetTokenId")} IS NOT NULL)"));
+
+                entity.HasOne(delivery => delivery.User)
+                    .WithMany(user => user.TransactionalEmailDeliveries)
+                    .HasForeignKey(delivery => delivery.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(delivery => delivery.EmailVerificationToken)
+                    .WithOne()
+                    .HasForeignKey<TransactionalEmailDelivery>(delivery => delivery.EmailVerificationTokenId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(delivery => delivery.PasswordResetToken)
+                    .WithOne()
+                    .HasForeignKey<TransactionalEmailDelivery>(delivery => delivery.PasswordResetTokenId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 

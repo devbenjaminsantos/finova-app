@@ -29,7 +29,7 @@ namespace FinanceDashboard.Api.Controllers
         private readonly JwTokenService _tokenService;
         private readonly AuthCookieService _authCookieService;
         private readonly PasswordResetTokenService _tokenUtility;
-        private readonly IEmailSender _emailSender;
+        private readonly TransactionalEmailDeliveryService _transactionalEmailDeliveryService;
         private readonly DemoAccountPreparationService _demoAccountPreparationService;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
@@ -43,7 +43,7 @@ namespace FinanceDashboard.Api.Controllers
             JwTokenService tokenService,
             AuthCookieService authCookieService,
             PasswordResetTokenService tokenUtility,
-            IEmailSender emailSender,
+            TransactionalEmailDeliveryService transactionalEmailDeliveryService,
             DemoAccountPreparationService demoAccountPreparationService,
             IConfiguration configuration,
             IWebHostEnvironment environment,
@@ -56,7 +56,7 @@ namespace FinanceDashboard.Api.Controllers
             _tokenService = tokenService;
             _authCookieService = authCookieService;
             _tokenUtility = tokenUtility;
-            _emailSender = emailSender;
+            _transactionalEmailDeliveryService = transactionalEmailDeliveryService;
             _demoAccountPreparationService = demoAccountPreparationService;
             _configuration = configuration;
             _environment = environment;
@@ -125,30 +125,10 @@ namespace FinanceDashboard.Api.Controllers
                 });
             }
 
-            var (verificationToken, verificationUrl) = await CreateEmailVerificationTokenAsync(user);
-            var verificationSent = false;
-
-            try
-            {
-                var sendResult = await _emailSender.SendEmailVerificationAsync(
-                    user.Email,
-                    user.Name,
-                    verificationUrl,
-                    BuildEmailIdempotencyKey("email-verification", verificationToken.Id),
-                    HttpContext.RequestAborted);
-                verificationSent = sendResult.IsAccepted;
-                LogEmailSendResult(sendResult, "email-verification", user.Id);
-            }
-            catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception exception)
-            {
-                _logger.LogWarning(
-                    exception,
-                    "Não foi possível solicitar o e-mail de confirmação ao provedor.");
-            }
+            var verificationAttempt = await _transactionalEmailDeliveryService
+                .CreateAndSendEmailVerificationAsync(user, HttpContext.RequestAborted);
+            var verificationSent = verificationAttempt.Result.IsAccepted;
+            LogEmailSendResult(verificationAttempt.Result, "email-verification", user.Id);
 
             await _auditLogService.WriteAsync(
                 action: "auth.registered",
@@ -318,48 +298,44 @@ namespace FinanceDashboard.Api.Controllers
                 });
             }
 
-            var (verificationToken, verificationUrl) = await CreateEmailVerificationTokenAsync(user);
-            var verificationSent = false;
+            var retryAttempt = await _transactionalEmailDeliveryService
+                .RetryLatestPendingEmailVerificationAsync(user, HttpContext.RequestAborted);
 
-            try
+            if (retryAttempt is not null && retryAttempt.Result.IsAccepted)
             {
-                var sendResult = await _emailSender.SendEmailVerificationAsync(
-                    user.Email,
-                    user.Name,
-                    verificationUrl,
-                    BuildEmailIdempotencyKey("email-verification", verificationToken.Id),
-                    HttpContext.RequestAborted);
-                verificationSent = sendResult.IsAccepted;
-                LogEmailSendResult(sendResult, "email-verification", user.Id);
-
-                if (sendResult.IsPending)
-                {
-                    await _auditLogService.WriteAsync(
-                        action: "auth.verification-resend-pending",
-                        entityType: "User",
-                        entityId: user.Id.ToString(),
-                        userId: user.Id,
-                        summary: "Novo link criado; resultado do envio de confirmação pendente.");
-                    return Ok(new
-                    {
-                        message = "Se a conta existir e ainda não estiver confirmada, enviaremos um novo link."
-                    });
-                }
-            }
-            catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception exception)
-            {
-                _logger.LogWarning(
-                    exception,
-                    "Não foi possível solicitar o reenvio de confirmação ao provedor.");
+                await InvalidateActiveEmailVerificationTokensAsync(
+                    user.Id,
+                    retryAttempt.Delivery.EmailVerificationTokenId!.Value);
+                await _auditLogService.WriteAsync(
+                    action: "auth.verification-resent",
+                    entityType: "User",
+                    entityId: user.Id.ToString(),
+                    userId: user.Id,
+                    summary: "E-mail de confirmação reenviado com o mesmo link pendente.");
+                return NeutralResendVerificationResponse();
             }
 
-            if (verificationSent)
+            if (retryAttempt is not null && retryAttempt.Result.IsPending)
             {
-                await InvalidateActiveEmailVerificationTokensAsync(user.Id, verificationToken.Id);
+                LogEmailSendResult(retryAttempt.Result, "email-verification", user.Id);
+                await _auditLogService.WriteAsync(
+                    action: "auth.verification-resend-pending",
+                    entityType: "User",
+                    entityId: user.Id.ToString(),
+                    userId: user.Id,
+                    summary: "Link existente reenviado; resultado da entrega ainda pendente.");
+                return NeutralResendVerificationResponse();
+            }
+
+            var verificationAttempt = await _transactionalEmailDeliveryService
+                .CreateAndSendEmailVerificationAsync(user, HttpContext.RequestAborted);
+            LogEmailSendResult(verificationAttempt.Result, "email-verification", user.Id);
+
+            if (verificationAttempt.Result.IsAccepted)
+            {
+                await InvalidateActiveEmailVerificationTokensAsync(
+                    user.Id,
+                    verificationAttempt.Delivery.EmailVerificationTokenId!.Value);
                 await _auditLogService.WriteAsync(
                     action: "auth.verification-resent",
                     entityType: "User",
@@ -367,16 +343,23 @@ namespace FinanceDashboard.Api.Controllers
                     userId: user.Id,
                     summary: "Novo e-mail de confirmação enviado.");
             }
+            else if (verificationAttempt.Result.IsPending)
+            {
+                await _auditLogService.WriteAsync(
+                    action: "auth.verification-resend-pending",
+                    entityType: "User",
+                    entityId: user.Id.ToString(),
+                    userId: user.Id,
+                    summary: "Novo link criado; resultado do envio de confirmação pendente.");
+            }
             else
             {
-                _context.EmailVerificationTokens.Remove(verificationToken);
-                await _context.SaveChangesAsync();
+                await _transactionalEmailDeliveryService.DiscardAsync(
+                    verificationAttempt.Delivery,
+                    HttpContext.RequestAborted);
             }
 
-            return Ok(new
-            {
-                message = "Se a conta existir e ainda não estiver confirmada, enviaremos um novo link."
-            });
+            return NeutralResendVerificationResponse();
         }
 
         [HttpPost("verify-email")]
@@ -438,53 +421,37 @@ namespace FinanceDashboard.Api.Controllers
                 return Ok(response);
             }
 
-            var (resetToken, resetUrl) = await CreatePasswordResetTokenAsync(user);
-            var resetEmailSent = false;
-
-            try
-            {
-                var sendResult = await _emailSender.SendPasswordResetEmailAsync(
-                    user.Email,
-                    user.Name,
-                    resetUrl,
-                    BuildEmailIdempotencyKey("password-reset", resetToken.Id),
-                    HttpContext.RequestAborted);
-                resetEmailSent = sendResult.IsAccepted;
-                LogEmailSendResult(sendResult, "password-reset", user.Id);
-
-                if (sendResult.IsPending)
-                {
-                    await _auditLogService.WriteAsync(
-                        action: "auth.password-reset-requested",
-                        entityType: "User",
-                        entityId: user.Id.ToString(),
-                        userId: user.Id,
-                        summary: "Solicitação de redefinição registrada; entrega do e-mail pendente.");
-                    return Ok(response);
-                }
-            }
-            catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
-            {
-                throw;
-            }
-            catch (Exception exception)
-            {
-                _logger.LogWarning(
-                    exception,
-                    "Não foi possível solicitar o e-mail de redefinição ao provedor.");
-            }
-
             var exposeResetUrl = _environment.IsDevelopment() ||
                 _configuration.GetValue("PasswordReset:ExposeResetUrlInResponse", false);
+            var resetAttempt = await _transactionalEmailDeliveryService
+                .RetryLatestPendingPasswordResetAsync(user, HttpContext.RequestAborted)
+                ?? await _transactionalEmailDeliveryService
+                    .CreateAndSendPasswordResetAsync(user, HttpContext.RequestAborted);
+            var resetEmailSent = resetAttempt.Result.IsAccepted;
+            LogEmailSendResult(resetAttempt.Result, "password-reset", user.Id);
+
+            if (resetAttempt.Result.IsPending)
+            {
+                await _auditLogService.WriteAsync(
+                    action: "auth.password-reset-requested",
+                    entityType: "User",
+                    entityId: user.Id.ToString(),
+                    userId: user.Id,
+                    summary: "Solicitação de redefinição registrada; entrega do e-mail pendente.");
+                return Ok(response);
+            }
 
             if (resetEmailSent || exposeResetUrl)
             {
-                await InvalidateActivePasswordResetTokensAsync(user.Id, resetToken.Id);
+                await InvalidateActivePasswordResetTokensAsync(
+                    user.Id,
+                    resetAttempt.Delivery.PasswordResetTokenId!.Value);
             }
             else
             {
-                _context.PasswordResetTokens.Remove(resetToken);
-                await _context.SaveChangesAsync();
+                await _transactionalEmailDeliveryService.DiscardAsync(
+                    resetAttempt.Delivery,
+                    HttpContext.RequestAborted);
             }
 
             await _auditLogService.WriteAsync(
@@ -498,7 +465,7 @@ namespace FinanceDashboard.Api.Controllers
 
             if (exposeResetUrl)
             {
-                response.ResetUrl = resetUrl;
+                response.ResetUrl = resetAttempt.Url;
             }
 
             return Ok(response);
@@ -619,26 +586,6 @@ namespace FinanceDashboard.Api.Controllers
             };
         }
 
-        private async Task<(EmailVerificationToken Token, string Url)> CreateEmailVerificationTokenAsync(User user)
-        {
-            var now = DateTime.UtcNow;
-            var rawToken = _tokenUtility.GenerateToken();
-
-            var token = new EmailVerificationToken
-            {
-                UserId = user.Id,
-                TokenHash = _tokenUtility.HashToken(rawToken),
-                CreatedAtUtc = now,
-                ExpiresAtUtc = now.AddHours(24)
-            };
-
-            _context.EmailVerificationTokens.Add(token);
-
-            await _context.SaveChangesAsync();
-
-            return (token, BuildEmailVerificationUrl(rawToken));
-        }
-
         private async Task InvalidateActiveEmailVerificationTokensAsync(int userId, int exceptTokenId)
         {
             var now = DateTime.UtcNow;
@@ -660,24 +607,6 @@ namespace FinanceDashboard.Api.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-        }
-
-        private async Task<(PasswordResetToken Token, string Url)> CreatePasswordResetTokenAsync(User user)
-        {
-            var now = DateTime.UtcNow;
-            var rawToken = _tokenUtility.GenerateToken();
-            var token = new PasswordResetToken
-            {
-                UserId = user.Id,
-                TokenHash = _tokenUtility.HashToken(rawToken),
-                CreatedAtUtc = now,
-                ExpiresAtUtc = now.AddMinutes(30)
-            };
-
-            _context.PasswordResetTokens.Add(token);
-            await _context.SaveChangesAsync();
-
-            return (token, BuildResetUrl(rawToken));
         }
 
         private async Task InvalidateActivePasswordResetTokensAsync(int userId, int exceptTokenId)
@@ -702,20 +631,10 @@ namespace FinanceDashboard.Api.Controllers
             }
         }
 
-        private string BuildResetUrl(string token)
+        private OkObjectResult NeutralResendVerificationResponse() => Ok(new
         {
-            return $"{ResolveClientBaseUrl()}/reset-password?token={Uri.EscapeDataString(token)}";
-        }
-
-        private string BuildEmailVerificationUrl(string token)
-        {
-            return $"{ResolveClientBaseUrl()}/verify-email?token={Uri.EscapeDataString(token)}";
-        }
-
-        private static string BuildEmailIdempotencyKey(string eventType, int tokenId)
-        {
-            return $"{eventType}/{tokenId}";
-        }
+            message = "Se a conta existir e ainda não estiver confirmada, enviaremos um novo link."
+        });
 
         private void LogEmailSendResult(EmailSendResult result, string eventType, int userId)
         {

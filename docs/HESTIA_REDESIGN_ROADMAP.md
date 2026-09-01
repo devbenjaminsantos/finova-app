@@ -636,6 +636,8 @@ prevalece sobre referências históricas ao Brevo neste documento.
   confirmação de e-mail não puder ser enviada.
 - [x] Adicionar timeout e cancelamento ao envio HTTP para não prender requisições
   HTTP indefinidamente.
+- [x] Persistir entregas transacionais pendentes e repetir com o mesmo token e
+  chave idempotente, sem armazenar token ou conteúdo em texto claro.
 - [x] Manter apenas placeholders nos arquivos de exemplo; não criar nem inserir
   chave Resend agora.
 - [x] Manter `Notifications__Enabled=false` no serviço web.

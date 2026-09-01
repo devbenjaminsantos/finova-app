@@ -39,8 +39,10 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [x] Liberar nova tentativa quando o provedor rejeitar o envio.
   - [x] Cobrir orquestração de entrega única, repetição e falha com testes unitários.
   - [ ] Validar duas instâncias concorrentes contra o Azure SQL ativo.
-  - [ ] Fechar a janela entre o aceite externo e o commit local com a chave
-    idempotente do Resend e um estado de entrega persistido.
+  - [x] Fechar a janela entre o aceite externo e o commit local com a chave
+    idempotente do Resend e um estado de entrega persistido antes do envio.
+    A recuperação após redeploy ainda depende de persistir o key ring de Data
+    Protection antes de escalar a API.
 - [x] Confirmar persistência compartilhada do ASP.NET Core Data Protection entre instâncias do mesmo slot no Azure App Service.
 - [ ] Adotar key ring externo antes de usar troca de deployment slots, pois slots diferentes não compartilham chaves.
 - [ ] Isolar a conta demo, com expiração e proteção contra uso concorrente abusivo.

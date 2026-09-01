@@ -28,6 +28,7 @@ namespace FinanceDashboard.Api.Models
         public ICollection<FinancialAccount> FinancialAccounts { get; set; } = new List<FinancialAccount>();
         public ICollection<BudgetGoal> BudgetGoals { get; set; } = new List<BudgetGoal>();
         public ICollection<NotificationDelivery> NotificationDeliveries { get; set; } = new List<NotificationDelivery>();
+        public ICollection<TransactionalEmailDelivery> TransactionalEmailDeliveries { get; set; } = new List<TransactionalEmailDelivery>();
         public ICollection<EmailVerificationToken> EmailVerificationTokens { get; set; } = new List<EmailVerificationToken>();
         public ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
         public ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
