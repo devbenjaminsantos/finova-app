@@ -16,7 +16,10 @@ public static class DatabaseConfiguration
         IConfiguration configuration)
     {
         var provider = ResolveProvider(configuration["Database:Provider"]);
-        var connectionString = GetRequiredConnectionString(configuration);
+        var configuredConnectionString = GetRequiredConnectionString(configuration);
+        var connectionString = provider == HestiaDatabaseProvider.PostgreSql
+            ? NormalizePostgreSqlConnectionString(configuredConnectionString)
+            : configuredConnectionString;
 
         services.AddDbContext<AppDbContext>(options =>
         {
@@ -87,14 +90,14 @@ public static class DatabaseConfiguration
             string.IsNullOrWhiteSpace(uri.AbsolutePath.Trim('/')))
         {
             throw new InvalidOperationException(
-                "A conexão de migration do PostgreSQL precisa estar em um formato válido.");
+                "A conexão do PostgreSQL precisa estar em um formato válido.");
         }
 
         var userInfoSeparator = uri.UserInfo.IndexOf(':');
         if (userInfoSeparator <= 0 || userInfoSeparator == uri.UserInfo.Length - 1)
         {
             throw new InvalidOperationException(
-                "A conexão de migration do PostgreSQL precisa informar usuário e senha.");
+                "A conexão do PostgreSQL precisa informar usuário e senha.");
         }
 
         var builder = new NpgsqlConnectionStringBuilder
@@ -129,7 +132,7 @@ public static class DatabaseConfiguration
                     if (!int.TryParse(value, out var timeout) || timeout < 0)
                     {
                         throw new InvalidOperationException(
-                            "A conexão de migration do PostgreSQL contém connect_timeout inválido.");
+                            "A conexão do PostgreSQL contém connect_timeout inválido.");
                     }
 
                     builder.Timeout = timeout;
