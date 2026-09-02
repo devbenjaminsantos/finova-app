@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace FinanceDashboard.Api.Data;
 
@@ -69,6 +70,74 @@ public static class DatabaseConfiguration
         throw new InvalidOperationException(
             "Database:Provider deve ser SqlServer ou PostgreSql. " +
             "Em variáveis de ambiente, use Database__Provider.");
+    }
+
+    public static string NormalizePostgreSqlConnectionString(string connectionString)
+    {
+        var candidate = connectionString.Trim();
+
+        if (!candidate.StartsWith("postgres", StringComparison.OrdinalIgnoreCase))
+        {
+            return candidate;
+        }
+
+        if (!Uri.TryCreate(candidate, UriKind.Absolute, out var uri) ||
+            uri.Scheme is not ("postgres" or "postgresql") ||
+            string.IsNullOrWhiteSpace(uri.Host) ||
+            string.IsNullOrWhiteSpace(uri.AbsolutePath.Trim('/')))
+        {
+            throw new InvalidOperationException(
+                "A conexão de migration do PostgreSQL precisa estar em um formato válido.");
+        }
+
+        var userInfoSeparator = uri.UserInfo.IndexOf(':');
+        if (userInfoSeparator <= 0 || userInfoSeparator == uri.UserInfo.Length - 1)
+        {
+            throw new InvalidOperationException(
+                "A conexão de migration do PostgreSQL precisa informar usuário e senha.");
+        }
+
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = uri.Host,
+            Port = uri.IsDefaultPort ? 5432 : uri.Port,
+            Database = Uri.UnescapeDataString(uri.AbsolutePath.Trim('/')),
+            Username = Uri.UnescapeDataString(uri.UserInfo[..userInfoSeparator]),
+            Password = Uri.UnescapeDataString(uri.UserInfo[(userInfoSeparator + 1)..])
+        };
+
+        foreach (var parameter in uri.Query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var separatorIndex = parameter.IndexOf('=');
+            var name = Uri.UnescapeDataString(
+                separatorIndex < 0 ? parameter : parameter[..separatorIndex]);
+            var value = Uri.UnescapeDataString(
+                separatorIndex < 0 ? string.Empty : parameter[(separatorIndex + 1)..]);
+
+            switch (name.ToLowerInvariant())
+            {
+                case "sslmode":
+                    builder["Ssl Mode"] = value;
+                    break;
+                case "channel_binding":
+                    builder["Channel Binding"] = value;
+                    break;
+                case "application_name":
+                    builder.ApplicationName = value;
+                    break;
+                case "connect_timeout":
+                    if (!int.TryParse(value, out var timeout) || timeout < 0)
+                    {
+                        throw new InvalidOperationException(
+                            "A conexão de migration do PostgreSQL contém connect_timeout inválido.");
+                    }
+
+                    builder.Timeout = timeout;
+                    break;
+            }
+        }
+
+        return builder.ConnectionString;
     }
 
     private static string GetRequiredConnectionString(IConfiguration configuration)

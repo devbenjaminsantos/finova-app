@@ -386,8 +386,10 @@ static async Task ApplyPendingMigrationsOnStartupAsync(WebApplication app)
             "ConnectionStrings__Migration é obrigatória quando Database__ApplyMigrationsOnStartup=true.");
     }
 
+    var normalizedMigrationConnectionString = DatabaseConfiguration
+        .NormalizePostgreSqlConnectionString(migrationConnectionString);
     var options = new DbContextOptionsBuilder<AppDbContext>()
-        .UseNpgsql(migrationConnectionString)
+        .UseNpgsql(normalizedMigrationConnectionString)
         .Options;
     await using var context = new AppDbContext(options);
     var pendingMigrations = await context.Database.GetPendingMigrationsAsync();

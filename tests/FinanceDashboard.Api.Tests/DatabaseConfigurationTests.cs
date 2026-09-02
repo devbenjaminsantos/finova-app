@@ -3,32 +3,27 @@ using Xunit;
 
 namespace FinanceDashboard.Api.Tests;
 
-public class DatabaseConfigurationTests
+public sealed class DatabaseConfigurationTests
 {
-    [Theory]
-    [InlineData("SqlServer", HestiaDatabaseProvider.SqlServer)]
-    [InlineData("sqlserver", HestiaDatabaseProvider.SqlServer)]
-    [InlineData("PostgreSql", HestiaDatabaseProvider.PostgreSql)]
-    [InlineData("postgresql", HestiaDatabaseProvider.PostgreSql)]
-    public void ResolveProviderAcceptsSupportedNames(
-        string configuredProvider,
-        HestiaDatabaseProvider expected)
+    [Fact]
+    public void NormalizePostgreSqlConnectionString_ConvertsNeonUriWithoutLeakingIt()
     {
-        var provider = DatabaseConfiguration.ResolveProvider(configuredProvider);
+        var normalized = DatabaseConfiguration.NormalizePostgreSqlConnectionString(
+            "postgresql://migrator:secret-value@ep-example.us-east-1.aws.neon.tech/hestia?sslmode=require&channel_binding=require");
 
-        Assert.Equal(expected, provider);
+        Assert.Contains("Host=ep-example.us-east-1.aws.neon.tech", normalized);
+        Assert.Contains("Database=hestia", normalized);
+        Assert.Contains("Username=migrator", normalized);
+        Assert.Contains("Ssl Mode=Require", normalized);
+        Assert.DoesNotContain("://", normalized);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("1")]
-    [InlineData("Postgres")]
-    public void ResolveProviderRejectsMissingOrUnsupportedNames(string? configuredProvider)
+    [Fact]
+    public void NormalizePostgreSqlConnectionString_RejectsMalformedUriWithoutEchoingIt()
     {
-        var exception = Assert.Throws<InvalidOperationException>(
-            () => DatabaseConfiguration.ResolveProvider(configuredProvider));
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            DatabaseConfiguration.NormalizePostgreSqlConnectionString("postgresql://migrator@invalid"));
 
-        Assert.Contains("SqlServer ou PostgreSql", exception.Message);
+        Assert.DoesNotContain("migrator", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 }

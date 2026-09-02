@@ -144,6 +144,10 @@ DMARC.
     menor privilégio. Criar uma role/conexão administrativa exclusiva em
     `ConnectionStrings__Migration`; não conceder DDL à conexão de runtime nem
     habilitar o Resend antes disso.
+  - A API aceita tanto a URI `postgresql://` copiada do Neon quanto o formato
+    ADO.NET. Caso uma URI inválida chegue ao startup, o valor não é registrado;
+    rotacionar a senha de qualquer conexão que tenha aparecido em logs antigos
+    antes de uma nova tentativa.
 - [ ] Enviar confirmação e recuperação para uma conta controlada e verificar o
   ID aceito pelo Resend. O estado `delivered` continua dependendo do webhook.
 
