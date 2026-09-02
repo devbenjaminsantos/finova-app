@@ -133,12 +133,12 @@ DMARC.
   recuperação.
 - [x] Persistir o key ring de Data Protection no Neon antes de habilitar o
   envio, por migration explícita.
-- [ ] Criar uma chave de envio no Resend e um remetente temporário permitido
+- [x] Criar uma chave de envio no Resend e um remetente temporário permitido
   pelo provedor.
-- [ ] Configurar na Railway `Email__Enabled=true`, `Email__Provider=Resend`,
+- [x] Configurar na Railway `Email__Enabled=true`, `Email__Provider=Resend`,
   `Resend__ApiKey`, `Resend__FromEmail`, `Resend__FromName` e
   `Client__BaseUrl`, sem expor os valores.
-- [ ] Aplicar as migrations no Neon e confirmar o startup da Railway.
+- [x] Aplicar as migrations no Neon e confirmar o startup da Railway.
   - Bloqueio encontrado em 1 de setembro de 2026: a conexão de runtime da API
     não tem `CREATE` no schema `public` (`SQLSTATE 42501`), como esperado para
     menor privilégio. Criar uma role/conexão administrativa exclusiva em
@@ -148,8 +148,12 @@ DMARC.
     ADO.NET. Caso uma URI inválida chegue ao startup, o valor não é registrado;
     rotacionar a senha de qualquer conexão que tenha aparecido em logs antigos
     antes de uma nova tentativa.
-- [ ] Enviar confirmação e recuperação para uma conta controlada e verificar o
-  ID aceito pelo Resend. O estado `delivered` continua dependendo do webhook.
+- [x] Enviar a confirmação para uma conta controlada, verificar o ID aceito pelo
+  Resend, o recebimento no Gmail e a conclusão do link de verificação.
+  Evidência manual confirmada em 2 de setembro de 2026.
+- [ ] Enviar a recuperação de senha para a conta controlada e validar o link.
+- [ ] Implementar o webhook antes de persistir `delivered` automaticamente; até
+  lá, a entrega real depende da confirmação no provedor ou pelo destinatário.
 
 ## Ativação depois do domínio próprio
 

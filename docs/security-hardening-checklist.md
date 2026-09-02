@@ -55,10 +55,11 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [x] Cobrir preservação de usuários reais, isolamento, expiração lógica e acessos concorrentes com testes unitários.
   - [ ] Identificar e remover manualmente a antiga conta compartilhada somente após confirmar seu ID e propriedade no banco ativo.
   - [ ] Validar criação e limpeza contra o Azure SQL ativo e monitorar abuso do endpoint anônimo.
-- [ ] Implementar e verificar entrega real de cadastro, confirmação e
-  recuperação pelo Resend com remetente temporário e URL da Vercel; migrar para
-  o domínio autenticado antes de tratar o envio como produção. Notificações
-  financeiras ficam para cron/worker posterior.
+- [x] Implementar e verificar entrega real de cadastro e confirmação pelo Resend
+  com remetente temporário e URL da Vercel.
+- [ ] Verificar recuperação de senha pelo Resend e migrar para o domínio
+  autenticado antes de tratar o envio como produção. Notificações financeiras
+  ficam para cron/worker posterior.
 
 ## Desempenho e manutenção
 

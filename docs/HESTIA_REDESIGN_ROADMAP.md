@@ -641,7 +641,7 @@ referências históricas ao Brevo neste documento.
   chave idempotente, sem armazenar token ou conteúdo em texto claro.
 - [x] Persistir o key ring de Data Protection no Neon para preservar retries,
   antiforgery e cookies entre redeploys da Railway.
-- [ ] Criar chave e remetente temporário no Resend e habilitar o adapter apenas
+- [x] Criar chave e remetente temporário no Resend e habilitar o adapter apenas
   na Railway, com a URL estável da Vercel nos links.
 - [x] Manter apenas placeholders nos arquivos de exemplo; não criar nem inserir
   chave Resend agora.
