@@ -151,7 +151,8 @@ DMARC.
 - [x] Enviar a confirmação para uma conta controlada, verificar o ID aceito pelo
   Resend, o recebimento no Gmail e a conclusão do link de verificação.
   Evidência manual confirmada em 2 de setembro de 2026.
-- [ ] Enviar a recuperação de senha para a conta controlada e validar o link.
+- [x] Enviar a recuperação de senha para a conta controlada e validar o link e
+  a troca de senha. Evidência manual confirmada em 3 de setembro de 2026.
 - [ ] Implementar o webhook antes de persistir `delivered` automaticamente; até
   lá, a entrega real depende da confirmação no provedor ou pelo destinatário.
 

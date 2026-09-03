@@ -57,9 +57,9 @@ Este checklist transforma os achados da revisão técnica em incrementos pequeno
   - [ ] Validar criação e limpeza contra o Azure SQL ativo e monitorar abuso do endpoint anônimo.
 - [x] Implementar e verificar entrega real de cadastro e confirmação pelo Resend
   com remetente temporário e URL da Vercel.
-- [ ] Verificar recuperação de senha pelo Resend e migrar para o domínio
-  autenticado antes de tratar o envio como produção. Notificações financeiras
-  ficam para cron/worker posterior.
+- [x] Verificar recuperação de senha pelo Resend com a conta controlada.
+- [ ] Migrar para o domínio autenticado antes de tratar o envio como produção.
+  Notificações financeiras ficam para cron/worker posterior.
 
 ## Desempenho e manutenção
 

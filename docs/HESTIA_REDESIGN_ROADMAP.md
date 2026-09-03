@@ -661,6 +661,10 @@ referências históricas ao Brevo neste documento.
 - [ ] Configurar `Email__*` e `Resend__*` sem expor valores.
 - [ ] Fazer deploy e confirmar o diagnóstico de startup sem imprimir valores.
 - [ ] Testar cadastro, confirmação, reenvio e recuperação com contas controladas.
+  - [x] Cadastro, confirmação e recuperação validados no Gmail com a conta
+    controlada em 2 e 3 de setembro de 2026.
+  - [ ] Reenvio de confirmação e cobertura adicional em Outlook permanecem
+    pendentes para a etapa do domínio autenticado.
 - [ ] Confirmar `delivered` no Resend; resposta `200`/`201` da
   API não é prova de entrega.
 - [ ] Validar webhook assinado, idempotência, spam, bounce e remetente inválido.
