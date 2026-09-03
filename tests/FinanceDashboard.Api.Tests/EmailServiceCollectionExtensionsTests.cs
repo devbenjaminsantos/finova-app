@@ -66,6 +66,46 @@ public class EmailServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void AddHestiaEmail_RegistersBrevoSender_WhenConfigurationIsComplete()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Email:Enabled"] = "true",
+                ["Email:Provider"] = "Brevo",
+                ["Brevo:ApiKey"] = "xkeysib-test-key-not-real",
+                ["Brevo:FromEmail"] = "sender@example.com",
+                ["Brevo:FromName"] = "Héstia",
+                ["Brevo:TimeoutSeconds"] = "8"
+            })
+            .Build();
+        var services = new ServiceCollection();
+
+        services.AddHestiaEmail(configuration);
+
+        using var provider = services.BuildServiceProvider();
+        Assert.IsType<BrevoEmailSender>(provider.GetRequiredService<IEmailSender>());
+    }
+
+    [Fact]
+    public void AddHestiaEmail_RejectsActivation_WhenBrevoConfigurationIsIncomplete()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Email:Enabled"] = "true",
+                ["Email:Provider"] = "Brevo"
+            })
+            .Build();
+        var services = new ServiceCollection();
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => services.AddHestiaEmail(configuration));
+
+        Assert.Contains("Brevo__ApiKey", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task DisabledEmailSender_ReturnsDisabledWithoutPretendingDelivery()
     {
         var sender = new DisabledEmailSender();

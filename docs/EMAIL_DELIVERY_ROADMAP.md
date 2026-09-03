@@ -1,14 +1,15 @@
 # Decisão e roadmap de e-mail transacional
 
-**Última revisão:** 1 de setembro de 2026
-**Estado:** adapter Resend, outbox transacional e key ring persistido no Neon
-implementados; a ativação remota depende da chave e do remetente temporário do
-Resend.
+**Última revisão:** 3 de setembro de 2026
+**Estado:** Brevo escolhida como fonte principal; adapter HTTPS em validação.
+Outbox transacional e key ring persistido no Neon estão implementados. O Resend
+permanece disponível apenas como contingência inativa.
 
 ## Decisão
 
-O provedor-alvo é o **Resend pela API HTTPS**, chamado pela API ASP.NET Core
-hospedada na Railway e mantido atrás do contrato `IEmailSender`.
+O provedor principal é a **Brevo pela API HTTPS**, chamada pela API ASP.NET Core
+hospedada na Railway e mantida atrás do contrato `IEmailSender`. O adapter do
+Resend será preservado para rollback, sem duas fontes ativas simultaneamente.
 
 O envio não será movido para o frontend nem para uma Function da Vercel. A API
 já é responsável por usuários, tokens, auditoria e regras de reenvio; manter o
@@ -19,23 +20,23 @@ Também não será usada a integração do Marketplace da Vercel. Ela é adequad
 quando o código servidor roda na própria Vercel, mas, no Héstia, a chave deve
 existir somente na Railway.
 
-A primeira implementação usará um `HttpClient` tipado contra a API REST do
-Resend. O SDK oficial confirma suporte a .NET, mas o Héstia precisa apenas do
-endpoint de envio neste corte; manter esse detalhe no adapter reduz dependências
-e preserva o restante da aplicação caso o cliente do provedor mude. A chamada
-direta deve enviar `Authorization: Bearer`, `User-Agent` e `Idempotency-Key`.
+A integração usa um `HttpClient` tipado contra a API REST da Brevo. O Héstia
+precisa apenas do endpoint transacional neste corte; manter esse detalhe no
+adapter reduz dependências e preserva o restante da aplicação caso o cliente do
+provedor mude. A chamada direta envia `api-key`, `User-Agent` e a chave
+idempotente nos headers transacionais do payload.
 Templates continuarão versionados no backend, com versões texto e HTML. React
 Email não será introduzido apenas para esse fluxo.
 
-## Por que Resend
+## Decisão atual
 
 | Critério | Resend | Brevo | Impacto para o Héstia |
 | --- | --- | --- | --- |
 | Integração | API REST e SDK oficial para .NET | API REST, SDK C# e SMTP | ambos atendem; será preferida a API HTTPS |
-| Idempotência | chave por envio mantida por 24 horas | chave por envio com janela de 15 minutos | Resend cobre melhor timeouts, cold boot e novas tentativas tardias |
+| Idempotência | chave por envio mantida por 24 horas | chave por envio com janela de 15 minutos | a outbox preserva a mesma chave; retries fora da janela exigem atenção operacional |
 | Eventos | webhooks assinados e eventos de entrega, bounce, complaint e suppression | webhooks transacionais e log de entrega | ambos atendem; assinatura e deduplicação fazem parte do aceite |
-| Plano gratuito observado | 3.000 e-mails/mês, limite de 100/dia e até 3 domínios | 300 e-mails/dia | Brevo tem maior limite diário; o limite do Resend é suficiente para a fase inicial |
-| Escopo do produto | focado em e-mail para aplicações | suíte de marketing e comunicação | Resend é mais simples para os fluxos transacionais atuais |
+| Plano gratuito observado | 3.000 e-mails/mês, limite de 100/dia e até 3 domínios | 300 e-mails/dia | Brevo atende o teste real atual sem custo |
+| Escopo do produto | focado em e-mail para aplicações | suíte de marketing e comunicação | a conta Brevo existente e o remetente verificável destravam o fluxo atual |
 
 Postmark permanece como alternativa paga se a entregabilidade justificar o
 custo no futuro. Amazon SES não será adotado agora: apesar do baixo custo por
@@ -55,12 +56,12 @@ Preços, cotas e recursos devem ser conferidos novamente no dia da ativação.
 ## Cold start e fluxo escolhido
 
 ```text
-Navegador -> Vercel -> Railway -> Neon -> Resend API
+Navegador -> Vercel -> Railway -> Neon -> Brevo API
                          ^
                          `-- autenticação, token e auditoria
 ```
 
-O Resend não elimina o cold start da Railway. A primeira chamada ainda precisa
+A Brevo não elimina o cold start da Railway. A primeira chamada ainda precisa
 acordar a API antes de criar o usuário e o token no Neon. A troca de SMTP por
 HTTPS reduz a fragilidade da etapa seguinte e permite timeout, resposta
 estruturada, idempotência e correlação pelo identificador retornado pelo
@@ -123,9 +124,23 @@ o mesmo nível de proteção das variáveis de ambiente.
 
 Enquanto não houver domínio próprio, a ativação usará a URL de produção da
 Vercel como `Client__BaseUrl`:
-`https://hestia-app-benjamin-santos.vercel.app`. O remetente temporário de
-teste do Resend não substitui a validação posterior de domínio, SPF, DKIM e
-DMARC.
+`https://hestia-app-benjamin-santos.vercel.app`. O remetente temporário
+verificado na Brevo não substitui a validação posterior de domínio, SPF,
+DKIM e DMARC.
+
+## Troca controlada para Brevo
+
+- [x] Implementar o adapter Brevo pela API HTTPS sem remover o adapter Resend.
+- [x] Definir Brevo como provedor padrão nos exemplos, mantendo envio desligado
+  por padrão.
+- [ ] Criar uma API key exclusiva de envio e salvá-la somente na Railway.
+- [ ] Criar e validar um remetente na conta Brevo.
+- [ ] Configurar `Brevo__ApiKey`, `Brevo__FromEmail`, `Brevo__FromName` e
+  `Brevo__TimeoutSeconds` antes de trocar `Email__Provider`.
+- [ ] Trocar `Email__Provider=Brevo`, fazer um único redeploy e confirmar o
+  startup sem registrar valores secretos.
+- [ ] Executar cadastro real, confirmar recebimento e concluir o link.
+- [ ] Confirmar o evento de entrega no log transacional da Brevo.
 
 ## Ativação temporária com a URL da Vercel
 

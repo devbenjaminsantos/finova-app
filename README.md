@@ -52,7 +52,7 @@ Héstia helps users:
 - PostgreSQL in production, with SQL Server retained for local compatibility
 - JWT in an `HttpOnly` cookie, with Bearer support for external clients
 - Scalar.AspNetCore
-- email delivery behind an `IEmailSender` abstraction, with Resend selected and disabled until the Héstia domain is configured
+- email delivery behind an `IEmailSender` abstraction, with Brevo as the primary provider and Resend retained as an inactive fallback
 - Pluggy backend foundation for future Open Finance flows
 
 ### Infrastructure
@@ -93,9 +93,9 @@ The production architecture is:
 
 The coordinated rename and its rollback boundaries are documented in the [Héstia transition roadmap](docs/HESTIA_TRANSITION_ROADMAP.md). Historical Azure material remains archived for audit purposes only.
 
-The custom domain is still pending. Resend was selected for transactional email,
-but no account, key, webhook, or sender DNS will be configured before that
-domain is ready. See the [email delivery roadmap](docs/EMAIL_DELIVERY_ROADMAP.md).
+The custom domain is still pending. Brevo is the primary transactional email
+provider using a verified temporary sender; domain authentication remains a
+production-hardening requirement. See the [email delivery roadmap](docs/EMAIL_DELIVERY_ROADMAP.md).
 
 ## Running Locally
 
