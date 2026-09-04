@@ -507,6 +507,24 @@ ocultos ou de um layout desktop comprimido.
   disponíveis logo depois e não deixam espaço vazio quando inexistentes;
 - um teste de página garante a ordem semântica Histórico → Compromissos.
 
+## Correções e polimentos
+
+Esta seção concentra ajustes descobertos na validação manual depois do redesign.
+Os itens serão adicionados e tratados em incrementos pequenos, sem misturar
+correções de fluxo com novas funcionalidades.
+
+- [ ] Impedir, na redefinição de senha, que o usuário volte a usar a senha que
+  já está ativa na conta.
+  - Comparar a senha proposta com o hash atual no backend antes de alterá-la;
+    nunca persistir senha em texto claro nem registrar valor, hash ou tentativa
+    em logs.
+  - Retornar erro acionável e neutro para o usuário, preservando o token de
+    redefinição para uma nova tentativa com outra senha.
+  - Cobrir: mesma senha rejeitada, nova senha aceita e token/código de auditoria
+    preservados conforme o contrato atual.
+  - A necessidade foi identificada no teste manual de recuperação de senha com
+    a Brevo, em 4 de setembro de 2026.
+
 ## Etapa 7 - camada Héstia e agentes
 
 - [ ] Adicionar uma entrada unificada apenas após a UX financeira amadurecer.
