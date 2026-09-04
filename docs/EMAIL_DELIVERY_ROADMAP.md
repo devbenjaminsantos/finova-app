@@ -135,12 +135,13 @@ DKIM e DMARC.
 - [x] Definir Brevo como provedor padrão nos exemplos, mantendo envio desligado
   por padrão.
 - [x] Criar uma API key exclusiva de envio e salvá-la somente na Railway.
-- [ ] Criar e validar um remetente na conta Brevo.
+- [x] Criar e validar um remetente na conta Brevo.
 - [x] Configurar `Brevo__ApiKey`, `Brevo__FromEmail`, `Brevo__FromName` e
   `Brevo__TimeoutSeconds` antes de trocar `Email__Provider`.
 - [x] Trocar `Email__Provider=Brevo`, fazer um único redeploy e confirmar o
   startup sem registrar valores secretos.
-- [ ] Executar cadastro real, confirmar recebimento e concluir o link.
+- [x] Executar cadastros reais e confirmar o recebimento em diferentes contas.
+- [ ] Concluir um link de confirmação recebido pela Brevo.
 - [ ] Confirmar o evento de entrega no log transacional da Brevo.
 
 ### Evidência e avisos do primeiro deploy Brevo
@@ -161,9 +162,12 @@ Os logs também apresentaram dois avisos não bloqueantes:
   externo. O endpoint público HTTPS e o healthcheck funcionam; revisar forwarded
   headers/HTTPS redirection se surgir loop, redirect incorreto ou URL HTTP.
 
-O primeiro envio será executado manualmente pela interface antes de qualquer
-teste automatizado adicional. Manter pendentes os itens de recebimento, conclusão
-do link e confirmação `delivered` até haver evidência real.
+O teste manual realizado em 4 de setembro de 2026 criou cadastros com diferentes
+contas. A API recebeu `HTTP 201` da Brevo em aproximadamente 310 ms e persistiu
+o aceite; todas as mensagens chegaram depois de cerca de cinco minutos. Essa
+latência ocorreu depois do aceite da API da Brevo e, portanto, não deve ser
+atribuída ao cold start da Railway sem evidência adicional. Manter pendentes a
+conclusão de um link e a confirmação do evento `delivered` no painel da Brevo.
 
 ## Ativação temporária com a URL da Vercel
 
