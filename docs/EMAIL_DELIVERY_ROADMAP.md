@@ -1,9 +1,10 @@
 # Decisão e roadmap de e-mail transacional
 
-**Última revisão:** 3 de setembro de 2026
-**Estado:** Brevo escolhida como fonte principal; adapter HTTPS em validação.
-Outbox transacional e key ring persistido no Neon estão implementados. O Resend
-permanece disponível apenas como contingência inativa.
+**Última revisão:** 4 de setembro de 2026
+**Estado:** Brevo ativa como fonte principal; startup e healthcheck validados,
+com o primeiro envio real ainda pendente. Outbox transacional e key ring
+persistido no Neon estão implementados. O Resend permanece disponível apenas
+como contingência inativa.
 
 ## Decisão
 
@@ -133,14 +134,36 @@ DKIM e DMARC.
 - [x] Implementar o adapter Brevo pela API HTTPS sem remover o adapter Resend.
 - [x] Definir Brevo como provedor padrão nos exemplos, mantendo envio desligado
   por padrão.
-- [ ] Criar uma API key exclusiva de envio e salvá-la somente na Railway.
+- [x] Criar uma API key exclusiva de envio e salvá-la somente na Railway.
 - [ ] Criar e validar um remetente na conta Brevo.
-- [ ] Configurar `Brevo__ApiKey`, `Brevo__FromEmail`, `Brevo__FromName` e
+- [x] Configurar `Brevo__ApiKey`, `Brevo__FromEmail`, `Brevo__FromName` e
   `Brevo__TimeoutSeconds` antes de trocar `Email__Provider`.
-- [ ] Trocar `Email__Provider=Brevo`, fazer um único redeploy e confirmar o
+- [x] Trocar `Email__Provider=Brevo`, fazer um único redeploy e confirmar o
   startup sem registrar valores secretos.
 - [ ] Executar cadastro real, confirmar recebimento e concluir o link.
 - [ ] Confirmar o evento de entrega no log transacional da Brevo.
+
+### Evidência e avisos do primeiro deploy Brevo
+
+Em 4 de setembro de 2026, o deploy `9e0ca31f-55f7-47c8-9fcb-82e1be8a4785`
+terminou com `SUCCESS`, o healthcheck público respondeu `HTTP 200` e o startup
+registrou `Provedor de e-mail configurado: Brevo.`. Isso comprova configuração
+e inicialização, mas não comprova aceite nem entrega de uma mensagem.
+
+Os logs também apresentaram dois avisos não bloqueantes:
+
+- `libgssapi_krb5.so.2: cannot open shared object file`: biblioteca Kerberos
+  ausente na imagem de runtime. A conexão atual por credencial segue funcional;
+  investigar se passar a usar autenticação GSSAPI/Kerberos ou se aparecer falha
+  de conexão associada.
+- `Failed to determine the https port for redirect`: a API não identifica uma
+  porta HTTPS dentro do contêiner, enquanto a Railway encerra TLS no proxy
+  externo. O endpoint público HTTPS e o healthcheck funcionam; revisar forwarded
+  headers/HTTPS redirection se surgir loop, redirect incorreto ou URL HTTP.
+
+O primeiro envio será executado manualmente pela interface antes de qualquer
+teste automatizado adicional. Manter pendentes os itens de recebimento, conclusão
+do link e confirmação `delivered` até haver evidência real.
 
 ## Ativação temporária com a URL da Vercel
 
