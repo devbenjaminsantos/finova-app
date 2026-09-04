@@ -1,8 +1,9 @@
 # Transição operacional Finova -> Héstia
 
-Este documento coordena o rebranding técnico depois do redesign. A migração
-preserva dados, mantém uma janela de rollback e evita configurar e-mail antes
-do domínio definitivo.
+Este documento registra o rebranding técnico concluído depois do redesign. A
+arquitetura atual e os procedimentos de novos deploys estão no
+[`production-runbook.md`](production-runbook.md); esta trilha preserva contexto,
+decisões e limites históricos de rollback.
 
 ## Identidade de destino
 
@@ -56,11 +57,10 @@ alteração destrutiva ou de schema fez parte desta etapa.
 
 ## E-mail
 
-O Resend pela API HTTPS foi escolhido como alvo para os e-mails transacionais,
-substituindo o plano anterior de Brevo por SMTP. Qualquer remetente de produção
-permanece desativado: conta, chave, webhook e DNS só serão configurados depois
-da definição do domínio próprio. A implementação, os cuidados com cold start,
-idempotência, SPF, DKIM e DMARC estão em
+A Brevo pela API HTTPS é o provedor transacional ativo. A configuração,
+cadastro, confirmação, recuperação, reenvio limitado e entrega real foram
+validados com remetente temporário. O domínio próprio, SPF, DKIM, DMARC e
+webhooks continuam pendentes e estão centralizados em
 [`EMAIL_DELIVERY_ROADMAP.md`](EMAIL_DELIVERY_ROADMAP.md).
 
 ## Evidências locais de 2026-08-31
@@ -106,5 +106,7 @@ idempotência, SPF, DKIM e DMARC estão em
   banco e roles internos permaneceram estáveis conforme a fronteira definida;
 - nove cenários Playwright de login, cadastro, rotas protegidas, desktop e
   mobile passaram; o cenário de PDF também passou com dados e inspeção visual;
-- Resend e notificações por e-mail continuam desativados até o domínio próprio;
-  nenhum secret ou recurso remoto do provedor foi criado nesta decisão.
+- Brevo está ativa para confirmação e recuperação; notificações financeiras
+  continuam desativadas até existir worker/cron apropriado;
+- segredos do provedor permanecem somente na Railway e não foram registrados
+  neste documento.

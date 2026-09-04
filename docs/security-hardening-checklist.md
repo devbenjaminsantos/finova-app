@@ -1,69 +1,78 @@
 # Checklist de segurança e confiabilidade
 
-Este checklist transforma os achados da revisão técnica em incrementos pequenos e verificáveis. Um item só deve ser marcado como concluído depois de implementação, testes automatizados e validação do comportamento no ambiente correspondente.
+Este checklist acompanha o estado ativo do Héstia. Material de Azure e
+SQL Server histórico está fora deste documento; a operação atual usa Vercel,
+Railway, Neon PostgreSQL e Brevo.
 
-## Concluído na revisão
+Um item só deve ser marcado como concluído depois de implementação, testes
+adequados e validação no ambiente correspondente.
 
-- [x] Revisar pontos de XSS, SQL manual, autorização de endpoints, código sem uso e documentação desatualizada.
-- [x] Remover a dependência de runtime do Azure Communication Services e manter envio de e-mail atrás de `IEmailSender`.
-- [x] Validar builds, lint, testes de frontend, testes de backend, auditorias de dependências e smoke tests no navegador.
+## Controles concluídos
 
-## Prioridade imediata
+- [x] JWT emitido em cookie `HttpOnly`, `Secure` em produção, com versão de
+  sessão validada no banco; `Bearer` permanece apenas para clientes externos.
+- [x] Operações mutáveis protegidas por antiforgery e CORS limitado a origens
+  explícitas.
+- [x] Rate limiting global, de autenticação e de conta demo com resposta `429`
+  e `Retry-After`.
+- [x] Dashboard público usa token aleatório de 256 bits, persistido como hash,
+  com rotação e revogação.
+- [x] Sessões são invalidadas após redefinição/troca de senha e tokens com
+  versão antiga são rejeitados.
+- [x] Key ring de Data Protection, outbox transacional e dados da aplicação
+  persistidos no Neon.
+- [x] Conexão de runtime do Neon separada da conexão administrativa usada para
+  migrations controladas.
+- [x] Brevo configurada atrás de `IEmailSender`; confirmação, recuperação,
+  reenvio limitado, `Delivered` e `Seen` validados manualmente.
+- [x] Conta demo isolada por acesso, expira logicamente, não compartilha dados
+  entre visitantes e está fora da automação de e-mail.
+- [x] Cabeçalhos de segurança, neutralização de fórmulas CSV e autorização por
+  usuário cobertos pela revisão atual.
 
-- [ ] Remover o JWT do `localStorage`.
-  - [x] Emitir o JWT somente em cookie `HttpOnly`, `Secure` em produção e com expiração definida.
-  - [x] Enviar cookies nas chamadas do frontend sem construir `Authorization` no navegador.
-  - [x] Proteger métodos mutáveis com token antiforgery e CORS com origens explícitas.
-  - [x] Encerrar o cookie no logout da API e limpar o estado não sensível do cliente.
-  - [x] Manter `Authorization: Bearer` apenas como compatibilidade para clientes externos autenticados.
-  - [x] Cobrir login, logout, cookie, CSRF e ausência de JWT no armazenamento com testes.
-  - [ ] Validar cookies entre o Static Web App e o App Service no domínio final.
-- [ ] Invalidar sessões existentes após redefinição ou troca de senha.
-  - [x] Persistir uma versão de sessão por usuário e incluí-la no JWT.
-  - [x] Rejeitar tokens sem versão ou com versão diferente da registrada no banco.
-  - [x] Encerrar todas as sessões após redefinição por link.
-  - [x] Revogar as demais sessões e renovar a atual após troca de senha no perfil.
-  - [x] Criar migration e cobrir validação, redefinição e troca de senha com testes.
-  - [ ] Aplicar a migration e validar a revogação no ambiente Azure ativo.
-- [ ] Substituir o identificador previsível do painel público por token revogável.
-  - [x] Gerar token aleatório de 256 bits e persistir somente o hash SHA-256.
-  - [x] Exibir o valor bruto somente na emissão ou rotação.
-  - [x] Permitir rotação e revogação imediata pela tela de perfil.
-  - [x] Cobrir emissão, consulta, rotação e revogação com testes de API e frontend.
-  - [ ] Aplicar a migration e gerar novos links para painéis que já estavam ativos na Azure.
+## Prioridade alta
 
-## Confiabilidade operacional
+- [ ] Impedir reutilização da senha atualmente ativa durante a redefinição.
+  O item e os critérios de aceite estão em
+  [`HESTIA_REDESIGN_ROADMAP.md`](HESTIA_REDESIGN_ROADMAP.md#correções-e-polimentos).
+- [ ] Validar o intervalo de proxies confiáveis da Railway e reduzir a
+  configuração atual ao menor conjunto suportado. Confirmar que
+  `X-Forwarded-For` não altera auditoria nem a partição do rate limit quando
+  enviado diretamente por um cliente.
+- [ ] Verificar cookies, CSRF, logout, expiração e revogação no domínio
+  definitivo, depois do cutover de DNS.
+- [ ] Adicionar timeout, estado de espera e retry seguro no frontend para cold
+  start, sem repetir automaticamente operações mutáveis.
 
-- [ ] Reduzir duplicidade de notificações em múltiplas instâncias da API.
-  - [x] Coordenar cada entrega com `sp_getapplock` e registro transacional no Azure SQL.
-  - [x] Liberar nova tentativa quando o provedor rejeitar o envio.
-  - [x] Cobrir orquestração de entrega única, repetição e falha com testes unitários.
-  - [ ] Validar duas instâncias concorrentes contra o Azure SQL ativo.
-  - [x] Fechar a janela entre o aceite externo e o commit local com a chave
-    idempotente do Resend e um estado de entrega persistido antes do envio.
-  - [x] Persistir o key ring de Data Protection no Neon antes de escalar a API,
-    preservando tokens protegidos, antiforgery e cookies durante redeploys.
-- [x] Confirmar persistência compartilhada do ASP.NET Core Data Protection entre instâncias do mesmo slot no Azure App Service.
-- [ ] Adotar key ring externo antes de usar troca de deployment slots, pois slots diferentes não compartilham chaves.
-- [ ] Isolar a conta demo, com expiração e proteção contra uso concorrente abusivo.
-  - [x] Criar uma conta efêmera independente por acesso, sem compartilhar dados entre visitantes.
-  - [x] Expirar cada conta após duas horas e remover contas vencidas no acesso seguinte.
-  - [x] Serializar criação e limpeza entre instâncias com `sp_getapplock` e transação `Serializable`.
-  - [x] Não apagar nenhuma conta apenas por coincidir com o e-mail-base configurado.
-  - [x] Limitar o endpoint anônimo a cinco chamadas por minuto por IP.
-  - [x] Excluir contas demo da automação de e-mail.
-  - [x] Cobrir preservação de usuários reais, isolamento, expiração lógica e acessos concorrentes com testes unitários.
-  - [ ] Identificar e remover manualmente a antiga conta compartilhada somente após confirmar seu ID e propriedade no banco ativo.
-  - [ ] Validar criação e limpeza contra o Azure SQL ativo e monitorar abuso do endpoint anônimo.
-- [x] Implementar e verificar entrega real de cadastro e confirmação pelo Resend
-  com remetente temporário e URL da Vercel.
-- [x] Verificar recuperação de senha pelo Resend com a conta controlada.
-- [ ] Migrar para o domínio autenticado antes de tratar o envio como produção.
-  Notificações financeiras ficam para cron/worker posterior.
+## E-mail e privacidade
 
-## Desempenho e manutenção
+- [ ] Autenticar o domínio de envio na Brevo com SPF, DKIM e DMARC; iniciar
+  DMARC em observação antes de `quarantine` ou `reject`.
+- [ ] Criar webhook Brevo com validação de assinatura sobre o corpo bruto,
+  limite de payload e deduplicação do evento.
+- [ ] Processar `delivered`, bounce, complaint e suppression sem confiar na
+  ordem de chegada dos eventos.
+- [ ] Definir retenção e exclusão para tokens expirados, auditoria e registros
+  de entrega, sem guardar token bruto, corpo de e-mail ou dados financeiros.
+- [ ] Rotacionar imediatamente qualquer chave que apareça fora de um cofre de
+  secrets e nunca colocá-la em GitHub, Vercel, frontend, logs ou documentação.
 
-- [x] Dividir o bundle do frontend por rota e medir o carregamento inicial novamente.
-  - [x] Carregar páginas com `React.lazy` e fallback acessível.
-  - [x] Confirmar build com núcleo de 467,81 kB e gráficos em chunk separado de 370,86 kB.
-- [x] Repetir a revisão de endpoints, dependências e documentação antes da próxima versão pública.
+## Operação e escala
+
+- [ ] Validar os locks transacionais PostgreSQL de conta demo e notificações
+  com duas instâncias concorrentes contra o Neon.
+- [ ] Separar liveness de readiness para que saúde da API, acesso ao Neon e
+  schema esperado possam ser observados sem tratar um `200` isolado como prova
+  de disponibilidade completa.
+- [ ] Definir monitoramento, backup e restauração para Vercel, Railway e Neon.
+- [ ] Manter notificações financeiras desativadas até adotar worker/cron com
+  outbox, coordenação idempotente e retenção definida.
+
+## Observações de deploy atuais
+
+- `libgssapi_krb5.so.2` ausente na imagem Railway não bloqueou a conexão atual
+  por credencial; investigar apenas se GSSAPI/Kerberos ou falha de banco
+  relacionada surgir.
+- `Failed to determine the https port for redirect` ocorre atrás do proxy TLS
+  da Railway. O healthcheck HTTPS funciona; revisar forwarded headers e redirect
+  se aparecer loop, URL HTTP ou falha de cookie.

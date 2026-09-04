@@ -28,7 +28,8 @@ A Héstia permite:
 - definir metas mensais gerais e por categoria
 - acompanhar lançamentos recorrentes e compras parceladas
 - visualizar gráficos, comparativos, previsões e insights prescritivos
-- receber alertas de metas e resumo mensal por e-mail
+- configurar preferências para alertas de metas e resumo mensal; a automação
+  financeira por e-mail permanece desativada até existir worker dedicado
 - compartilhar um painel público somente leitura
 - revisar histórico de auditoria para fluxos sensíveis
 - alternar entre tema claro e escuro
@@ -52,7 +53,8 @@ A Héstia permite:
 - PostgreSQL em produção, com SQL Server preservado para compatibilidade local
 - JWT em cookie `HttpOnly`, com suporte Bearer para clientes externos
 - Scalar.AspNetCore
-- envio de e-mail atrás da abstração `IEmailSender`, com Resend escolhido e desativado até a configuração do domínio da Héstia
+- envio de e-mail atrás da abstração `IEmailSender`, com Brevo como provedor
+  principal e Resend preservado como contingência inativa
 - base de backend Pluggy para futuros fluxos de Open Finance
 
 ### Infraestrutura
@@ -93,16 +95,20 @@ A arquitetura de produção é:
 
 O renome coordenado e as fronteiras de rollback estão documentados no [roadmap de transição Héstia](docs/HESTIA_TRANSITION_ROADMAP.md). O material da Azure permanece apenas como histórico de auditoria.
 
-O domínio próprio ainda será definido. O Resend foi escolhido para os e-mails
-transacionais, mas conta, chave, webhook e DNS do remetente só serão configurados
-depois que esse domínio estiver pronto. Consulte o
+O domínio próprio ainda será definido. A Brevo é o provedor principal de
+e-mail transacional, com remetente temporário verificado; autenticação de
+domínio continua sendo um requisito de hardening. Consulte o
 [roadmap de envio de e-mail](docs/EMAIL_DELIVERY_ROADMAP.md).
 
 ## Como rodar localmente
 
-### 1. Banco de dados
+### 1. Banco de dados local
 
-Crie `server/.env` com base em `server/.env.example` e defina:
+O SQL Server permanece apenas como alternativa local. Crie `server/.env` com
+base em `server/.env.example`, defina uma senha local forte e mantenha
+`Database__Provider=SqlServer` com a `ConnectionStrings__Default` correspondente.
+Use a mesma senha escolhida em `SA_PASSWORD` e na connection string de exemplo:
+o .NET não expande `${SA_PASSWORD}` dentro de connection strings.
 
 ```env
 SA_PASSWORD=SuaSenhaForteAqui
@@ -114,6 +120,9 @@ Suba o SQL Server:
 cd server
 docker compose up -d
 ```
+
+Para desenvolvimento local com PostgreSQL, use `Database__Provider=PostgreSql`
+e uma connection string local. Em produção, o banco é sempre PostgreSQL.
 
 ### 2. Backend
 
@@ -127,15 +136,11 @@ Configurações esperadas:
 - `Jwt__Audience`
 - `Cors__AllowedOrigins__0`
 - `Client__BaseUrl`
-- `Notifications__Enabled`
-- `Notifications__ProcessingIntervalMinutes`
-- `Smtp__Host`
-- `Smtp__Port`
-- `Smtp__Username`
-- `Smtp__Password`
-- `Smtp__FromEmail`
-- `Smtp__FromName`
-- `Smtp__EnableSsl`
+- `Database__Provider`
+- `Email__Enabled` e `Email__Provider` (`Brevo` é o provedor de produção)
+- `Brevo__ApiKey`, `Brevo__FromEmail`, `Brevo__FromName` e
+  `Brevo__TimeoutSeconds` somente ao testar e-mail localmente
+- `Notifications__Enabled` e `Notifications__ProcessingIntervalMinutes`
 - `Demo__Enabled`
 - `Demo__Name`
 - `Demo__Email`
@@ -179,22 +184,28 @@ Em desenvolvimento local, `client/src/lib/api/http.js` usa o fallback:
 http://localhost:5278/api
 ```
 
-Em builds de produção, configure a URL do App Service ativo:
+O frontend publicado usa o rewrite `/api/*` definido em `vercel.json`.
+`VITE_API_URL` é opcional e só deve ser definido quando um build precisar
+chamar uma API diferente diretamente:
 
 ```text
-VITE_API_URL=https://HOST-DA-SUA-API.azurewebsites.net/api
+VITE_API_URL=https://sua-api.example.com/api
 ```
 
 ## Migrações
 
-Para aplicar as migrations:
+Para desenvolvimento local, aplique as migrations com:
 
 ```powershell
 cd server/FinanceDashboard.Api
 dotnet ef database update
 ```
 
-Esse passo é necessário sempre que uma nova migration alterar o schema do banco.
+Em produção, as migrations usam uma conexão administrativa separada em
+`ConnectionStrings__Migration`. Mantenha a conexão de runtime com privilégio
+mínimo; habilite `Database__ApplyMigrationsOnStartup=true` apenas no deploy
+controlado que aplica migrations pendentes e desabilite-o depois. Consulte o
+[runbook de produção](docs/production-runbook.md).
 
 ## Testes
 
@@ -222,17 +233,21 @@ npm run test:e2e
 
 ## Documentação
 
-- [Guia de deploy no Azure](docs/azure-deploy.md)
+- [Runbook de produção](docs/production-runbook.md)
+- [Roadmap de envio de e-mail](docs/EMAIL_DELIVERY_ROADMAP.md)
+- [Roadmap de redesign Héstia](docs/HESTIA_REDESIGN_ROADMAP.md)
 - [Roadmap](docs/roadmap.md)
 - [Changelog](docs/changelog.md)
 - [Decisões de arquitetura](docs/architecture-decisions.md)
 - [Checklist de segurança e confiabilidade](docs/security-hardening-checklist.md)
+- [Guia de deploy no Azure arquivado](docs/azure-deploy.md)
 
 ## Segurança
 
 - Não versionar segredos.
 - Manter configurações locais do backend fora do Git.
-- Guardar senhas do SQL Server apenas em ambientes seguros.
+- Guardar credenciais do PostgreSQL, Brevo e SQL Server local somente em
+  ambientes seguros.
 - Não expor links de redefinição de senha em logs de produção.
 - Manter `Client__BaseUrl` fixado na origem confiável do frontend.
 - Manter o rate limit ativo nos endpoints públicos de autenticação.

@@ -1,4 +1,8 @@
-# Deploy no Azure
+# Deploy no Azure (arquivado)
+
+> **Histórico de auditoria.** Azure não é o caminho de produção atual e as
+> instruções abaixo não devem ser usadas para publicar o Héstia. Para operação
+> atual, consulte [`production-runbook.md`](production-runbook.md).
 
 O Finova usa recursos independentes para frontend, API e banco:
 

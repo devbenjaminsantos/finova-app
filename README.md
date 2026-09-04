@@ -28,7 +28,8 @@ Héstia helps users:
 - define monthly budget goals, including category goals
 - follow recurring entries and installment purchases
 - review charts, comparisons, forecasts, and prescriptive insights
-- receive goal alerts and monthly summaries by email
+- configure preferences for goal alerts and monthly summaries; automated
+  financial email remains disabled pending a dedicated worker
 - share a public read-only dashboard link
 - review relevant audit history for sensitive flows
 - switch between light and dark themes
@@ -99,9 +100,13 @@ production-hardening requirement. See the [email delivery roadmap](docs/EMAIL_DE
 
 ## Running Locally
 
-### 1. Database
+### 1. Database (local)
 
-Create `server/.env` from `server/.env.example` and define:
+SQL Server remains available only as an optional local environment. Create
+`server/.env` from `server/.env.example`, set a strong local password, and keep
+`Database__Provider=SqlServer` with a matching `ConnectionStrings__Default`.
+Use the same chosen password in `SA_PASSWORD` and in the example connection
+string; .NET does not expand `${SA_PASSWORD}` inside connection strings.
 
 ```env
 SA_PASSWORD=YourStrongPasswordHere
@@ -113,6 +118,9 @@ Start SQL Server:
 cd server
 docker compose up -d
 ```
+
+For PostgreSQL local development, set `Database__Provider=PostgreSql` and a
+local PostgreSQL connection string instead. Production always uses PostgreSQL.
 
 ### 2. Backend
 
@@ -126,15 +134,11 @@ Expected configuration:
 - `Jwt__Audience`
 - `Cors__AllowedOrigins__0`
 - `Client__BaseUrl`
-- `Notifications__Enabled`
-- `Notifications__ProcessingIntervalMinutes`
-- `Smtp__Host`
-- `Smtp__Port`
-- `Smtp__Username`
-- `Smtp__Password`
-- `Smtp__FromEmail`
-- `Smtp__FromName`
-- `Smtp__EnableSsl`
+- `Database__Provider`
+- `Email__Enabled` and `Email__Provider` (`Brevo` is the production provider)
+- `Brevo__ApiKey`, `Brevo__FromEmail`, `Brevo__FromName` and
+  `Brevo__TimeoutSeconds` only when testing e-mail locally
+- `Notifications__Enabled` and `Notifications__ProcessingIntervalMinutes`
 - `Demo__Enabled`
 - `Demo__Name`
 - `Demo__Email`
@@ -178,22 +182,28 @@ For local frontend development, `client/src/lib/api/http.js` falls back to:
 http://localhost:5278/api
 ```
 
-For production builds, configure the active App Service URL:
+The deployed frontend uses the `/api/*` rewrite declared in `vercel.json`.
+`VITE_API_URL` is optional and should only be set when a build must call a
+different API directly:
 
 ```text
-VITE_API_URL=https://YOUR-API-HOST.azurewebsites.net/api
+VITE_API_URL=https://your-api.example.com/api
 ```
 
 ## Database Migrations
 
-Apply migrations with:
+For local development, apply migrations with:
 
 ```powershell
 cd server/FinanceDashboard.Api
 dotnet ef database update
 ```
 
-Run this whenever a new migration changes the database schema.
+Production migrations use a separate administrative connection configured as
+`ConnectionStrings__Migration`. Keep the runtime connection least-privileged;
+enable `Database__ApplyMigrationsOnStartup=true` only for the controlled deploy
+that applies pending migrations, then disable it again. See the
+[production runbook](docs/production-runbook.md).
 
 ## Tests
 
@@ -221,17 +231,21 @@ npm run test:e2e
 
 ## Documentation
 
-- [Azure deployment guide](docs/azure-deploy.md)
+- [Production runbook](docs/production-runbook.md)
+- [Email delivery roadmap](docs/EMAIL_DELIVERY_ROADMAP.md)
+- [Héstia redesign roadmap](docs/HESTIA_REDESIGN_ROADMAP.md)
 - [Roadmap](docs/roadmap.md)
 - [Changelog](docs/changelog.md)
 - [Architecture decisions](docs/architecture-decisions.md)
 - [Security and reliability checklist](docs/security-hardening-checklist.md)
+- [Archived Azure deployment guide](docs/azure-deploy.md)
 
 ## Security Notes
 
 - Do not commit secrets.
 - Keep local backend configuration out of Git.
-- Store SQL Server passwords only in safe local or cloud secret stores.
+- Store PostgreSQL, Brevo and local SQL Server credentials only in safe secret
+  stores.
 - Keep password reset links out of logs in production.
 - Keep `Client__BaseUrl` pinned to the trusted frontend origin.
 - Keep rate limiting enabled on public authentication endpoints.

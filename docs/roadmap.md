@@ -4,7 +4,9 @@ Este roadmap organiza a evolução do Héstia em frentes de produto e tecnologia
 
 ## Base atual
 
-O projeto já possui uma base funcional consolidada e uma arquitetura de deploy no Azure. Após transferências ou recriações de recursos, o ambiente precisa passar pela validação pós-deploy documentada antes de ser apresentado como produção ativa:
+O projeto possui uma base funcional consolidada e uma arquitetura ativa em
+Vercel, Railway e Neon. A validação pós-deploy está centralizada no
+[`production-runbook.md`](production-runbook.md):
 
 - autenticação com JWT, confirmação de e-mail e recuperação de senha
 - conta demo para apresentação do produto
@@ -13,10 +15,11 @@ O projeto já possui uma base funcional consolidada e uma arquitetura de deploy 
 - metas gerais e por categoria
 - contas financeiras e filtros por conta
 - suporte a lançamentos recorrentes, parcelamentos e tags
-- notificações por e-mail para alertas e resumos
+- confirmação e recuperação por e-mail pela Brevo; alertas financeiros ainda
+  permanecem desativados
 - painel público somente leitura
 - auditoria para fluxos sensíveis
-- workflows de deploy para frontend e API, com banco Azure SQL
+- deploy integrado para frontend Vercel e API Railway, com PostgreSQL no Neon
 
 ## Direção de produto
 
@@ -74,10 +77,13 @@ Prioridades:
 Prioridades:
 
 - ampliar testes automatizados dos fluxos críticos
-- integrar uma plataforma de métricas e rastreamento, como Application Insights
+- definir observação de logs, erros, disponibilidade e latência compatível com
+  Vercel, Railway e Neon
 - documentar rotinas de backup e recuperação
 - revisar tratamento de erro em frontend e backend
 - manter health checks simples e confiáveis
+- medir a latência fim a fim de cadastro e e-mail sem confundir aceite do
+  provedor com entrega
 
 ### 2. Contratos e consistência
 
@@ -97,6 +103,8 @@ Prioridades:
 - manter segredos fora do repositório
 - validar CORS e URLs de produção em cada deploy
 - continuar separando configuração local, staging e produção
+- manter a role de runtime do banco sem DDL e a conexão administrativa restrita
+  a migrations controladas
 
 ## Próximos marcos sugeridos
 
@@ -106,6 +114,8 @@ Prioridades:
 - revisar estados vazios, erros e carregamentos
 - validar responsividade dos fluxos principais
 - confirmar consistência entre conta demo e conta real
+- tratar os itens de [Correções e polimentos](HESTIA_REDESIGN_ROADMAP.md#correções-e-polimentos)
+  descobertos em validações manuais
 
 ### Marco B: Finanças avançadas
 
@@ -120,3 +130,5 @@ Prioridades:
 - melhorar monitoramento e alertas técnicos
 - documentar operação de produção
 - fortalecer testes end-to-end dos fluxos públicos e autenticados
+- autenticar o domínio de envio e processar webhooks transacionais com
+  assinatura e deduplicação

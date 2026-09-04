@@ -2,13 +2,16 @@
 
 > Documento operacional para migrar o Finova com baixo risco, preservar uma janela de rollback e reduzir o custo de infraestrutura durante períodos sem acesso.
 
-**Última revisão:** 24 de agosto de 2026
+**Última revisão:** 4 de setembro de 2026
 
-**Estado:** planejamento; nenhuma etapa deste documento implica que a migração já foi executada.
+**Estado:** histórico; a migração para Vercel, Railway e Neon foi concluída.
+O documento preserva o planejamento e suas evidências, não um checklist ativo.
 
 > **Registro histórico:** a migração e o rebranding foram concluídos depois da
-> criação deste plano. As instruções de Brevo/SMTP abaixo não devem mais ser
-> aplicadas. O alvo atual é Resend pela API HTTPS e está documentado em
+> criação deste plano. Nenhuma instrução operacional abaixo deve ser aplicada
+> em um novo deploy. A arquitetura ativa está no
+> [`production-runbook.md`](production-runbook.md), e a Brevo por HTTPS é o
+> provedor de e-mail atual, documentado em
 > [`EMAIL_DELIVERY_ROADMAP.md`](EMAIL_DELIVERY_ROADMAP.md).
 
 ## Objetivo

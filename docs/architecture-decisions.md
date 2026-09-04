@@ -19,11 +19,26 @@ Motivos:
 - facilitar testes e configuração local
 - permitir que o frontend aponte para diferentes APIs por ambiente
 
-## `VITE_API_URL` como contrato de produção
+## Rewrite `/api` como contrato de produção
 
-O frontend usa `VITE_API_URL` para chamar a API. Em produção, essa variável precisa apontar para a URL do App Service com `/api`.
+Em produção, a Vercel encaminha `/api/*` para a Railway conforme
+`vercel.json`. O frontend usa esse caminho relativo por padrão, preservando
+cookies e evitando expor um host de API no bundle.
 
-Essa decisão evita que o frontend tente chamar rotas relativas incorretas no Static Web Apps, o que pode gerar respostas como `405 Method Not Allowed` em endpoints como login.
+`VITE_API_URL` permanece opcional para ambientes que precisam chamar uma API
+diretamente e deve sempre terminar em `/api`. Ele é incorporado no build do
+Vite e nunca deve conter segredo.
+
+## PostgreSQL em produção e migrations separadas
+
+O runtime de produção usa PostgreSQL no Neon. SQL Server permanece apenas como
+compatibilidade para desenvolvimento local e para o histórico de migrations
+arquivado.
+
+A API usa `ConnectionStrings__Default` com privilégio mínimo. Migrations
+controladas usam `ConnectionStrings__Migration`, uma conexão administrativa
+separada, habilitada apenas durante um deploy de schema. Isso limita o impacto
+de uma credencial de runtime e evita conceder DDL ao serviço web.
 
 ## JWT, confirmação de e-mail e recuperação de senha
 

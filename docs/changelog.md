@@ -4,10 +4,14 @@ Este changelog registra os principais marcos de entrega do Héstia. Ele é escri
 
 ## Base atual de entrega
 
-- Arquitetura de deploy preparada para Azure Static Web Apps, App Service e Azure SQL.
-- Health check público disponível para validar a API.
-- Configuração de produção baseada em `VITE_API_URL`, apontando o frontend diretamente para a API com `/api`.
-- Logs estruturados da API e eventos de auditoria para fluxos relevantes.
+- Arquitetura ativa: React/Vite na Vercel, API ASP.NET Core na Railway e
+  PostgreSQL no Neon.
+- Rewrite `/api/*` da Vercel para a Railway; `VITE_API_URL` é opcional para
+  ambientes com API direta.
+- Healthcheck público, logs estruturados e eventos de auditoria para fluxos
+  relevantes.
+- Migrations PostgreSQL e key ring do ASP.NET Core Data Protection persistidos
+  no Neon; conexão de runtime e conexão administrativa de migration separadas.
 
 ## Segurança e portabilidade
 
@@ -19,8 +23,10 @@ Este changelog registra os principais marcos de entrega do Héstia. Ele é escri
 - Neutralização de fórmulas em arquivos CSV exportados.
 - Cabeçalhos de segurança no frontend e na API.
 - Dependências npm e NuGet atualizadas e auditadas.
-- Substituição do Azure Communication Services Email por SMTP genérico.
-- Workflows de frontend e API com build, testes e auditoria antes do deploy.
+- Substituição do Azure Communication Services e SMTP legado por adapters HTTPS
+  de e-mail.
+- Brevo como provedor transacional ativo, com aceite, entrega e abertura
+  confirmados em validação manual.
 
 ## Autenticação e acesso
 
@@ -48,12 +54,13 @@ Este changelog registra os principais marcos de entrega do Héstia. Ele é escri
 - Previsões e leituras agregadas do comportamento financeiro.
 - Painel público somente leitura para compartilhamento controlado.
 
-## Notificações
+## E-mail e notificações
 
-- Envio de e-mails por SMTP por meio de uma abstração de domínio.
-- Alertas relacionados a metas.
-- Resumos mensais.
-- Estrutura de preferências de notificação.
+- Confirmação e recuperação por e-mail via Brevo, por meio de
+  `IEmailSender`, outbox e chave idempotente.
+- Reenvio de confirmação limitado intencionalmente.
+- Alertas de metas e resumos mensais preservam preferências e estrutura de
+  entrega, mas continuam desativados até haver worker/cron dedicado.
 
 ## Internacionalização e polimento textual
 
@@ -67,6 +74,7 @@ Este changelog registra os principais marcos de entrega do Héstia. Ele é escri
 
 - README principal em inglês.
 - README em português brasileiro.
-- Guia de deploy no Azure.
+- Runbook da arquitetura Vercel, Railway, Neon e Brevo.
+- Guia Azure preservado como histórico de auditoria.
 - Roadmap de produto e tecnologia.
 - Registro de decisões de arquitetura.

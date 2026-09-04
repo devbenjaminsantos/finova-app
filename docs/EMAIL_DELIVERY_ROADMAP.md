@@ -1,10 +1,10 @@
 # Decisão e roadmap de e-mail transacional
 
 **Última revisão:** 4 de setembro de 2026
-**Estado:** Brevo ativa como fonte principal; startup e healthcheck validados,
-com o primeiro envio real ainda pendente. Outbox transacional e key ring
-persistido no Neon estão implementados. O Resend permanece disponível apenas
-como contingência inativa.
+**Estado:** Brevo ativa como fonte principal; confirmação, recuperação,
+reenvio limitado, `Delivered` e `Seen` foram validados em contas distintas.
+Outbox transacional e key ring persistido no Neon estão implementados. O
+Resend permanece disponível apenas como contingência inativa.
 
 ## Decisão
 
@@ -141,8 +141,9 @@ DKIM e DMARC.
 - [x] Trocar `Email__Provider=Brevo`, fazer um único redeploy e confirmar o
   startup sem registrar valores secretos.
 - [x] Executar cadastros reais e confirmar o recebimento em diferentes contas.
-- [ ] Concluir um link de confirmação recebido pela Brevo.
-- [ ] Confirmar o evento de entrega no log transacional da Brevo.
+- [x] Concluir links de confirmação recebidos pela Brevo e autenticar as
+  contas confirmadas.
+- [x] Confirmar os eventos `Delivered` e `Seen` no log transacional da Brevo.
 
 ### Evidência e avisos do primeiro deploy Brevo
 
@@ -163,13 +164,18 @@ Os logs também apresentaram dois avisos não bloqueantes:
   headers/HTTPS redirection se surgir loop, redirect incorreto ou URL HTTP.
 
 O teste manual realizado em 4 de setembro de 2026 criou cadastros com diferentes
-contas. A API recebeu `HTTP 201` da Brevo em aproximadamente 310 ms e persistiu
-o aceite; todas as mensagens chegaram depois de cerca de cinco minutos. Essa
-latência ocorreu depois do aceite da API da Brevo e, portanto, não deve ser
-atribuída ao cold start da Railway sem evidência adicional. Manter pendentes a
-conclusão de um link e a confirmação do evento `delivered` no painel da Brevo.
+contas e em redes distintas. A API recebeu `HTTP 201` da Brevo em aproximadamente
+310 ms e persistiu o aceite; as primeiras mensagens chegaram depois de cerca de
+cinco minutos, enquanto uma recuperação posterior chegou em menos de um minuto.
+As contas foram confirmadas e autenticadas, os reenvios respeitaram o limite
+intencional de um minuto e o painel Brevo registrou `Delivered` e `Seen`.
+Portanto, a latência observada ocorreu depois do aceite da API da Brevo e não
+deve ser atribuída ao cold start da Railway sem evidência adicional.
 
-## Ativação temporária com a URL da Vercel
+## Histórico: ativação inicial com Resend
+
+Esta seção preserva a evidência da ativação anterior. Ela não define o
+provedor atual e não deve orientar novos deploys.
 
 - [x] Definir a URL pública estável da Vercel para links de confirmação e
   recuperação.
@@ -203,12 +209,12 @@ conclusão de um link e a confirmação do evento `delivered` no painel da Brevo
 - [ ] Definir os hosts finais do app, API e subdomínio de envio.
 - [ ] Atualizar `Client__BaseUrl`, CORS, cookies, CSP, callbacks e links antes de
   enviar qualquer mensagem real.
-- [ ] Criar a conta Resend diretamente e uma chave restrita ao envio de
-  produção; armazená-la somente nas variáveis privadas da Railway.
+- [ ] Criar uma chave Brevo exclusiva para produção; armazená-la somente nas
+  variáveis privadas da Railway.
 - [ ] Configurar na Railway apenas os nomes previstos, sem registrar valores:
-  `Email__Enabled`, `Email__Provider`, `Resend__ApiKey`, `Resend__FromEmail`,
-  `Resend__FromName` e `Resend__WebhookSecret`.
-- [ ] Verificar o domínio no Resend e publicar exatamente os registros DKIM,
+  `Email__Enabled`, `Email__Provider`, `Brevo__ApiKey`, `Brevo__FromEmail`,
+  `Brevo__FromName` e o segredo de webhook quando ele existir.
+- [ ] Verificar o domínio na Brevo e publicar exatamente os registros DKIM,
   SPF e return-path indicados pelo painel.
 - [ ] Publicar um único SPF por hostname e iniciar DMARC em modo de observação
   antes de avançar para `quarantine` ou `reject`.
@@ -223,7 +229,7 @@ conclusão de um link e a confirmação do evento `delivered` no painel da Brevo
 - [ ] Testar cadastro, confirmação, reenvio e recuperação com contas
   controladas em Gmail e Outlook.
 - [ ] Confirmar o estado `delivered` no provedor e validar spam, bounce e
-  remetente inválido; aceite da API do Resend não basta.
+  remetente inválido; aceite da API da Brevo não basta.
 - [ ] Rotacionar imediatamente qualquer chave exposta e nunca armazenar secrets
   no GitHub, Vercel, documentação, logs ou frontend.
 
@@ -284,14 +290,17 @@ web apenas para manter um loop ativo. Antes de habilitá-los:
   telemetria;
 - [ ] definir retenção e exclusão de eventos de entrega.
 
-## Gate de conclusão
+## Gates de conclusão
 
-O envio de confirmação só pode ser marcado como concluído quando houver, no
-mesmo ambiente:
+O gate operacional atual foi concluído: segredo somente na Railway, testes de
+adapter/configuração, smoke real de cadastro, reenvio e recuperação, links
+funcionais e `Delivered`/`Seen` confirmados no mesmo ambiente.
+
+O gate de hardening de domínio permanece pendente e exige:
 
 1. domínio e DNS verificados;
-2. segredo somente na Railway;
-3. testes automatizados de sucesso, falha, timeout e repetição idempotente;
-4. smoke real de cadastro, reenvio e recuperação;
-5. evento `delivered` validado e webhook assinado processado uma única vez;
-6. logs sem tokens, chaves, conteúdo financeiro ou endereços completos.
+2. SPF, DKIM e DMARC publicados;
+3. webhook assinado, limitado e deduplicado;
+4. eventos `delivered`, bounce, complaint e suppression processados uma única
+   vez, sem confiar na ordem de chegada;
+5. logs sem tokens, chaves, conteúdo financeiro ou endereços completos.
